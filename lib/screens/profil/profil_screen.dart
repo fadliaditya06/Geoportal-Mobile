@@ -30,7 +30,8 @@ class ProfilScreen extends StatelessWidget {
               width: double.infinity,
               decoration: const BoxDecoration(
                 color: Color(0xFFB0E1C6),
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(50)),
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(50)),
               ),
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -52,45 +53,56 @@ class ProfilScreen extends StatelessWidget {
                   _buildProfilMenu(
                     icon: Icons.person_outlined,
                     title: "Lihat Profil",
-                    onTap: () => _navigateTo(context, const LihatProfilScreen()),
+                    onTap: () =>
+                        _navigateTo(context, const LihatProfilScreen()),
                   ),
                   _buildProfilMenu(
                     icon: Icons.edit_outlined,
-                    title: "Ubah Profil", 
+                    title: "Ubah Profil",
                     onTap: () => _navigateTo(context, const UbahProfilScreen()),
                   ),
                   _buildProfilMenu(
                     icon: Icons.lock_outline,
-                    title: "Ubah Kata Sandi", 
-                    onTap: () => _navigateTo(context, const UbahKataSandiScreen()),
+                    title: "Ubah Kata Sandi",
+                    onTap: () =>
+                        _navigateTo(context, const UbahKataSandiScreen()),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 30),
             // Tombol Logout
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (route) => false,
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF358666),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-              ),
-              icon: const Icon(Icons.logout, color: Colors.white),
-              label: const Text(
-                'Logout',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
+            SizedBox(
+              width: 250,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF358666),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                  ),
+                  // Navigator ke halaman login
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.logout,
+                      color: Colors.white), 
+                  label: const Text(
+                    'Logout',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -100,7 +112,6 @@ class ProfilScreen extends StatelessWidget {
       ),
     );
   }
-
   // Widget untuk menampilkan menu profil dengan navigasi
   Widget _buildProfilMenu({
     required IconData icon,
@@ -115,7 +126,8 @@ class ProfilScreen extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         leading: Icon(icon, color: Colors.black),
         title: Text(
           title,
@@ -128,7 +140,6 @@ class ProfilScreen extends StatelessWidget {
       ),
     );
   }
-
   // Fungsi untuk navigasi ke layar lain
   void _navigateTo(BuildContext context, Widget screen) {
     Navigator.push(

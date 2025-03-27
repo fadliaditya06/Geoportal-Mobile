@@ -26,7 +26,7 @@ class UbahProfilScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
-            mainAxisSize: MainAxisSize.min, 
+            mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 20),
               Center(
@@ -43,7 +43,8 @@ class UbahProfilScreen extends StatelessWidget {
                       child: const CircleAvatar(
                         radius: 25,
                         backgroundColor: Color(0xFFB0E1C6),
-                        child: Icon(Icons.camera_alt_outlined, size: 24, color: Colors.black),
+                        child: Icon(Icons.camera_alt_outlined,
+                            size: 24, color: Colors.black),
                       ),
                     ),
                   ],
@@ -52,7 +53,7 @@ class UbahProfilScreen extends StatelessWidget {
               const SizedBox(height: 20),
               // Form Ubah Profil
               ListView(
-                shrinkWrap: true, 
+                shrinkWrap: true,
                 children: [
                   _buildTitle("Nama Depan"),
                   _buildTextField(Icons.person_outline, "Nama Depan"),
@@ -66,33 +67,37 @@ class UbahProfilScreen extends StatelessWidget {
                 ],
               ),
               // Tombol Simpan
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: SafeArea(
-                  child: Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF358666),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+              SizedBox(
+                width: 250,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF358666),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40),
                       ),
-                      onPressed: () {},
-                      child: const Text(
-                        'Simpan',
-                        style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),
-                      ),
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      'Simpan',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white),
                     ),
                   ),
                 ),
               ),
+              const SizedBox(height: 30),
             ],
           ),
         ),
       ),
     );
   }
+
   // Widget untuk menampilkan judul di atas textbox
   Widget _buildTitle(String title) {
     return Padding(
@@ -106,6 +111,7 @@ class UbahProfilScreen extends StatelessWidget {
       ),
     );
   }
+
   // Widget untuk menampilkan textbox
   Widget _buildTextField(IconData icon, String label, {bool isEmail = false}) {
     return TextFormField(
@@ -113,7 +119,8 @@ class UbahProfilScreen extends StatelessWidget {
       decoration: InputDecoration(
         prefixIcon: Icon(icon, color: Colors.black),
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.w400),
+        labelStyle:
+            const TextStyle(color: Colors.black, fontWeight: FontWeight.w400),
         filled: true,
         fillColor: const Color(0xFFB0E1C6),
         border: OutlineInputBorder(

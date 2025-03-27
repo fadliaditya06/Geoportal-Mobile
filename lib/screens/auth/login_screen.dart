@@ -251,7 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 20),
                         // Tombol Masuk
                         SizedBox(
-                          width: double.infinity,
+                          width: 250,
                           child: Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 50.0),
@@ -267,7 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  // Navigasi ke halaman Login
+                                  // Navigasi ke halaman Beranda
                                   MaterialPageRoute(
                                     builder: (context) => const MainPage(),
                                   ),
@@ -290,7 +290,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             const Text(
                               'Belum memiliki akun?',
                               style: TextStyle(
-                                  color: Color(0xFF8c8e98),
+                                  color: Colors.black,
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w400),
                             ),

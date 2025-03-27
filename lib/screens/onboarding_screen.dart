@@ -140,7 +140,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                         : _nextPage,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _currentPage == 2
-                          ? Colors.grey
+                          ? const Color(0xFFB0E1C6)
                           : const Color(0xFF358666),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 30, vertical: 15),
@@ -150,7 +150,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                     ),
                     child: Text(
                       _currentPage == 2 ? 'Mulai Sekarang' : 'Selanjutnya',
-                      style: const TextStyle(color: Colors.white),
+                      style: TextStyle(
+                        color: _currentPage == 2 ? Colors.black : Colors.white),
                     ),
                   ),
                 ],

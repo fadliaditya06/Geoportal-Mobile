@@ -285,34 +285,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 20),
                       // Tombol Daftar
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            // Navigasi ke halaman Login
-                            MaterialPageRoute(
-                              builder: (context) => const LoginScreen(),
+                        SizedBox(
+                          width: 250,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 50.0),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF358666),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  // Navigasi ke halaman Login
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginScreen(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'Daftar',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white),
+                              ),
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF358666),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 15),
-                        ),
-                        child: const Text(
-                          'Daftar',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
+                        const SizedBox(height: 5),
                     ],
                   ),
                 ),

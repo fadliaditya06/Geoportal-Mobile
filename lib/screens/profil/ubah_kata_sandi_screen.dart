@@ -61,22 +61,27 @@ class UbahKataSandiScreenState extends State<UbahKataSandiScreen> {
               ),
               // Tombol Simpan
               Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF358666),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+                child: SizedBox(
+                  width: 250,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF358666),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                      ),
+                      onPressed: () {},
+                      child: const Text(
+                        'Simpan',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white),
+                      ),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 50, vertical: 15),
-                  ),
-                  onPressed: () {},
-                  child: const Text(
-                    'Simpan',
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
