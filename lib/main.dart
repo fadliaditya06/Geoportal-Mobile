@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geoportal_mobile/screens/beranda_screen.dart';
 import 'package:geoportal_mobile/screens/onboarding_screen.dart';
-import 'package:geoportal_mobile/screens/peta_screen.dart';
+import 'package:geoportal_mobile/screens/peta/peta_screen.dart';
 import 'package:geoportal_mobile/screens/profil/profil_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
