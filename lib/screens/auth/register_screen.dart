@@ -115,64 +115,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             borderSide: const BorderSide(
                                 color: Color(0xFF358666), width: 1),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 15.0, vertical: 10.0),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      // Input Nama Depan
-                      TextFormField(
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.person_outline),
-                          labelText: 'Nama Depan',
-                          labelStyle: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.black,
-                          ),
-                          filled: true,
-                          fillColor: const Color(0xFFB0E1C6),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: const BorderSide(
-                                color: Color(0xFF358666), width: 1),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: const BorderSide(
-                                color: Color(0xFF358666), width: 1),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      // Input Nama Belakang
-                      TextFormField(
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.person_outline),
-                          labelText: 'Nama Belakang',
-                          labelStyle: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.black,
-                          ),
-                          filled: true,
-                          fillColor: const Color(0xFFB0E1C6),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: const BorderSide(
-                                color: Color(0xFF358666), width: 1),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            borderSide: const BorderSide(
-                                color: Color(0xFF358666), width: 1),
-                          ),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -183,6 +125,62 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           prefixIcon: const Icon(Icons.email_outlined,
                               color: Colors.black),
                           labelText: 'Email',
+                          labelStyle: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black,
+                          ),
+                          filled: true,
+                          fillColor: const Color(0xFFB0E1C6),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            borderSide: const BorderSide(
+                                color: Color(0xFF358666), width: 1),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            borderSide: const BorderSide(
+                                color: Color(0xFF358666), width: 1),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // Input Nama Lengkap
+                      TextFormField(
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.person_outline),
+                          labelText: 'Nama Lengkap',
+                          labelStyle: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black,
+                          ),
+                          filled: true,
+                          fillColor: const Color(0xFFB0E1C6),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            borderSide: const BorderSide(
+                                color: Color(0xFF358666), width: 1),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            borderSide: const BorderSide(
+                                color: Color(0xFF358666), width: 1),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // Input Alamat
+                      TextFormField(
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.home_outlined),
+                          labelText: 'Alamat',
                           labelStyle: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w300,

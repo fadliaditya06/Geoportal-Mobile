@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(top: 20.0),
+                      padding: EdgeInsets.only(top: 15.0),
                     ),
                     Text(
                       'Login ke Akun Anda!',
@@ -149,8 +149,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderSide: const BorderSide(
                                   color: Color(0xFF358666), width: 1),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 15.0, vertical: 10.0),
                           ),
                         ),
                         const SizedBox(height: 20),
