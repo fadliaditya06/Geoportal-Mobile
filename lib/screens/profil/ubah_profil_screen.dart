@@ -21,15 +21,27 @@ class UbahProfilScreen extends StatelessWidget {
         backgroundColor: const Color(0xFFB0E1C6),
         elevation: 0,
       ),
-      // Konten Ubah Profil
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
+      body: Container(
+        decoration: BoxDecoration(
+          // Gradien Background
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: const [0.0, 0.3, 0.6, 1.0],
+            colors: [
+              const Color(0xFFB0E1C6),
+              const Color(0xFF72B396).withOpacity(0.31),
+              const Color(0xFF358666).withOpacity(0.60),
+              const Color(0xFFFFFFFF).withOpacity(0.98),
+            ],
+          ),
+        ),
+        child: SafeArea(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 20),
-              Center(
+              // Ikon Profil
+              Container(
+                padding: const EdgeInsets.only(top: 40, bottom: 40),
                 child: Stack(
                   alignment: Alignment.bottomRight,
                   children: [
@@ -50,47 +62,61 @@ class UbahProfilScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              // Form Ubah Profil
-              ListView(
-                shrinkWrap: true,
-                children: [
-                  _buildTitle("Nama Depan"),
-                  _buildTextField(Icons.person_outline, "Nama Depan"),
-                  const SizedBox(height: 15),
-                  _buildTitle("Nama Belakang"),
-                  _buildTextField(Icons.person_outline, "Nama Belakang"),
-                  const SizedBox(height: 15),
-                  _buildTitle("Email"),
-                  _buildTextField(Icons.email_outlined, "Email", isEmail: true),
-                  const SizedBox(height: 40),
-                ],
-              ),
-              // Tombol Simpan
-              SizedBox(
-                width: 250,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF358666),
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: const Text(
-                      'Simpan',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white),
+              // Box Container Profil
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(30)),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildTitle("Email"),
+                        _buildTextField(Icons.email_outlined, "Email",
+                            isEmail: true),
+                        const SizedBox(height: 20),
+                        _buildTitle("Nama Lengkap"),
+                        _buildTextField(Icons.person_outline, "Nama Lengkap"),
+                        const SizedBox(height: 20),
+                        _buildTitle("Alamat"),
+                        _buildTextField(Icons.home_outlined, "Alamat"),
+                        const SizedBox(height: 40),
+                        // Tombol Simpan
+                        Center(
+                          child: SizedBox(
+                            width: 150,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF358666),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
+                              ),
+                              onPressed: () {},
+                              child: const Text(
+                                'Simpan',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                      ],
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -98,10 +124,10 @@ class UbahProfilScreen extends StatelessWidget {
     );
   }
 
-  // Widget untuk menampilkan judul di atas textbox
+  // Widget untuk menampilkan judul
   Widget _buildTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Text(
         title,
         style: const TextStyle(
@@ -112,7 +138,7 @@ class UbahProfilScreen extends StatelessWidget {
     );
   }
 
-  // Widget untuk menampilkan textbox
+  // Widget untuk menampilkan TextFormField
   Widget _buildTextField(IconData icon, String label, {bool isEmail = false}) {
     return TextFormField(
       keyboardType: isEmail ? TextInputType.emailAddress : TextInputType.text,

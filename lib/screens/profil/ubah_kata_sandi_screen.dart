@@ -24,78 +24,107 @@ class UbahKataSandiScreenState extends State<UbahKataSandiScreen> {
         title: const Text(
           "Ubah Kata Sandi",
           style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
-          textAlign: TextAlign.left,
         ),
         backgroundColor: const Color(0xFFB0E1C6),
         elevation: 0,
       ),
-      // Konten Ubah Kata Sandi
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            // Gradien Background
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: const [0.0, 0.3, 0.6, 1.0],
+            colors: [
+              const Color(0xFFB0E1C6),
+              const Color(0xFF72B396).withOpacity(0.31),
+              const Color(0xFF358666).withOpacity(0.60),
+              const Color(0xFFFFFFFF).withOpacity(0.98),
+            ],
+          ),
+        ),
+        child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 30),
-              Center(
-                child: Image.asset(
-                  'assets/images/ubah-kata-sandi.png',
-                  width: 200,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                // Foto Ubah Kata Sandi
+                child: Center(
+                  child: Image.asset(
+                    'assets/images/ubah-kata-sandi.png',
+                    width: 200,
+                  ),
                 ),
               ),
-              // Form Ubah Kata Sandi
-              const SizedBox(height: 30),
-              ListView(
-                shrinkWrap: true,
-                children: [
-                  _buildTitle("Kata Sandi Lama"),
-                  _buildTextField("Kata Sandi Lama"),
-                  const SizedBox(height: 20),
-                  _buildTitle("Kata Sandi Baru"),
-                  _buildTextField("Kata Sandi Baru"),
-                  const SizedBox(height: 20),
-                  _buildTitle("Konfirmasi Kata Sandi"),
-                  _buildTextField("Konfirmasi Kata Sandi"),
-                  const SizedBox(height: 30),
-                ],
-              ),
-              // Tombol Simpan
-              Center(
-                child: SizedBox(
-                  width: 250,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF358666),
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(40),
+              const SizedBox(height: 30), //f
+              // Box Container Ubah Kata Sandi
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(30)),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildTitle("Kata Sandi Lama"),
+                        _buildTextField("Kata Sandi Lama"),
+                        const SizedBox(height: 20),
+                        _buildTitle("Kata Sandi Baru"),
+                        _buildTextField("Kata Sandi Baru"),
+                        const SizedBox(height: 20),
+                        _buildTitle("Konfirmasi Kata Sandi"),
+                        _buildTextField("Konfirmasi Kata Sandi"),
+                        const SizedBox(height: 40),
+                        // Tombol Simpan
+                        Center(
+                          child: SizedBox(
+                            width: 150,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF358666),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
+                              ),
+                              onPressed: () {
+                                // aksi simpan
+                              },
+                              child: const Text(
+                                'Simpan',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                      onPressed: () {},
-                      child: const Text(
-                        'Simpan',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white),
-                      ),
+                        const SizedBox(height: 30),
+                      ],
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
             ],
           ),
         ),
       ),
     );
   }
-  // Widget untuk menampilkan judul di atas textbox
+
+  // Widget untuk menampilkan judul
   Widget _buildTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
+      padding: const EdgeInsets.only(bottom: 15),
       child: Text(
         title,
         style: const TextStyle(
@@ -105,7 +134,8 @@ class UbahKataSandiScreenState extends State<UbahKataSandiScreen> {
       ),
     );
   }
-  // Widget untuk menampilkan textbox
+
+  // Widget untuk menampilkan text field
   Widget _buildTextField(String label) {
     return TextFormField(
       obscureText: !_isPasswordVisible,

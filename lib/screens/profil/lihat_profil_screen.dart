@@ -16,66 +16,109 @@ class LihatProfilScreen extends StatelessWidget {
         title: const Text(
           "Lihat Profil",
           style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
-          textAlign: TextAlign.left,
         ),
         backgroundColor: const Color(0xFFB0E1C6),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Bagian Header Profil
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
-              width: double.infinity,
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 80,
-                    backgroundColor: Color(0xFF358666),
-                    child: Icon(Icons.person, size: 100, color: Colors.white),
+      body: Container(
+        decoration: BoxDecoration(
+          // Gradien Background
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: const [0.0, 0.3, 0.6, 1.0],
+            colors: [
+              const Color(0xFFB0E1C6),
+              const Color(0xFF72B396).withOpacity(0.31),
+              const Color(0xFF358666).withOpacity(0.60),
+              const Color(0xFFFFFFFF).withOpacity(0.98),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Ikon Profil
+              Container(
+                padding: const EdgeInsets.only(top: 40, bottom: 40),
+                child: const CircleAvatar(
+                  radius: 80,
+                  backgroundColor: Color(0xFF358666),
+                  child: Icon(Icons.person, size: 100, color: Colors.white),
+                ),
+              ),
+              // Box Container Profil
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(30)),
                   ),
-                ],
+                  child: const SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _ProfilItem(
+                          label: "Email",
+                          value: "fadli@gmail.com",
+                          icon: Icons.email_outlined,
+                        ),
+                        _ProfilItem(
+                          label: "Nama Lengkap",
+                          value: "Fadli Aditya",
+                          icon: Icons.person_outlined,
+                        ),
+                        _ProfilItem(
+                          label: "Alamat",
+                          value: "Perumahan Sukajadi",
+                          icon: Icons.home_outlined,
+                        ),
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            // Bagian Informasi Profil
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildProfilSection("Nama Depan", "Fadlitz", Icons.person_outlined),
-                  _buildProfilSection("Nama Belakang", "Jago", Icons.person_outlined),
-                  _buildProfilSection("Email", "fadlitzjago@gmail.com", Icons.email_outlined),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
+}
 
-  // Widget untuk menampilkan informasi profil dengan judul di atas
-  Widget _buildProfilSection(String title, String value, IconData icon) {
+// Fungsi untuk menampilkan konten profil
+class _ProfilItem extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+
+  const _ProfilItem({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
+            label,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.w400,
               color: Colors.black,
             ),
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
               color: const Color(0xFFB0E1C6),
@@ -83,7 +126,10 @@ class LihatProfilScreen extends StatelessWidget {
               border: Border.all(color: Colors.black, width: 1),
             ),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 20,
+              ),
               leading: Icon(icon, color: Colors.black),
               title: Text(
                 value,
