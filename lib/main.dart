@@ -5,8 +5,11 @@ import 'package:geoportal_mobile/screens/peta/peta_screen.dart';
 import 'package:geoportal_mobile/screens/profil/profil_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id', ''); 
   runApp(const MyApp());
 }
 
