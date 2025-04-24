@@ -62,7 +62,7 @@ class PermintaanKonfirmasiModel {
       status: 'Permintaan konfirmasi anda ditolak karena beberapa alasan',
       lokasi: 'One Mall Batam',
       jenisPermintaan: 'Katalog Lokal',
-      tanggalPermintaan: DateTime(2024, 4, 28),
+      tanggalPermintaan: DateTime(2024, 4, 27),
     ),
   ];
 }
