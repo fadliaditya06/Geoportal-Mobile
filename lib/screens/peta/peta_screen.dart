@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_screen.dart';
 
 class PetaScreen extends StatelessWidget {
   const PetaScreen({super.key});
@@ -21,6 +22,23 @@ class PetaScreen extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
         automaticallyImplyLeading: false,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: IconButton(
+              icon: const Icon(Icons.assignment_turned_in_outlined, color: Color(0xFF358666), size: 30),
+              onPressed: () {
+                // Navigasi ke halaman Permintaan Konfirmasi
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PermintaanKonfirmasiScreen(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
