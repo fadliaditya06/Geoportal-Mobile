@@ -196,7 +196,6 @@ class BerandaScreen extends StatelessWidget {
               const SizedBox(height: 10),
               _beritaCard(),
               const SizedBox(height: 24),
-
               // Bagian Galery Kami
               _sectionTitle(
                 'Galery',
@@ -387,7 +386,6 @@ class BerandaScreen extends StatelessWidget {
       ),
     );
   }
-
   // Fungsi untuk menampilkan daftar galeri
   static Widget _galeriList() {
     return Container(
@@ -429,7 +427,6 @@ class BerandaScreen extends StatelessWidget {
       ),
     );
   }
-
   // Fungsi untuk menampilkan galeri item dengan gambar, judul, dan deskripsi
   static Widget _galeriItem({
     required String image,
