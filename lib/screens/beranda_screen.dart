@@ -370,7 +370,7 @@ class BerandaScreen extends StatelessWidget {
                         SizedBox(height: 4),
                         Text(
                           '“Selaku Ketua Pokja PKP, Saya menyambut baik dilaksanakannya Koordinasi ini. Bersama stake holder Kita sinkronkan kegiatan untuk mendukung sasaran dan tujuan pembangunan perumahan dan kawasan permukiman termasuk pencegahan dan penanganan permukiman kumuh dan penanggulangan kemiskinan,”',
-                          style: TextStyle(fontSize: 12, color: Colors.black54),
+                          style: TextStyle(fontSize: 12, color: Colors.black),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 7,
                         ),
