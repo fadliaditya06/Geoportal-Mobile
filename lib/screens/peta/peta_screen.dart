@@ -1,9 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:geoportal_mobile/screens/peta/detail_peta_screen.dart';
 import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_screen.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:flutter/services.dart';
 
-class PetaScreen extends StatelessWidget {
+class PetaScreen extends StatefulWidget {
   const PetaScreen({super.key});
+
+  @override
+  PetaScreenState createState() => PetaScreenState();
+}
+
+class PetaScreenState extends State<PetaScreen> {
+  final MapController _mapController = MapController();
+
+  // Fungsi untuk memilih koordinat yang dipilih
+  LatLng? _pickedLocation;
+  // Fungsi untuk menavigasi ke halaman peta fullscreen
+  void _goToFullScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const DetailPetaScreen(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +49,13 @@ class PetaScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: IconButton(
-              icon: const Icon(Icons.assignment_turned_in_outlined, color: Color(0xFF358666), size: 30),
+              icon: const Icon(
+                Icons.assignment_turned_in_outlined,
+                color: Color(0xFF358666),
+                size: 30,
+              ),
+              // Navigasi ke halaman Permintaan Konfirmasi
               onPressed: () {
-                // Navigasi ke halaman Permintaan Konfirmasi
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -43,10 +70,10 @@ class PetaScreen extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
+          // Box Pencarian
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Box Pencarian
               TextField(
                 decoration: InputDecoration(
                   hintText: 'Cari peta...',
@@ -57,20 +84,22 @@ class PetaScreen extends StatelessWidget {
                   contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Color(0xFF358666), width: 1),
+                    borderSide:
+                        const BorderSide(color: Color(0xFF358666), width: 1),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Color(0xFF358666), width: 1),
+                    borderSide:
+                        const BorderSide(color: Color(0xFF358666), width: 1),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Color(0xFF358666), width: 1),
+                    borderSide:
+                        const BorderSide(color: Color(0xFF358666), width: 1),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-
               // Carousel Peta
               CarouselSlider(
                 options: CarouselOptions(
@@ -101,8 +130,7 @@ class PetaScreen extends StatelessWidget {
                 }).toList(),
               ),
               const SizedBox(height: 40),
-
-              // Judul
+              // Judul Akses Peta Digital
               RichText(
                 text: const TextSpan(
                   style: TextStyle(
@@ -112,25 +140,25 @@ class PetaScreen extends StatelessWidget {
                   children: [
                     TextSpan(
                       text: 'Akses ',
-                      style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
+                      style:
+                          TextStyle(color: Colors.black, fontFamily: 'Poppins'),
                     ),
                     TextSpan(
                       text: 'Peta',
-                      style: TextStyle(color: Color(0xFF358666), fontFamily: 'Poppins'),
+                      style: TextStyle(
+                          color: Color(0xFF358666), fontFamily: 'Poppins'),
                     ),
                     TextSpan(
                       text: ' Digital',
-                      style: TextStyle(color: Colors.black, fontFamily: 'Poppins'),
+                      style:
+                          TextStyle(color: Colors.black, fontFamily: 'Poppins'),
                     ),
                   ],
                 ),
               ),
-
-              // Garis Horizontal
               const Divider(color: Colors.black, thickness: 1),
               const SizedBox(height: 20),
-
-              // Daftar Peta 
+              // Daftar Peta
               Container(
                 decoration: BoxDecoration(
                   color: const Color(0xFFB0E1C6),
@@ -143,6 +171,7 @@ class PetaScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+                // Fungsi untuk melihat peta
                 child: Column(
                   children: [
                     ClipRRect(
@@ -150,19 +179,86 @@ class PetaScreen extends StatelessWidget {
                         topLeft: Radius.circular(16),
                         topRight: Radius.circular(16),
                       ),
-                      child: Image.asset(
-                        'assets/images/peta-1.png',
+                      child: SizedBox(
                         height: 250,
                         width: double.infinity,
-                        fit: BoxFit.cover,
+                        child: Stack(
+                          children: [
+                            FlutterMap(
+                              mapController: _mapController,
+                              options: MapOptions(
+                                // Lokasi koordinat awal peta
+                                initialCenter: const LatLng(1.13, 104.0531),
+                                initialZoom: 13.0,
+                                onTap: (tapPosition, point) {
+                                  // Fungsi untuk menentukan koordinat saat peta di klik
+                                  setState(() {
+                                    _pickedLocation = point;
+                                  });
+                                  // Salin koordinat yang dipilih
+                                  Clipboard.setData(
+                                    ClipboardData(
+                                        text:
+                                            '${point.latitude}, ${point.longitude}'),
+                                  );
+                                  // Snackbar untuk menampilkan data koordinat yang dipilih
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: const Color(0xFF92E3A9),
+                                      content: Text(
+                                        'Koordinat disalin: ${point.latitude}, ${point.longitude}',
+                                        style: const TextStyle(
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              children: [
+                                TileLayer(
+                                  urlTemplate:
+                                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                ),
+                                if (_pickedLocation != null)
+                                  MarkerLayer(
+                                    markers: [
+                                      Marker(
+                                        point: _pickedLocation!,
+                                        child: const Icon(
+                                          Icons.location_on,
+                                          color: Colors.red,
+                                          size: 40,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                            // Tombol untuk memperbesar peta
+                            Positioned(
+                              bottom: 6,
+                              right: 6,
+                              child: SizedBox(
+                                width: 45,
+                                height: 45,
+                                child: FloatingActionButton(
+                                  onPressed: _goToFullScreen,
+                                  backgroundColor: const Color(0xFF92E3A9),
+                                  child: const Icon(Icons.fullscreen,
+                                      color: Colors.black),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                    // Judul dan Deskripsi Peta
                     Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Judul dan Deskripsi
                           const Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,12 +283,11 @@ class PetaScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          // Tombol Download dan View
+                          // Tombol Download
                           Padding(
                             padding: const EdgeInsets.only(top: 18.0),
                             child: Row(
                               children: [
-                                // Tombol Download
                                 Container(
                                   decoration: BoxDecoration(
                                     color: const Color(0xFF92E3A9),
@@ -204,20 +299,15 @@ class PetaScreen extends StatelessWidget {
                                   ),
                                   width: 50,
                                   height: 35,
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.download,
-                                          size: 18,
-                                          color: Colors.black,
-                                        ),
-                                        onPressed: () {
-                                          // 
-                                        },
-                                      ),
-                                    ],
+                                  child: IconButton(
+                                    icon: const Icon(
+                                      Icons.download,
+                                      size: 18,
+                                      color: Colors.black,
+                                    ),
+                                    onPressed: () {
+                                      // 
+                                    },
                                   ),
                                 ),
                                 const SizedBox(width: 8),
@@ -233,23 +323,16 @@ class PetaScreen extends StatelessWidget {
                                   ),
                                   width: 70,
                                   height: 35,
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      TextButton(
-                                        onPressed: () {
-                                          // 
-                                        },
-                                        child: const Text(
-                                          'View',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 12,
-                                            fontFamily: 'Poppins',
-                                          ),
-                                        ),
+                                  child: TextButton(
+                                    onPressed: _goToFullScreen,
+                                    child: const Text(
+                                      'View',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                        fontFamily: 'Poppins',
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ),
                               ],
