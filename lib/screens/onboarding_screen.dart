@@ -42,11 +42,11 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF64C38F),
-              Color(0xFFB0E1C6),
               Color(0xFFFBFFFC),
+              Color(0xFFB0E1C6),
+              Color(0xFF64C38F),
             ],
-            stops: [0.0, 0.18, 0.67],
+            stops: [0.0, 0.84, 1.0],
           ),
         ),
         child: Padding(
