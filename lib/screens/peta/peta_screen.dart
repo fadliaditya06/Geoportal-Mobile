@@ -264,7 +264,7 @@ class PetaScreenState extends State<PetaScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Sebaran Mall',
+                                  'Peta Batam',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -273,7 +273,7 @@ class PetaScreenState extends State<PetaScreen> {
                                 ),
                                 SizedBox(height: 4),
                                 Text(
-                                  'Alokasi sebaran mall daerah Batam',
+                                  'Alokasi sebaran daerah Batam',
                                   style: TextStyle(
                                     fontSize: 13,
                                     color: Colors.black87,
