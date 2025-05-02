@@ -103,7 +103,7 @@ class PetaScreenState extends State<PetaScreen> {
               // Carousel Peta
               CarouselSlider(
                 options: CarouselOptions(
-                  height: 200,
+                  height: 225,
                   autoPlay: true,
                   enlargeCenterPage: true,
                   viewportFraction: 1.0,
@@ -111,9 +111,9 @@ class PetaScreenState extends State<PetaScreen> {
                   autoPlayInterval: const Duration(seconds: 3),
                 ),
                 items: [
-                  'assets/carousel/peta-carousel-1.png',
-                  'assets/carousel/peta-carousel-2.png',
-                  'assets/carousel/peta-carousel-3.png',
+                  'assets/carousel/carousel-perumahan.png',
+                  'assets/carousel/carousel-permukiman.png',
+                  'assets/carousel/carousel-pertamanan.png',
                 ].map((imagePath) {
                   return Builder(
                     builder: (BuildContext context) {
