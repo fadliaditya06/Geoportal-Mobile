@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geoportal_mobile/screens/modal/galery_modal.dart';
-import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_screen.dart';
+import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_admin_screen.dart';
+// import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_screen.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class BerandaScreen extends StatelessWidget {
@@ -33,7 +34,7 @@ class BerandaScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const PermintaanKonfirmasiScreen(),
+                    builder: (context) => const PermintaanKonfirmasiAdminScreen(),
                   ),
                 );
               },
