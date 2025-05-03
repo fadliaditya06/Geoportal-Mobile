@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:geoportal_mobile/models/permintaan_konfirmasi_model.dart';
 import 'package:intl/intl.dart';
 
@@ -49,7 +49,7 @@ class _PermintaanKonfirmasiScreenState
               const Color(0xFFB0E1C6),
               const Color(0xFFFFFFFF).withOpacity(0.36),
               const Color(0xFF72B396).withOpacity(0.76),
-              const Color(0xFF358666).withOpacity(0.98),
+              const Color(0xFF358666).withOpacity(1.0),
             ],
           ),
         ),
