@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geoportal_mobile/screens/beranda_screen.dart';
 import 'package:geoportal_mobile/screens/onboarding_screen.dart';
+import 'package:geoportal_mobile/screens/peta/detail_data_konfirmasi_screen.dart';
 import 'package:geoportal_mobile/screens/peta/peta_screen.dart';
 import 'package:geoportal_mobile/screens/profil/profil_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,6 +28,11 @@ class MyApp extends StatelessWidget {
       ),
       home: const OnBoardingPage(), 
       debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      // Daftar Routes 
+      routes: {
+        '/detail-konfirmasi': (context) => const DetailDataKonfirmasiScreen(),
+      },
     );
   }
 }

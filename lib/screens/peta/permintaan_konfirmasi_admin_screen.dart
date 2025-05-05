@@ -30,16 +30,16 @@ class PermintaanKonfirmasiAdminScreenState
       // Gradien Background
       body: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            stops: const [0.0, 0.3, 0.6, 1.0],
+            stops: [0.0, 0.36, 0.76, 1.0],
             colors: [
-              const Color(0xFFB0E1C6),
-              const Color(0xFFFFFFFF).withOpacity(0.36),
-              const Color(0xFF72B396).withOpacity(0.76),
-              const Color(0xFF358666).withOpacity(1.0),
+              Color(0xFFB0E1C6),
+              Color(0xFFFFFFFF),
+              Color(0xFF72B396),
+              Color(0xFF358666),
             ],
           ),
         ),
@@ -56,9 +56,14 @@ class PermintaanKonfirmasiAdminScreenState
                   children: [
                     // Data Dummy untuk Card Permintaan Konfirmasi
                     Expanded(
-                      child: _permintaanKonfirmasiCard(
-                        title: 'Hana Annisa',
-                        description: 'Permintaan Konfirmasi Data',
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/detail-konfirmasi');
+                        },
+                        child: _permintaanKonfirmasiCard(
+                          title: 'Hana Annisa',
+                          description: 'Permintaan Konfirmasi Data',
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -66,15 +71,13 @@ class PermintaanKonfirmasiAdminScreenState
                     Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 30), 
-                          child:
-                              _permintaanKonfirmasiIcon(icon: CupertinoIcons.checkmark_alt),
+                          padding: const EdgeInsets.only(top: 30),
+                          child: _permintaanKonfirmasiIcon(
+                              icon: CupertinoIcons.checkmark_alt),
                         ),
                         const SizedBox(width: 5),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 30), 
+                          padding: const EdgeInsets.only(top: 30),
                           child: _permintaanKonfirmasiIcon(icon: Icons.close),
                         ),
                       ],
@@ -128,8 +131,7 @@ class PermintaanKonfirmasiAdminScreenState
             // Fungsi untuk menampilkan nama dan deskripsi
             Expanded(
               child: Padding(
-                padding:
-                    const EdgeInsets.only(top: 5), 
+                padding: const EdgeInsets.only(top: 5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -168,8 +170,8 @@ class PermintaanKonfirmasiAdminScreenState
         shape: BoxShape.circle,
         color: const Color(0xFFB0E1C6),
         border: Border.all(
-          color: const Color(0xFF358666), 
-          width: 1, 
+          color: const Color(0xFF358666),
+          width: 1,
         ),
       ),
       padding: const EdgeInsets.all(12),
