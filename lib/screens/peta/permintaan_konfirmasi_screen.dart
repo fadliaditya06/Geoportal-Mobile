@@ -40,16 +40,16 @@ class _PermintaanKonfirmasiScreenState
       // Gradien Background
       body: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            stops: const [0.0, 0.3, 0.6, 1.0],
+            stops: [0.0, 0.36, 0.76, 1.0],
             colors: [
-              const Color(0xFFB0E1C6),
-              const Color(0xFFFFFFFF).withOpacity(0.36),
-              const Color(0xFF72B396).withOpacity(0.76),
-              const Color(0xFF358666).withOpacity(1.0),
+              Color(0xFFB0E1C6),
+              Color(0xFFFFFFFF),
+              Color(0xFF72B396),
+              Color(0xFF358666),
             ],
           ),
         ),
@@ -212,7 +212,7 @@ class _PermintaanKonfirmasiScreenState
                                     const SizedBox(height: 6),
                                     Row(
                                       children: [
-                                        const Icon(Icons.access_time,
+                                        const Icon(Icons.access_time_filled,
                                             size: 18, color: Color(0xFF358666)),
                                         const SizedBox(width: 6),
                                         Text(
