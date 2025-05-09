@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:geoportal_mobile/screens/auth/login_screen.dart';
+import 'package:geoportal_mobile/controllers/auth/register_controller.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -9,7 +9,11 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final RegisterController controller = RegisterController();
+  bool isLoading = false;
   bool _isObscure = true;
+  bool _isConfirmObscure = true;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                 ),
                 child: Form(
+                  key: _formKey,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -81,7 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 20),
                       // Dropdown untuk memilih peran
                       DropdownButtonFormField<String>(
-                        value: null,
+                        value: controller.selectedRole,
                         hint: const Text(
                           "Pilih Peran",
                           style: TextStyle(
@@ -96,7 +101,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           );
                         }).toList(),
-                        onChanged: (value) {},
+                        onChanged: (String? newRole) {
+                          setState(() {
+                            controller.selectedRole = newRole;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Pilih peran terlebih dahulu';
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                           prefixIcon:
                               const Icon(Icons.person, color: Colors.black),
@@ -120,6 +135,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 20),
                       // Input Email
                       TextFormField(
+                        controller: controller.emailController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.email_outlined,
@@ -146,10 +162,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: Color(0xFF358666), width: 1),
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Silahkan masukkan email';
+                          }
+                          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                            return 'Format email tidak valid';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 20),
                       // Input Nama Lengkap
                       TextFormField(
+                        controller: controller.namaController,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.person_outline),
                           labelText: 'Nama Lengkap',
@@ -174,10 +200,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: Color(0xFF358666), width: 1),
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Silahkan masukkan nama';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 20),
                       // Input Alamat
                       TextFormField(
+                        controller: controller.alamatController,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.home_outlined),
                           labelText: 'Alamat',
@@ -202,10 +235,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: Color(0xFF358666), width: 1),
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Silahkan masukkan alamat';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 20),
                       // Input Kata Sandi
                       TextFormField(
+                        controller: controller.kataSandiController,
                         obscureText: _isObscure,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.lock_outline),
@@ -241,11 +281,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             },
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Silahkan masukkan password';
+                          }
+                          if (value.length < 6) {
+                            return 'Password minimal 6 karakter';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 20),
                       // Input Konfirmasi Kata Sandi
                       TextFormField(
-                        obscureText: _isObscure,
+                        controller: controller.konfirmasikataSandiController,
+                        obscureText: _isConfirmObscure,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.lock_outline),
                           labelText: 'Konfirmasi Kata Sandi',
@@ -270,53 +320,75 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: Color(0xFF358666), width: 1),
                           ),
                           suffixIcon: IconButton(
-                            icon: Icon(_isObscure
+                            icon: Icon(_isConfirmObscure
                                 ? Icons.visibility
                                 : Icons.visibility_off),
                             onPressed: () {
                               setState(() {
-                                _isObscure = !_isObscure;
+                                _isConfirmObscure = !_isConfirmObscure;
                               });
                             },
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Silahkan konfirmasi password';
+                          }
+                          if (value != controller.kataSandiController.text) {
+                            return 'Password tidak sama';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 20),
                       // Tombol Daftar
-                        SizedBox(
-                          width: 250,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 50.0),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF358666),
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 15),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(40),
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  // Navigasi ke halaman Login
-                                  MaterialPageRoute(
-                                    builder: (context) => const LoginScreen(),
-                                  ),
-                                );
-                              },
-                              child: const Text(
-                                'Daftar',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white),
+                      SizedBox(
+                        width: 250,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF358666),
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40),
                               ),
                             ),
+                            onPressed: isLoading
+                                ? null // disable button saat loading
+                                : () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+                                      await controller.register(context);
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                    }
+                                  },
+                            child: isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                    ),
+                                  )
+                                : const Text(
+                                    'Daftar',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                           ),
                         ),
-                        const SizedBox(height: 5),
+                      ),
+                      const SizedBox(height: 5),
                     ],
                   ),
                 ),

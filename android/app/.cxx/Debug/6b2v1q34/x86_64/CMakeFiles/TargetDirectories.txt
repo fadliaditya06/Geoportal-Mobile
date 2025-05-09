@@ -1,0 +1,2 @@
+C:/Mobile/geoportal-mobile/android/app/.cxx/Debug/6b2v1q34/x86_64/CMakeFiles/edit_cache.dir
+C:/Mobile/geoportal-mobile/android/app/.cxx/Debug/6b2v1q34/x86_64/CMakeFiles/rebuild_cache.dir

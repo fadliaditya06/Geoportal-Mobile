@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "377618963576",
+    "project_id": "geoportal-a3727",
+    "storage_bucket": "geoportal-a3727.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:377618963576:android:e508ea1052aae2c7a0a18d",
+        "android_client_info": {
+          "package_name": "com.example.geoportal_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhBi8CfHLvOFwD3ObmA8Veh_SMgEXzSKo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

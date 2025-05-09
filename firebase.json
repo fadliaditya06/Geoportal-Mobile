@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"geoportal-a3727","appId":"1:377618963576:android:e508ea1052aae2c7a0a18d","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"geoportal-a3727","configurations":{"android":"1:377618963576:android:e508ea1052aae2c7a0a18d","ios":"1:377618963576:ios:fcce18742296a6ada0a18d"}}}}}}
