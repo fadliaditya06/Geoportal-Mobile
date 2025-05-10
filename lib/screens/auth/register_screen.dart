@@ -108,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Pilih peran terlebih dahulu';
+                            return 'Silahkan pilih peran';
                           }
                           return null;
                         },
@@ -294,7 +294,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 20),
                       // Input Konfirmasi Kata Sandi
                       TextFormField(
-                        controller: controller.konfirmasikataSandiController,
+                        controller: controller.konfirmasiKataSandiController,
                         obscureText: _isConfirmObscure,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.lock_outline),
@@ -332,10 +332,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Silahkan konfirmasi password';
+                            return 'Silahkan konfirmasi kata sandi';
                           }
                           if (value != controller.kataSandiController.text) {
-                            return 'Password tidak sama';
+                            return 'Kata sandi tidak cocok';
                           }
                           return null;
                         },
@@ -355,7 +355,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                             onPressed: isLoading
-                                ? null // disable button saat loading
+                                ? null 
                                 : () async {
                                     if (_formKey.currentState!.validate()) {
                                       setState(() {
@@ -369,10 +369,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   },
                             child: isLoading
                                 ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
+                                    height: 30,
+                                    width: 30,
                                     child: CircularProgressIndicator(
-                                      strokeWidth: 2,
+                                      strokeWidth: 4,
                                       valueColor: AlwaysStoppedAnimation<Color>(
                                           Colors.white),
                                     ),

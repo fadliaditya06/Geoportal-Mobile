@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'dart:convert';
 
 class RegisterController {
@@ -9,8 +10,7 @@ class RegisterController {
   final TextEditingController namaController = TextEditingController();
   final TextEditingController alamatController = TextEditingController();
   final TextEditingController kataSandiController = TextEditingController();
-  final TextEditingController konfirmasikataSandiController =
-      TextEditingController();
+  final TextEditingController konfirmasiKataSandiController = TextEditingController();
 
   String? selectedRole;
 
@@ -36,7 +36,22 @@ class RegisterController {
       await _storeUserData(userCredential.user!);
 
       // ignore: use_build_context_synchronously
-      _showSnackbar(context, 'Pendaftaran berhasil!');
+      // Fungsi untuk menampilkan snackbar dengan pesan sukses
+      const snackBar = SnackBar(
+        elevation: 0,
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.transparent,
+        content: AwesomeSnackbarContent(
+          title: 'Berhasil',
+          message: 'Pendaftaran akun berhasil!',
+          contentType: ContentType.success,
+        ),
+      );
+
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      // _showSnackbar(context, 'Pendaftaran berhasil!');
       clearForm();
 
       // Navigasi ke halaman login setelah registrasi berhasil
@@ -52,30 +67,14 @@ class RegisterController {
   }
 
   String? _validateInputs(BuildContext context) {
-    if (selectedRole == null || selectedRole!.isEmpty) {
-      return 'Silakan pilih peran';
-    }
-
+    // Validasi untuk semua form harus diisi
     if (emailController.text.isEmpty ||
         namaController.text.isEmpty ||
         alamatController.text.isEmpty ||
         kataSandiController.text.isEmpty ||
-        konfirmasikataSandiController.text.isEmpty) {
+        konfirmasiKataSandiController.text.isEmpty) {
       return 'Semua form harus diisi';
     }
-
-    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(emailController.text)) {
-      return 'Format email tidak valid';
-    }
-
-    if (kataSandiController.text != konfirmasikataSandiController.text) {
-      return 'Konfirmasi kata sandi tidak cocok';
-    }
-
-    if (kataSandiController.text.length < 6) {
-      return 'Kata sandi minimal 6 karakter';
-    }
-
     return null;
   }
 
@@ -101,23 +100,34 @@ class RegisterController {
     String errorMessage;
     switch (e.code) {
       case 'email-already-in-use':
-        errorMessage = 'Email sudah terdaftar';
-        break;
-      case 'invalid-email':
-        errorMessage = 'Format email tidak valid';
+        errorMessage = 'Email ini sudah terdaftar!';
         break;
       default:
         errorMessage = 'Terjadi kesalahan: ${e.message}';
     }
-    _showSnackbar(context, errorMessage);
+    _showSnackbarError (context, errorMessage);
   }
+  // Fungsi untuk menampilkan snackbar dengan pesan kesalahan
+  void _showSnackbarError(BuildContext context, String message) {
+  final snackBar = SnackBar(
+    elevation: 0,
+    behavior: SnackBarBehavior.floating,
+    backgroundColor: Colors.transparent,
+    content: AwesomeSnackbarContent(
+      title: 'Gagal',
+      message: message,
+      contentType: ContentType.failure,
+    ),
+  );
 
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
   void clearForm() {
     emailController.clear();
     namaController.clear();
     alamatController.clear();
     kataSandiController.clear();
-    konfirmasikataSandiController.clear();
+    konfirmasiKataSandiController.clear();
     selectedRole = null;
   }
 
@@ -135,6 +145,6 @@ class RegisterController {
     namaController.dispose();
     alamatController.dispose();
     kataSandiController.dispose();
-    konfirmasikataSandiController.dispose();
+    konfirmasiKataSandiController.dispose();
   }
 }
