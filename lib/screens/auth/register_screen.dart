@@ -90,14 +90,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         hint: const Text(
                           "Pilih Peran",
                           style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w300),
+                              color: Colors.black, fontSize: 15, fontWeight: FontWeight.w300),
                         ),
                         items: ['Pengguna', 'Admin'].map((role) {
                           return DropdownMenuItem<String>(
                             value: role,
                             child: Text(
                               role,
-                              style: const TextStyle(color: Colors.black),
+                              style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 15),
                             ),
                           );
                         }).toList(),
