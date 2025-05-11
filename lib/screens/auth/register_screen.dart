@@ -177,7 +177,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       TextFormField(
                         controller: controller.namaController,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.person_outline),
+                          prefixIcon: const Icon(Icons.person_outline, color: Colors.black),
                           labelText: 'Nama Lengkap',
                           labelStyle: const TextStyle(
                             fontSize: 15,
@@ -212,7 +212,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       TextFormField(
                         controller: controller.alamatController,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.home_outlined),
+                          prefixIcon: const Icon(Icons.home_outlined, color: Colors.black),
                           labelText: 'Alamat',
                           labelStyle: const TextStyle(
                             fontSize: 15,
@@ -248,7 +248,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         controller: controller.kataSandiController,
                         obscureText: _isObscure,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock_outline),
+                          prefixIcon: const Icon(Icons.lock_outline, color: Colors.black),
                           labelText: 'Kata Sandi',
                           labelStyle: const TextStyle(
                             fontSize: 15,
@@ -297,7 +297,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         controller: controller.konfirmasiKataSandiController,
                         obscureText: _isConfirmObscure,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock_outline),
+                          prefixIcon: const Icon(Icons.lock_outline, color: Colors.black),
                           labelText: 'Konfirmasi Kata Sandi',
                           labelStyle: const TextStyle(
                             fontSize: 15,
