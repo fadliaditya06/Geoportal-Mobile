@@ -202,7 +202,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Silahkan masukkan nama';
+                            return 'Silahkan masukkan nama lengkap';
                           }
                           return null;
                         },
@@ -283,7 +283,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Silahkan masukkan password';
+                            return 'Silahkan masukkan kata sandi';
                           }
                           if (value.length < 6) {
                             return 'Password minimal 6 karakter';
