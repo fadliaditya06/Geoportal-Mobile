@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geoportal_mobile/main.dart';
 import 'package:geoportal_mobile/screens/auth/register_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -117,16 +118,24 @@ class _LoginScreenState extends State<LoginScreen> {
                         // Dropdown untuk memilih peran
                         DropdownButtonFormField<String>(
                           value: null,
-                          hint: const Text(
+                          hint: Text(
                             "Pilih Peran",
-                            style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w300),
+                            style: GoogleFonts.poppins(
+                              color: Colors.black, 
+                              fontSize: 15, 
+                              fontWeight: FontWeight.w400
+                            ),
                           ),
                           items: ['Pengguna', 'Admin'].map((role) {
                             return DropdownMenuItem<String>(
                               value: role,
                               child: Text(
                                 role,
-                                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 15),
+                                style: GoogleFonts.poppins(
+                                  color: Colors.black, 
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400, 
+                                ),
                               ),
                             );
                           }).toList(),
