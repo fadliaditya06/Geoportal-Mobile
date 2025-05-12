@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geoportal_mobile/controllers/auth/register_controller.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -87,17 +88,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       // Dropdown untuk memilih peran
                       DropdownButtonFormField<String>(
                         value: controller.selectedRole,
-                        hint: const Text(
+                        hint: Text(
                           "Pilih Peran",
-                          style: TextStyle(
-                              color: Colors.black, fontSize: 15, fontWeight: FontWeight.w300),
+                          style: GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                         items: ['Pengguna', 'Admin'].map((role) {
                           return DropdownMenuItem<String>(
                             value: role,
                             child: Text(
                               role,
-                              style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 15),
+                              style: GoogleFonts.poppins(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           );
                         }).toList(),
@@ -113,8 +121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          prefixIcon:
-                              const Icon(Icons.person, color: Colors.black),
+                          prefixIcon: const Icon(Icons.person, color: Colors.black),
                           filled: true,
                           fillColor: const Color(0xFFB0E1C6),
                           border: OutlineInputBorder(
@@ -138,8 +145,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         controller: controller.emailController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.email_outlined,
-                              color: Colors.black),
+                          prefixIcon: const Icon(Icons.email_outlined, color: Colors.black),
                           labelText: 'Email',
                           labelStyle: const TextStyle(
                             fontSize: 15,
@@ -274,6 +280,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             icon: Icon(_isObscure
                                 ? Icons.visibility
                                 : Icons.visibility_off),
+                            color: Colors.black,
                             onPressed: () {
                               setState(() {
                                 _isObscure = !_isObscure;
@@ -323,6 +330,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             icon: Icon(_isConfirmObscure
                                 ? Icons.visibility
                                 : Icons.visibility_off),
+                            color: Colors.black,
                             onPressed: () {
                               setState(() {
                                 _isConfirmObscure = !_isConfirmObscure;
@@ -355,7 +363,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                             onPressed: isLoading
-                                ? null 
+                                ? null
                                 : () async {
                                     if (_formKey.currentState!.validate()) {
                                       setState(() {
