@@ -19,23 +19,15 @@ class RegisterController {
 
   Future<void> register(BuildContext context) async {
     try {
-      // Validasi input
-      final validationError = _validateInputs(context);
-      if (validationError != null) {
-        _showSnackbar(context, validationError);
-        return;
-      }
-
       // Buat akun dengan Firebase Authentication
       final userCredential = await _auth.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: kataSandiController.text.trim(),
       );
 
-      // Simpan data tambahan ke Firestore
+      // Simpan data ke Firestore
       await _storeUserData(userCredential.user!);
 
-      // ignore: use_build_context_synchronously
       // Fungsi untuk menampilkan snackbar dengan pesan sukses
       const snackBar = SnackBar(
         elevation: 0,
@@ -47,12 +39,8 @@ class RegisterController {
           contentType: ContentType.success,
         ),
       );
-
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-      // _showSnackbar(context, 'Pendaftaran berhasil!');
-      clearForm();
 
       // Navigasi ke halaman login setelah registrasi berhasil
       // ignore: use_build_context_synchronously
@@ -66,23 +54,12 @@ class RegisterController {
     }
   }
 
-  String? _validateInputs(BuildContext context) {
-    // Validasi untuk semua form harus diisi
-    if (emailController.text.isEmpty ||
-        namaController.text.isEmpty ||
-        alamatController.text.isEmpty ||
-        kataSandiController.text.isEmpty ||
-        konfirmasiKataSandiController.text.isEmpty) {
-      return 'Semua form harus diisi';
-    }
-    return null;
-  }
-
+  // Fungsi untuk menyimpan data user ke Firestore
   Future<void> _storeUserData(User user) async {
     // Hash kata sandi menggunakan SHA-256
     final hashedKataSandi =
         sha256.convert(utf8.encode(kataSandiController.text.trim())).toString();
-    // Simpan data pengguna ke Firestore
+    // Data user yang akan disimpan
     await _firestore.collection('user').doc(user.uid).set({
       'uid': user.uid,
       'email': emailController.text.trim(),
@@ -91,11 +68,11 @@ class RegisterController {
       'peran': selectedRole,
       'foto_profil': '',
       'kata_sandi': hashedKataSandi,
-      // 'emailVerified': false,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
 
+  // Fungsi untuk menangani kesalahan autentikasi dan menampilkan snackbar
   void _handleAuthError(BuildContext context, FirebaseAuthException e) {
     String errorMessage;
     switch (e.code) {
@@ -105,30 +82,17 @@ class RegisterController {
       default:
         errorMessage = 'Terjadi kesalahan: ${e.message}';
     }
-    _showSnackbarError (context, errorMessage);
-  }
-  // Fungsi untuk menampilkan snackbar dengan pesan kesalahan
-  void _showSnackbarError(BuildContext context, String message) {
-  final snackBar = SnackBar(
-    elevation: 0,
-    behavior: SnackBarBehavior.floating,
-    backgroundColor: Colors.transparent,
-    content: AwesomeSnackbarContent(
-      title: 'Gagal',
-      message: message,
-      contentType: ContentType.failure,
-    ),
-  );
-
-  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-}
-  void clearForm() {
-    emailController.clear();
-    namaController.clear();
-    alamatController.clear();
-    kataSandiController.clear();
-    konfirmasiKataSandiController.clear();
-    selectedRole = null;
+    final snackBar = SnackBar(
+      elevation: 0,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      content: AwesomeSnackbarContent(
+        title: 'Gagal',
+        message: errorMessage,
+        contentType: ContentType.failure,
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   void _showSnackbar(BuildContext context, String message) {
