@@ -293,7 +293,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             return 'Silahkan masukkan kata sandi';
                           }
                           if (value.length < 6) {
-                            return 'Password minimal 6 karakter';
+                            return 'Kata sandi minimal 6 karakter';
                           }
                           return null;
                         },
