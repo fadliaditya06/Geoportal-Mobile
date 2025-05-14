@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -48,6 +39,16 @@ class DefaultFirebaseOptions {
         );
     }
   }
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAOl28K0CKgx3Mqg4JirRpSZ1d0DPlFGqo',
+    appId: '1:377618963576:web:1e1be0f52849a161a0a18d',
+    messagingSenderId: '377618963576',
+    projectId: 'geoportal-a3727',
+    authDomain: 'geoportal-a3727.firebaseapp.com',
+    storageBucket: 'geoportal-a3727.firebasestorage.app',
+    measurementId: 'G-JB4EGZ893B',
+  );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAhBi8CfHLvOFwD3ObmA8Veh_SMgEXzSKo',
@@ -64,5 +65,24 @@ class DefaultFirebaseOptions {
     projectId: 'geoportal-a3727',
     storageBucket: 'geoportal-a3727.firebasestorage.app',
     iosBundleId: 'com.example.geoportalMobile',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyCw_Bvmd1kLaDFrXDI8XC2Zi2U00EzsRU8',
+    appId: '1:377618963576:ios:fcce18742296a6ada0a18d',
+    messagingSenderId: '377618963576',
+    projectId: 'geoportal-a3727',
+    storageBucket: 'geoportal-a3727.firebasestorage.app',
+    iosBundleId: 'com.example.geoportalMobile',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAOl28K0CKgx3Mqg4JirRpSZ1d0DPlFGqo',
+    appId: '1:377618963576:web:1e1be0f52849a161a0a18d',
+    messagingSenderId: '377618963576',
+    projectId: 'geoportal-a3727',
+    authDomain: 'geoportal-a3727.firebaseapp.com',
+    storageBucket: 'geoportal-a3727.firebasestorage.app',
+    measurementId: 'G-JB4EGZ893B',
   );
 }
