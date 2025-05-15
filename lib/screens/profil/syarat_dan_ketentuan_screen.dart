@@ -71,7 +71,7 @@ class SyaratdanKetentuanScreen extends StatelessWidget {
                               color: Color(0xFF358666)),
                           textAlign: TextAlign.left,
                         ),
-                        Divider(thickness: 1),
+                        Divider(thickness: 1, color: Colors.black),
                         Text(
                           'Geoportal adalah platform informasi geospasial untuk analisis dan perencanaan. Dengan menggunakan layanan ini, pengguna menyetujui syarat dan ketentuan yang berlaku.\n\n',
                           style: TextStyle(
