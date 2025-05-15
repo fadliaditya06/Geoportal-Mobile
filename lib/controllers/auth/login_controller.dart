@@ -1,13 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoportal_mobile/widget/custom_snackbar.dart';
+import 'package:geoportal_mobile/utils/secure_storage.dart';
 
 class LoginController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController kataSandiController = TextEditingController();
@@ -39,9 +38,8 @@ class LoginController {
         return;
       }
 
-      // Simpan token dan peran pengguna
-      await _secureStorage.write(key: 'auth_token', value: uid);
-      await _secureStorage.write(key: 'user_role', value: role);
+      // Simpan token dan peran pengguna menggunakan SecureStorage
+      await SecureStorage.simpanDataLogin(uid, role);
 
       // Jika berhasil login, arahkan ke dashboard sesuai peran
       if (!context.mounted) return;
@@ -51,7 +49,6 @@ class LoginController {
         isSuccess: true,
       );
 
-      // Arahkan ke dashboard jika login berhasil
       Navigator.of(context).pushReplacementNamed('/main');
 
       // Validasi jika email dan kata sandi tidak valid
@@ -81,34 +78,33 @@ class LoginController {
   Future<void> logout(BuildContext context) async {
     try {
       await _auth.signOut();
-      await _secureStorage.deleteAll();
+      await SecureStorage.clear();
 
+      if (!context.mounted) return;
       showCustomSnackbar(
         context: context,
         message: 'Logout berhasil',
         isSuccess: true,
       );
-      // ignore: use_build_context_synchronously
-      // ScaffoldMessenger.of(context).showSnackBar(Snackbar);
     } catch (e) {
-      showCustomSnackbar(
-        context: context,
-        message: 'Terjadi kesalahan saat logout: $e',
-        isSuccess: false,
-      );
-      // ignore: use_build_context_synchronously
-      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      if (context.mounted) {
+        showCustomSnackbar(
+          context: context,
+          message: 'Terjadi kesalahan saat logout: $e',
+          isSuccess: false,
+        );
+      }
     }
   }
 
-  // Fungsi untuk mengambil peran pennguna yang tersimpan
+  // Fungsi untuk mengambil role pengguna dari secure storage
   Future<String?> getRole() async {
-    return await _secureStorage.read(key: 'user_role');
+    return await SecureStorage.getRole();
   }
 
   // Fungsi untuk memeriksa apakah pengguna sudah login
   Future<bool> isLoggedIn() async {
-    final token = await _secureStorage.read(key: 'auth_token');
+    final token = await SecureStorage.getToken();
     return token != null;
   }
 
