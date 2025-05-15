@@ -4,9 +4,17 @@ import 'package:geoportal_mobile/screens/profil/lihat_profil_screen.dart';
 import 'package:geoportal_mobile/screens/profil/syarat_dan_ketentuan_screen.dart';
 import 'package:geoportal_mobile/screens/profil/ubah_kata_sandi_screen.dart';
 import 'package:geoportal_mobile/screens/profil/ubah_profil_screen.dart';
+import 'package:geoportal_mobile/controllers/auth/login_controller.dart';
 
-class ProfilScreen extends StatelessWidget {
+class ProfilScreen extends StatefulWidget {
   const ProfilScreen({super.key});
+
+  @override
+  State<ProfilScreen> createState() => _ProfilScreenState();
+}
+
+class _ProfilScreenState extends State<ProfilScreen> {
+  final LoginController controller = LoginController();
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +127,8 @@ class ProfilScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(40),
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          await controller.logout(context);
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(

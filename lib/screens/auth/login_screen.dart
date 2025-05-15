@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:geoportal_mobile/main.dart';
+import 'package:geoportal_mobile/controllers/auth/login_controller.dart';
 import 'package:geoportal_mobile/screens/auth/register_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,8 +11,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final LoginController controller = LoginController();
+  bool isLoading = false;
   bool _isObscure = true;
   bool _rememberMe = false;
+  String? selectedRole;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: Form(
+                    key: _formKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -121,10 +126,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           hint: Text(
                             "Pilih Peran",
                             style: GoogleFonts.poppins(
-                              color: Colors.black, 
-                              fontSize: 15, 
-                              fontWeight: FontWeight.w400
-                            ),
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400),
                           ),
                           items: ['Pengguna', 'Admin'].map((role) {
                             return DropdownMenuItem<String>(
@@ -132,14 +136,26 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Text(
                                 role,
                                 style: GoogleFonts.poppins(
-                                  color: Colors.black, 
+                                  color: Colors.black,
                                   fontSize: 15,
-                                  fontWeight: FontWeight.w400, 
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             );
                           }).toList(),
-                          onChanged: (value) {},
+                          onChanged: (value) {
+                            setState(() {
+                              selectedRole = value;
+                              controller.selectedRole =
+                                  value; // update di controller juga
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Silahkan pilih peran';
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             prefixIcon:
                                 const Icon(Icons.person, color: Colors.black),
@@ -163,6 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 20),
                         // Input email
                         TextFormField(
+                          controller: controller.emailController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             prefixIcon: const Icon(Icons.email_outlined,
@@ -189,10 +206,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Color(0xFF358666), width: 1),
                             ),
                           ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Silahkan masukkan email';
+                            }
+                            if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                                .hasMatch(value)) {
+                              return 'Format email tidak valid';
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 20),
                         // Input password
                         TextFormField(
+                          controller: controller.kataSandiController,
                           obscureText: _isObscure,
                           decoration: InputDecoration(
                             prefixIcon: const Icon(Icons.lock_outline,
@@ -232,6 +260,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                             ),
                           ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Silahkan masukkan kata sandi';
+                            }
+                            if (value.length < 6) {
+                              return 'Kata sandi minimal 6 karakter';
+                            }
+                            return null;
+                          },
                         ),
                         // Checkbox "Ingat Saya"
                         Row(
@@ -271,22 +308,39 @@ class _LoginScreenState extends State<LoginScreen> {
                                   borderRadius: BorderRadius.circular(40),
                                 ),
                               ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  // Navigasi ke halaman Beranda
-                                  MaterialPageRoute(
-                                    builder: (context) => const MainPage(),
-                                  ),
-                                );
-                              },
-                              child: const Text(
-                                'Masuk',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white),
-                              ),
+                              onPressed: isLoading
+                                  ? null
+                                  : () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        await controller.login(
+                                            context); // login dengan context untuk navigasi & snackbar
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                      }
+                                    },
+                              child: isLoading
+                                  ? const SizedBox(
+                                      height: 30,
+                                      width: 30,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 4,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.white),
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Masuk',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                             ),
                           ),
                         ),

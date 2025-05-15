@@ -11,6 +11,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:geoportal_mobile/config/firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,14 +34,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF358666)),
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(color: Color(0xFF358666)),
         useMaterial3: true,
       ),
-      // home: const OnBoardingPage(), 
+      // home: const OnBoardingPage(),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
-      // Daftar Routes 
+      // Daftar Routes
       routes: {
         '/': (context) => const OnBoardingPage(),
+        '/main': (context) => const MainPage(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/detail-konfirmasi': (context) => const DetailKonfirmasiDataScreen(),
@@ -59,17 +62,34 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _pageIndex = 0;
+  String? uid;
 
-  final List<Widget> _pages = [
-    const BerandaScreen(),
-    const PetaScreen(),
-    const ProfilScreen(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      uid = user.uid;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Jika uid belum ada, tampilkan loading dulu
+    if (uid == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final List<Widget> pages = [
+      BerandaScreen(uid: uid!),
+      const PetaScreen(),
+      const ProfilScreen(),
+    ];
+
     return Scaffold(
-      body: _pages[_pageIndex], 
+      body: pages[_pageIndex],
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.transparent,
         color: const Color(0xFF358666),
