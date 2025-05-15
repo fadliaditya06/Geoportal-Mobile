@@ -33,6 +33,12 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/berita/
+    - assets/images/eksplor-fitur/
+    - assets/images/galeri/
+    - assets/images/icon/
+    - assets/images/logo/
+    - assets/images/onboarding/
     - assets/carousel/
 
   fonts:

@@ -44,7 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: EdgeInsets.only(top: 30),
                 ),
                 Image.asset(
-                  'assets/images/logo-geoportal.png',
+                  'assets/images/logo/logo-geoportal.png',
                   width: 200,
                 ),
               ],

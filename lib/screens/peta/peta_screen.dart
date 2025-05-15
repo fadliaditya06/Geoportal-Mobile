@@ -34,7 +34,7 @@ class PetaScreenState extends State<PetaScreen> {
       appBar: AppBar(
         leading: Center(
           child: Image.asset(
-            'assets/images/logo-geoportal-2.png',
+            'assets/images/logo/logo-geoportal-2.png',
             width: 100,
           ),
         ),

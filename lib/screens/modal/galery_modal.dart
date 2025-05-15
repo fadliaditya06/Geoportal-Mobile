@@ -53,7 +53,7 @@ class GaleriModal {
                       return Column(
                         children: [
                           _semuaGalery(
-                            image: 'assets/images/galeri-${index + 1}.png',
+                            image: 'assets/images/galeri/galeri-${index + 1}.png',
                             title: index == 0
                                 ? 'Sekupang'
                                 : index == 1

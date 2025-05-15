@@ -52,7 +52,7 @@ class UbahKataSandiScreenState extends State<UbahKataSandiScreen> {
                 // Foto Ubah Kata Sandi
                 child: Center(
                   child: Image.asset(
-                    'assets/images/ubah-kata-sandi.png',
+                    'assets/images/icon/ubah-kata-sandi.png',
                     width: 200,
                   ),
                 ),

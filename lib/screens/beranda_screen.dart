@@ -61,7 +61,7 @@ class BerandaScreenState extends State<BerandaScreen> {
           automaticallyImplyLeading: false,
           leading: Center(
             child: Image.asset(
-              'assets/images/logo-geoportal-2.png',
+              'assets/images/logo/logo-geoportal-2.png',
               width: 100,
             ),
           ),
@@ -199,7 +199,7 @@ class BerandaScreenState extends State<BerandaScreen> {
                                       children: [
                                         _eksplorItem(
                                           image:
-                                              'assets/images/eksplor-fitur-${index + 1}.png',
+                                              'assets/images/eksplor-fitur/eksplor-fitur-${index + 1}.png',
                                           title: index == 0
                                               ? 'Pencarian & Visualisasi Data'
                                               : index == 1
@@ -399,7 +399,7 @@ class BerandaScreenState extends State<BerandaScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
-                      'assets/images/berita-${index + 1}.png',
+                      'assets/images/berita/berita-${index + 1}.png',
                       fit: BoxFit.cover,
                       height: 180,
                       width: double.infinity,
@@ -456,7 +456,7 @@ class BerandaScreenState extends State<BerandaScreen> {
             return Column(
               children: [
                 _galeriItem(
-                  image: 'assets/images/galeri-${index + 1}.png',
+                  image: 'assets/images/galeri/galeri-${index + 1}.png',
                   title: index == 0
                       ? 'Sekupang'
                       : index == 1
@@ -557,7 +557,7 @@ class BerandaScreenState extends State<BerandaScreen> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(0),
               child: Image.asset(
-                'assets/images/galeri-${index + 1}.png',
+                'assets/images/galeri/galeri-${index + 1}.png',
                 width: 220,
                 height: 220,
                 fit: BoxFit.cover,

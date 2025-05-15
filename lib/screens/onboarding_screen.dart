@@ -68,17 +68,17 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                   // Konten Onboarding Slide 1, 2, dan 3
                   children: [
                     _buildPage(
-                      image: 'assets/images/onboarding-1.png',
+                      image: 'assets/images/onboarding/onboarding-1.png',
                       title: "Selamat Datang di Geoportal!",
                       description:
                           "\"Jelajahi, analisis, dan unduh data geospasial dengan mudah di Geoportal. Mari mulai perjalanan Anda!\"",
                     ),
                     _buildFeaturePage(
-                      image: 'assets/images/onboarding-2.png',
+                      image: 'assets/images/onboarding/onboarding-2.png',
                       title: "Jelajahi dan Akses\nData Spasial!",
                     ),
                     _buildPage(
-                      image: 'assets/images/onboarding-3.png',
+                      image: 'assets/images/onboarding/onboarding-3.png',
                       title: "Yuk Akses lebih\nMudah!",
                       description:
                           "\"Buat akun untuk menyimpan peta favorit dan mengunduh data dengan lebih fleksibel. Dapatkan pengalaman terbaik di Geoportal!\"",
