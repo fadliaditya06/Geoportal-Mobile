@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:geoportal_mobile/widget/custom_snackbar.dart';
 
 class LoginController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -12,7 +12,7 @@ class LoginController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController kataSandiController = TextEditingController();
   String? selectedRole;
-  
+
   // Fungsi untuk menangani proses login
   Future<void> login(BuildContext context) async {
     try {
@@ -31,11 +31,10 @@ class LoginController {
       String role = userData['peran'];
       if (role != selectedRole) {
         if (!context.mounted) return;
-        showAwesomeSnackbar(
+        showCustomSnackbar(
           context: context,
-          title: 'Gagal',
           message: 'Peran yang dipilih tidak sesuai',
-          contentType: ContentType.failure,
+          isSuccess: false,
         );
         return;
       }
@@ -46,11 +45,10 @@ class LoginController {
 
       // Jika berhasil login, arahkan ke dashboard sesuai peran
       if (!context.mounted) return;
-      showAwesomeSnackbar(
+      showCustomSnackbar(
         context: context,
-        title: 'Berhasil',
-        message: 'Berhasil login sebagai $role',
-        contentType: ContentType.success,
+        message: 'Login berhasil',
+        isSuccess: true,
       );
 
       // Arahkan ke dashboard jika login berhasil
@@ -59,11 +57,10 @@ class LoginController {
       // Validasi jika email dan kata sandi tidak valid
     } on FirebaseAuthException catch (e) {
       if (context.mounted) {
-        showAwesomeSnackbar(
+        showCustomSnackbar(
           context: context,
-          title: 'Gagal',
           message: 'Email atau kata sandi tidak valid',
-          contentType: ContentType.failure,
+          isSuccess: false,
         );
         // ignore: avoid_print
         print('FirebaseAuthException: ${e.code} - ${e.message}');
@@ -71,11 +68,10 @@ class LoginController {
     } catch (e) {
       // Validasi jika terjadi kesalahan
       if (context.mounted) {
-        showAwesomeSnackbar(
+        showCustomSnackbar(
           context: context,
-          title: 'Gagal',
           message: 'Terjadi kesalahan: ${e.toString()}',
-          contentType: ContentType.failure,
+          isSuccess: false,
         );
       }
     }
@@ -87,31 +83,21 @@ class LoginController {
       await _auth.signOut();
       await _secureStorage.deleteAll();
 
-      const snackBar = SnackBar(
-        elevation: 0,
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.transparent,
-        content: AwesomeSnackbarContent(
-          title: 'Berhasil',
-          message: 'Berhasil logout dari akun',
-          contentType: ContentType.success,
-        ),
+      showCustomSnackbar(
+        context: context,
+        message: 'Logout berhasil',
+        isSuccess: true,
       );
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      // ScaffoldMessenger.of(context).showSnackBar(Snackbar);
     } catch (e) {
-      final snackBar = SnackBar(
-        elevation: 0,
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.transparent,
-        content: AwesomeSnackbarContent(
-          title: 'Gagal',
-          message: 'Terjadi kesalahan saat logout: $e',
-          contentType: ContentType.failure,
-        ),
+      showCustomSnackbar(
+        context: context,
+        message: 'Terjadi kesalahan saat logout: $e',
+        isSuccess: false,
       );
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 
@@ -130,26 +116,4 @@ class LoginController {
     emailController.dispose();
     kataSandiController.dispose();
   }
-}
-
-// Fungsi untuk menampilkan semua snackbar
-void showAwesomeSnackbar({
-  required BuildContext context,
-  required String title,
-  required String message,
-  required ContentType contentType,
-}) {
-  final snackBar = SnackBar(
-    elevation: 0,
-    behavior: SnackBarBehavior.floating,
-    backgroundColor: Colors.transparent,
-    content: AwesomeSnackbarContent(
-      title: title,
-      message: message,
-      contentType: contentType,
-    ),
-  );
-  
-  // Fungsi untuk menampilkan snackbar
-  ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }

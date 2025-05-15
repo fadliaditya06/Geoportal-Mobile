@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:geoportal_mobile/widget/custom_snackbar.dart';
 import 'dart:convert';
 
 class RegisterController {
@@ -29,28 +29,28 @@ class RegisterController {
       await _storeUserData(userCredential.user!);
 
       // Fungsi untuk menampilkan snackbar dengan pesan sukses
-      const snackBar = SnackBar(
-        elevation: 0,
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.transparent,
-        content: AwesomeSnackbarContent(
-          title: 'Berhasil',
-          message: 'Pendaftaran akun berhasil!',
-          contentType: ContentType.success,
-        ),
+      showCustomSnackbar(
+        context: context,
+        message: 'Pendaftaran akun berhasil',
+        isSuccess: true,
       );
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      // ScaffoldMessenger.of(context).showSnackBar(snackbar);
 
       // Navigasi ke halaman login setelah registrasi berhasil
-      // ignore: use_build_context_synchronously
       Navigator.of(context).pushNamed('/login');
     } on FirebaseAuthException catch (e) {
-      // ignore: use_build_context_synchronously
-      _handleAuthError(context, e);
+      if (context.mounted) {
+        _handleAuthError(context, e);
+      }
     } catch (e) {
-      // ignore: use_build_context_synchronously
-      _showSnackbar(context, 'Terjadi kesalahan: ${e.toString()}');
+      if (context.mounted) {
+        showCustomSnackbar(
+          context: context,
+          message: 'Terjadi kesalahan: ${e.toString()}',
+          isSuccess: false,
+        );
+      }
     }
   }
 
@@ -77,30 +77,15 @@ class RegisterController {
     String errorMessage;
     switch (e.code) {
       case 'email-already-in-use':
-        errorMessage = 'Email ini sudah terdaftar!';
+        errorMessage = 'Email ini sudah terdaftar';
         break;
       default:
         errorMessage = 'Terjadi kesalahan: ${e.message}';
     }
-    final snackBar = SnackBar(
-      elevation: 0,
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: Colors.transparent,
-      content: AwesomeSnackbarContent(
-        title: 'Gagal',
-        message: errorMessage,
-        contentType: ContentType.failure,
-      ),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  void _showSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-      ),
+    showCustomSnackbar(
+      context: context,
+      message: errorMessage,
+      isSuccess: false,
     );
   }
 
