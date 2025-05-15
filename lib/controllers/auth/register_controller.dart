@@ -29,6 +29,7 @@ class RegisterController {
       await _storeUserData(userCredential.user!);
 
       // Fungsi untuk menampilkan snackbar dengan pesan sukses
+      if (!context.mounted) return;
       showCustomSnackbar(
         context: context,
         message: 'Pendaftaran akun berhasil',
