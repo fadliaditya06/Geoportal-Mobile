@@ -146,8 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           onChanged: (value) {
                             setState(() {
                               selectedRole = value;
-                              controller.selectedRole =
-                                  value; // update di controller juga
+                              controller.selectedRole = value; 
                             });
                           },
                           validator: (value) {
@@ -315,8 +314,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         setState(() {
                                           isLoading = true;
                                         });
-                                        await controller.login(
-                                            context); // login dengan context untuk navigasi & snackbar
+                                        await controller.login(context); 
                                         setState(() {
                                           isLoading = false;
                                         });
