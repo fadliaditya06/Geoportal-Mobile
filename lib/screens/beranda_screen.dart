@@ -5,241 +5,266 @@ import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_admin_screen
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-class BerandaScreen extends StatelessWidget {
+class BerandaScreen extends StatefulWidget {
   final String uid;
 
   const BerandaScreen({super.key, required this.uid});
 
-  Future<String> _fetchUserName() async {
-    final userData =
-        await FirebaseFirestore.instance.collection('user').doc(uid).get();
-    return userData['nama'] ?? 'Pengguna';
+  @override
+  BerandaScreenState createState() => BerandaScreenState();
+}
+
+class BerandaScreenState extends State<BerandaScreen> {
+  String? userName;
+  bool isLoading = true;
+  String? error;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserName();
+  }
+
+  Future<void> _fetchUserName() async {
+    try {
+      final userData = await FirebaseFirestore.instance
+          .collection('user')
+          .doc(widget.uid)
+          .get();
+
+      if (mounted) {
+        setState(() {
+          userName = userData['nama'] ?? 'Pengguna';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          error = 'Gagal mengambil data pengguna';
+          isLoading = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Center(
-          child: Image.asset(
-            'assets/images/logo-geoportal-2.png',
-            width: 100,
+        appBar: AppBar(
+          title: const Text(
+            "Geoportal",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
-        ),
-        title: const Text(
-          "Geoportal",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: IconButton(
-              icon: const Icon(Icons.assignment_turned_in_outlined,
-                  color: Color(0xFF358666), size: 30),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        const PermintaanKonfirmasiAdminScreen(),
-                  ),
-                );
-              },
+          centerTitle: true,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          leading: Center(
+            child: Image.asset(
+              'assets/images/logo-geoportal-2.png',
+              width: 100,
             ),
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: FutureBuilder<String>(
-            future: _fetchUserName(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const Text('Gagal mengambil data pengguna');
-              } else {
-                String userName = snapshot.data ?? 'Pengguna';
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          const TextSpan(text: 'Hi'),
-                          TextSpan(
-                            text: ' $userName',
-                            style: const TextStyle(
-                              color: Color(0xFF358666),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const TextSpan(text: '!'),
-                        ],
-                      ),
-                      style: const TextStyle(fontSize: 26),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: IconButton(
+                icon: const Icon(Icons.assignment_turned_in_outlined,
+                    color: Color(0xFF358666), size: 30),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const PermintaanKonfirmasiAdminScreen(),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Selamat datang $userName!',
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w400),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(text: 'Ayo temukan'),
-                          TextSpan(
-                            text: ' Peta ',
-                            style: TextStyle(
-                                color: Color(0xFF358666),
-                                fontWeight: FontWeight.bold),
-                          ),
-                          TextSpan(text: '\nkamu!'),
-                        ],
-                      ),
-                      style: TextStyle(fontSize: 26),
-                    ),
-                    const SizedBox(height: 16),
-                    // Carousel Beranda
-                    CarouselSlider(
-                      options: CarouselOptions(
-                        height: 225,
-                        autoPlay: true,
-                        enlargeCenterPage: true,
-                        viewportFraction: 1.0,
-                        aspectRatio: 16 / 9,
-                        autoPlayInterval: const Duration(seconds: 3),
-                      ),
-                      items: [
-                        'assets/carousel/carousel-perumahan.png',
-                        'assets/carousel/carousel-permukiman.png',
-                        'assets/carousel/carousel-pertamanan.png',
-                      ].map((imagePath) {
-                        return Builder(
-                          builder: (BuildContext context) {
-                            return ClipRRect(
-                              borderRadius: BorderRadius.circular(16.0),
-                              child: Image.asset(
-                                imagePath,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                              ),
-                            );
-                          },
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 24),
-                    // Konten Eksplor Fitur Kami
-                    const Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(text: 'Yuk Eksplor'),
-                          TextSpan(
-                            text: ' Fitur ',
-                            style: TextStyle(
-                              color: Color(0xFF358666),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          TextSpan(text: 'Kami'),
-                        ],
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    // Card Eksplor Fitur Kami
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF64C38F),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: SizedBox(
-                        height: 340,
-                        child: ListView.builder(
-                          itemCount: 3,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                _eksplorItem(
-                                  image:
-                                      'assets/images/eksplor-fitur-${index + 1}.png',
-                                  title: index == 0
-                                      ? 'Pencarian & Visualisasi Data'
-                                      : index == 1
-                                          ? 'Manajemen Data & Kolaborasi'
-                                          : 'Profil Pengguna',
-                                  description: index == 0
-                                      ? 'Menampilkan berbagai data geospasial dalam bentuk peta digital, memungkinkan pengguna untuk mencari dan memahami informasi dengan lebih mudah.'
-                                      : index == 1
-                                          ? 'Memungkinkan pengguna untuk mengunggah, berbagi, dan mengelola data geospasial secara terpusat untuk mendukung kerja sama dalam pengambilan keputusan.'
-                                          : 'Memungkinkan setiap pengguna untuk memiliki akun pribadi, dan dapat mengedit informasi profil.',
-                                ),
-                                if (index != 2) const SizedBox(height: 16),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    // Konten Berita Terbaru
-                    RichText(
-                      text: const TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Berita',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF358666),
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                          TextSpan(
-                            text: ' Terbaru',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    _beritaCard(),
-                    const SizedBox(height: 24),
-                    // Bagian Galery Kami
-                    _sectionTitle(
-                      'Galery',
-                      'Kami',
-                      onTap: () {},
-                      titleColor: const Color(0xFF358666),
-                      subTitleColor: Colors.black,
-                    ),
-                    const SizedBox(height: 12),
-                    // Daftar Galeri
-                    _galeriList(),
-                    const SizedBox(height: 50),
-                    // Galeri List Tambahan
-                    _galeriListTambahan(),
-                    const SizedBox(height: 12),
-                  ],
-                );
-              }
-            },
-          ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
-      ),
-    );
+        body: SafeArea(
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : error != null
+                    ? Center(child: Text(error!))
+                    : SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  const TextSpan(text: 'Hi'),
+                                  TextSpan(
+                                    text: ' $userName',
+                                    style: const TextStyle(
+                                      color: Color(0xFF358666),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const TextSpan(text: '!'),
+                                ],
+                              ),
+                              style: const TextStyle(fontSize: 26),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Selamat datang $userName!',
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w400),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(text: 'Ayo temukan'),
+                                  TextSpan(
+                                    text: ' Peta ',
+                                    style: TextStyle(
+                                        color: Color(0xFF358666),
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  TextSpan(text: '\nkamu!'),
+                                ],
+                              ),
+                              style: TextStyle(fontSize: 26),
+                            ),
+                            const SizedBox(height: 16),
+                            // Carousel Beranda
+                            CarouselSlider(
+                              options: CarouselOptions(
+                                height: 225,
+                                autoPlay: true,
+                                enlargeCenterPage: true,
+                                viewportFraction: 1.0,
+                                aspectRatio: 16 / 9,
+                                autoPlayInterval: const Duration(seconds: 3),
+                              ),
+                              items: [
+                                'assets/carousel/carousel-perumahan.png',
+                                'assets/carousel/carousel-permukiman.png',
+                                'assets/carousel/carousel-pertamanan.png',
+                              ].map((imagePath) {
+                                return Builder(
+                                  builder: (BuildContext context) {
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                      child: Image.asset(
+                                        imagePath,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                      ),
+                                    );
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                            const SizedBox(height: 24),
+                            // Konten Eksplor Fitur Kami
+                            const Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(text: 'Yuk Eksplor'),
+                                  TextSpan(
+                                    text: ' Fitur ',
+                                    style: TextStyle(
+                                      color: Color(0xFF358666),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  TextSpan(text: 'Kami'),
+                                ],
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            // Card Eksplor Fitur Kami
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF64C38F),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: SizedBox(
+                                height: 340,
+                                child: ListView.builder(
+                                  itemCount: 3,
+                                  itemBuilder: (context, index) {
+                                    return Column(
+                                      children: [
+                                        _eksplorItem(
+                                          image:
+                                              'assets/images/eksplor-fitur-${index + 1}.png',
+                                          title: index == 0
+                                              ? 'Pencarian & Visualisasi Data'
+                                              : index == 1
+                                                  ? 'Manajemen Data & Kolaborasi'
+                                                  : 'Profil Pengguna',
+                                          description: index == 0
+                                              ? 'Menampilkan berbagai data geospasial dalam bentuk peta digital, memungkinkan pengguna untuk mencari dan memahami informasi dengan lebih mudah.'
+                                              : index == 1
+                                                  ? 'Memungkinkan pengguna untuk mengunggah, berbagi, dan mengelola data geospasial secara terpusat untuk mendukung kerja sama dalam pengambilan keputusan.'
+                                                  : 'Memungkinkan setiap pengguna untuk memiliki akun pribadi, dan dapat mengedit informasi profil.',
+                                        ),
+                                        if (index != 2)
+                                          const SizedBox(height: 16),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            // Konten Berita Terbaru
+                            RichText(
+                              text: const TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Berita',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF358666),
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: ' Terbaru',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black,
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            _beritaCard(),
+                            const SizedBox(height: 24),
+                            // Bagian Galery Kami
+                            _sectionTitle(
+                              'Galery',
+                              'Kami',
+                              onTap: () {},
+                              titleColor: const Color(0xFF358666),
+                              subTitleColor: Colors.black,
+                            ),
+                            const SizedBox(height: 12),
+                            // Daftar Galeri
+                            _galeriList(),
+                            const SizedBox(height: 50),
+                            // Galeri List Tambahan
+                            _galeriListTambahan(),
+                            const SizedBox(height: 12),
+                          ],
+                        ))));
   }
 
   // Fungsi untuk menampilkan konten eksplor fitur
