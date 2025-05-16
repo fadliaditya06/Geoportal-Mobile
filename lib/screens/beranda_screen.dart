@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geoportal_mobile/screens/modal/galery_modal.dart';
 import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_admin_screen.dart';
 // import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_screen.dart';
+import 'package:card_loading/card_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -86,7 +87,43 @@ class BerandaScreenState extends State<BerandaScreen> {
         ),
         body: SafeArea(
             child: isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 16),
+                    itemCount: 7,
+                    itemBuilder: (context, index) {
+                      double width;
+                      double height;
+                      switch (index % 3) {
+                        case 0:
+                          width = 150;
+                          height = 30; 
+                          break;
+                        case 1:
+                          width = 200;
+                          height = 50; 
+                          break;
+                        case 2:
+                        default:
+                          width = 350;
+                          height = 120;
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Row(
+                          children: [
+                            CardLoading(
+                              height: height,
+                              width: width,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              margin: const EdgeInsets.symmetric(vertical: 10),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  )
                 : error != null
                     ? Center(child: Text(error!))
                     : SingleChildScrollView(
