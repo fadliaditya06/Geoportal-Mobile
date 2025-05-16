@@ -26,7 +26,7 @@ class BerandaScreenState extends State<BerandaScreen> {
   bool isLoading = true;
   String? error;
 
-  // Menyimpan peran pengguna
+  // Menyimpan peran user
   String? role;
 
   @override
@@ -35,7 +35,7 @@ class BerandaScreenState extends State<BerandaScreen> {
     _fetchUserName();
   }
 
-  // Fungsi untuk mengambil data pengguna berdasarkan uid
+  // Fungsi untuk mengambil data user berdasarkan uid
   Future<void> _fetchUserName() async {
     try {
       final userData = await FirebaseFirestore.instance
@@ -85,24 +85,18 @@ class BerandaScreenState extends State<BerandaScreen> {
                     color: Color(0xFF358666), size: 30),
                 // Navigasi ke halaman Permintaan Konfirmasi sesuai peran
                 onPressed: () {
-                  if (role == null) {
-                    // Bisa tampilkan pesan loading atau abaikan sementara
-                    return;
-                  }
                   if (role == 'Admin') {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            const PermintaanKonfirmasiAdminScreen(),
+                        builder: (context) => const PermintaanKonfirmasiAdminScreen(),
                       ),
                     );
                   } else {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            const PermintaanKonfirmasiScreen(),
+                        builder: (context) => const PermintaanKonfirmasiScreen(),
                       ),
                     );
                   }
