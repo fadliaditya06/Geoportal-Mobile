@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:geoportal_mobile/screens/modal/galery_modal.dart';
 import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_admin_screen.dart';
-// import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_screen.dart';
 import 'package:card_loading/card_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_screen.dart';
 
 class BerandaScreen extends StatefulWidget {
   final String uid;
@@ -17,8 +17,17 @@ class BerandaScreen extends StatefulWidget {
 
 class BerandaScreenState extends State<BerandaScreen> {
   String? userName;
+
+  // Fungsi untuk mengambil nama depan
+  String getFirstName(String fullName) {
+    return fullName.split(' ').first;
+  }
+
   bool isLoading = true;
   String? error;
+
+  // Menyimpan peran pengguna
+  String? role;
 
   @override
   void initState() {
@@ -26,6 +35,7 @@ class BerandaScreenState extends State<BerandaScreen> {
     _fetchUserName();
   }
 
+  // Fungsi untuk mengambil data pengguna berdasarkan uid
   Future<void> _fetchUserName() async {
     try {
       final userData = await FirebaseFirestore.instance
@@ -36,6 +46,7 @@ class BerandaScreenState extends State<BerandaScreen> {
       if (mounted) {
         setState(() {
           userName = userData['nama'] ?? 'Pengguna';
+          role = userData['peran'] ?? 'pengguna';
           isLoading = false;
         });
       }
@@ -72,14 +83,29 @@ class BerandaScreenState extends State<BerandaScreen> {
               child: IconButton(
                 icon: const Icon(Icons.assignment_turned_in_outlined,
                     color: Color(0xFF358666), size: 30),
+                // Navigasi ke halaman Permintaan Konfirmasi sesuai peran
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          const PermintaanKonfirmasiAdminScreen(),
-                    ),
-                  );
+                  if (role == null) {
+                    // Bisa tampilkan pesan loading atau abaikan sementara
+                    return;
+                  }
+                  if (role == 'Admin') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const PermintaanKonfirmasiAdminScreen(),
+                      ),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const PermintaanKonfirmasiScreen(),
+                      ),
+                    );
+                  }
                 },
               ),
             ),
@@ -97,11 +123,11 @@ class BerandaScreenState extends State<BerandaScreen> {
                       switch (index % 3) {
                         case 0:
                           width = 150;
-                          height = 30; 
+                          height = 30;
                           break;
                         case 1:
                           width = 200;
-                          height = 50; 
+                          height = 50;
                           break;
                         case 2:
                         default:
@@ -137,7 +163,8 @@ class BerandaScreenState extends State<BerandaScreen> {
                                 children: [
                                   const TextSpan(text: 'Hi'),
                                   TextSpan(
-                                    text: ' $userName',
+                                    text:
+                                        ' ${getFirstName(userName ?? 'Pengguna')}',
                                     style: const TextStyle(
                                       color: Color(0xFF358666),
                                       fontWeight: FontWeight.w600,
@@ -150,7 +177,7 @@ class BerandaScreenState extends State<BerandaScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Selamat datang $userName!',
+                              'Selamat datang ${getFirstName(userName ?? 'Pengguna')}!',
                               style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w400),
                             ),

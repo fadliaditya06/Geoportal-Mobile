@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:geoportal_mobile/screens/peta/detail_peta_screen.dart';
 import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_screen.dart';
+import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_admin_screen.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/services.dart';
 
 class PetaScreen extends StatefulWidget {
-  const PetaScreen({super.key});
+  // Menyimpan peran user
+  final String? role;
+  const PetaScreen({super.key, this.role});
 
   @override
   PetaScreenState createState() => PetaScreenState();
@@ -18,6 +21,7 @@ class PetaScreenState extends State<PetaScreen> {
 
   // Fungsi untuk memilih koordinat yang dipilih
   LatLng? _pickedLocation;
+
   // Fungsi untuk menavigasi ke halaman peta fullscreen
   void _goToFullScreen() {
     Navigator.push(
@@ -54,14 +58,25 @@ class PetaScreenState extends State<PetaScreen> {
                 color: Color(0xFF358666),
                 size: 30,
               ),
-              // Navigasi ke halaman Permintaan Konfirmasi
+              // Navigasi ke halaman Permintaan Konfirmasi sesuai peran
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PermintaanKonfirmasiScreen(),
-                  ),
-                );
+                final role = widget.role ?? '';
+                if (role == 'Admin') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const PermintaanKonfirmasiAdminScreen(),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PermintaanKonfirmasiScreen(),
+                    ),
+                  );
+                }
               },
             ),
           ),
@@ -306,7 +321,7 @@ class PetaScreenState extends State<PetaScreen> {
                                       color: Colors.black,
                                     ),
                                     onPressed: () {
-                                      // 
+                                      //
                                     },
                                   ),
                                 ),

@@ -12,6 +12,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:geoportal_mobile/config/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +38,6 @@ class MyApp extends StatelessWidget {
         progressIndicatorTheme: const ProgressIndicatorThemeData(color: Color(0xFF358666)),
         useMaterial3: true,
       ),
-      // home: const OnBoardingPage(),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       // Daftar Routes
@@ -63,6 +63,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _pageIndex = 0;
   String? uid;
+  String? role;
 
   @override
   void initState() {
@@ -70,13 +71,25 @@ class _MainPageState extends State<MainPage> {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       uid = user.uid;
+
+      // Ambil peran user 
+      FirebaseFirestore.instance
+          .collection('user')
+          .doc(uid)
+          .get()
+          .then((doc) {
+        if (doc.exists) {
+          setState(() {
+            role = doc.data()?['peran'] ?? 'Pengguna';
+          });
+        }
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Jika uid belum ada, tampilkan loading dulu
-    if (uid == null) {
+    if (uid == null || role == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
@@ -84,7 +97,7 @@ class _MainPageState extends State<MainPage> {
 
     final List<Widget> pages = [
       BerandaScreen(uid: uid!),
-      const PetaScreen(),
+      PetaScreen(role: role),  
       const ProfilScreen(),
     ];
 
