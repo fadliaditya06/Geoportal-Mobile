@@ -6,7 +6,8 @@ import 'package:geoportal_mobile/screens/profil/lihat_profil_screen.dart';
 import 'package:geoportal_mobile/screens/profil/syarat_dan_ketentuan_screen.dart';
 import 'package:geoportal_mobile/screens/profil/ubah_kata_sandi_screen.dart';
 import 'package:geoportal_mobile/screens/profil/ubah_profil_screen.dart';
-import 'package:geoportal_mobile/controllers/auth/login_controller.dart';
+import 'package:geoportal_mobile/controllers/login_controller.dart';
+import 'package:geoportal_mobile/screens/modal/logout_alert.dart';
 
 class ProfilScreen extends StatefulWidget {
   const ProfilScreen({super.key});
@@ -30,7 +31,7 @@ Future<String> getNamaUser() async {
 
 class _ProfilScreenState extends State<ProfilScreen> {
   final LoginController controller = LoginController();
-  
+
   // Fungsi untuk menyimpan nama user
   String? namaUser = '';
 
@@ -158,16 +159,21 @@ class _ProfilScreenState extends State<ProfilScreen> {
                             borderRadius: BorderRadius.circular(40),
                           ),
                         ),
-                        onPressed: () async {
-                          await controller.logout(context);
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LoginScreen(),
-                            ),
+                        onPressed: () {
+                          showLogoutDialog(
+                            context: context,
+                            onConfirm: () async {
+                              await controller.logout(context); // proses logout
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginScreen(),
+                                ),
+                              );
+                            },
                           );
                         },
-                        icon: const Icon(Icons.logout, color: Colors.white),
+                        icon: const Icon(Icons.logout, color: Colors.white, size: 20),
                         label: const Text(
                           'Logout',
                           style: TextStyle(
