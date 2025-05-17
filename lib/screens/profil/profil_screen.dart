@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoportal_mobile/screens/auth/login_screen.dart';
 import 'package:geoportal_mobile/screens/profil/lihat_profil_screen.dart';
 import 'package:geoportal_mobile/screens/profil/syarat_dan_ketentuan_screen.dart';
@@ -13,8 +15,37 @@ class ProfilScreen extends StatefulWidget {
   State<ProfilScreen> createState() => _ProfilScreenState();
 }
 
+// Fungsi untuk mengambil nama user
+Future<String> getNamaUser() async {
+  final uid = FirebaseAuth.instance.currentUser?.uid;
+  if (uid != null) {
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('user').doc(uid).get();
+    if (userDoc.exists) {
+      return userDoc['nama'] ?? 'Tidak ada nama';
+    }
+  }
+  return 'Tidak ada nama';
+}
+
 class _ProfilScreenState extends State<ProfilScreen> {
   final LoginController controller = LoginController();
+  
+  // Fungsi untuk menyimpan nama user
+  String? namaUser = '';
+
+  @override
+  void initState() {
+    super.initState();
+    ambilNamaUser();
+  }
+
+  void ambilNamaUser() async {
+    String nama = await getNamaUser();
+    setState(() {
+      namaUser = nama;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,19 +87,19 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   borderRadius:
                       BorderRadius.vertical(bottom: Radius.circular(70)),
                 ),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CircleAvatar(
+                    const CircleAvatar(
                       radius: 80,
                       backgroundColor: Color(0xFF358666),
                       child: Icon(Icons.person, size: 100, color: Colors.white),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Center(
                       child: Text(
-                        "Fadli Aditya",
-                        style: TextStyle(
+                        namaUser ?? '',
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
