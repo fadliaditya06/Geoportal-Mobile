@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:geoportal_mobile/controllers/auth/register_controller.dart';
+import 'package:geoportal_mobile/controllers/register_controller.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegisterScreen extends StatefulWidget {

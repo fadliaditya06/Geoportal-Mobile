@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:geoportal_mobile/controllers/auth/login_controller.dart';
+import 'package:geoportal_mobile/controllers/login_controller.dart';
 import 'package:geoportal_mobile/screens/auth/register_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
