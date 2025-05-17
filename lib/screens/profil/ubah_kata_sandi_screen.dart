@@ -89,7 +89,7 @@ class UbahKataSandiScreenState extends State<UbahKataSandiScreen> {
                             controller: controller.kataSandiLamaController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Silakan masukkan kata sandi lama';
+                                return 'Silahkan masukkan kata sandi lama';
                               }
                               if (value.length < 6) {
                                 return 'Kata sandi minimal 6 karakter';
@@ -104,7 +104,7 @@ class UbahKataSandiScreenState extends State<UbahKataSandiScreen> {
                             controller: controller.kataSandiBaruController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Silakan masukkan kata sandi baru';
+                                return 'Silahkan masukkan kata sandi baru';
                               }
                               if (value.length < 6) {
                                 return 'Kata sandi minimal 6 karakter';
@@ -120,7 +120,7 @@ class UbahKataSandiScreenState extends State<UbahKataSandiScreen> {
                                 controller.konfirmasiKataSandiController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Silakan konfirmasi kata sandi';
+                                return 'Silahkan konfirmasi kata sandi';
                               }
                               if (value.length < 6) {
                                 return 'Kata sandi minimal 6 karakter';
