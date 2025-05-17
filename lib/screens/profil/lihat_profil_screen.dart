@@ -1,7 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class LihatProfilScreen extends StatelessWidget {
+class LihatProfilScreen extends StatefulWidget {
   const LihatProfilScreen({super.key});
+
+  @override
+  State<LihatProfilScreen> createState() => _LihatProfilScreenState();
+}
+
+class _LihatProfilScreenState extends State<LihatProfilScreen> {
+  late Future<Map<String, dynamic>?> userDataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    userDataFuture = getUserData();
+  }
+
+  // Fungsi untuk mengambil data user berdasarkan uid yang sedang login
+  Future<Map<String, dynamic>?> getUserData() async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid != null) {
+        DocumentSnapshot doc =
+            await FirebaseFirestore.instance.collection('user').doc(uid).get();
+        if (doc.exists) {
+          return doc.data() as Map<String, dynamic>;
+        }
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error ambil data user: $e');
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -9,9 +42,7 @@ class LihatProfilScreen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.chevron_left, size: 30, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "Lihat Profil",
@@ -36,54 +67,68 @@ class LihatProfilScreen extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              // Ikon Profil
-              Container(
-                padding: const EdgeInsets.only(top: 40, bottom: 40),
-                child: const CircleAvatar(
-                  radius: 80,
-                  backgroundColor: Color(0xFF358666),
-                  child: Icon(Icons.person, size: 100, color: Colors.white),
-                ),
-              ),
-              // Box Container Profil
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                  width: double.infinity,
-                  padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(30)),
-                  ),
-                  child: const SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _ProfilItem(
-                          label: "Email",
-                          value: "fadli@gmail.com",
-                          icon: Icons.email_outlined,
-                        ),
-                        _ProfilItem(
-                          label: "Nama Lengkap",
-                          value: "Fadli Aditya",
-                          icon: Icons.person_outlined,
-                        ),
-                        _ProfilItem(
-                          label: "Alamat",
-                          value: "Perumahan Sukajadi",
-                          icon: Icons.home_outlined,
-                        ),
-                        SizedBox(height: 20),
-                      ],
+          child: FutureBuilder<Map<String, dynamic>?>(
+            future: userDataFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox.shrink();
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data == null) {
+                return const Center(child: Text('Data user tidak ditemukan'));
+              } else {
+                final data = snapshot.data!;
+                return Column(
+                  children: [
+                    // Ikon Profil
+                    Container(
+                      padding: const EdgeInsets.only(top: 40, bottom: 40),
+                      child: const CircleAvatar(
+                        radius: 80,
+                        backgroundColor: Color(0xFF358666),
+                        child: Icon(Icons.person, size: 100, color: Colors.white),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            ],
+                    // Box Container Profil
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                        width: double.infinity,
+                        padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(30)),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _ProfilItem(
+                                label: "Email",
+                                value: data['email'] ?? 'Tidak ada email',
+                                icon: Icons.email_outlined,
+                              ),
+                              _ProfilItem(
+                                label: "Nama Lengkap",
+                                value: data['nama'] ?? 'Tidak ada nama',
+                                icon: Icons.person_outlined,
+                              ),
+                              _ProfilItem(
+                                label: "Alamat",
+                                value: data['alamat'] ?? 'Tidak ada alamat',
+                                icon: Icons.home_outlined,
+                              ),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
           ),
         ),
       ),
@@ -91,7 +136,7 @@ class LihatProfilScreen extends StatelessWidget {
   }
 }
 
-// Fungsi untuk menampilkan konten profil
+// Widget untuk menampilkan konten profil
 class _ProfilItem extends StatelessWidget {
   final String label;
   final String value;
