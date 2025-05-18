@@ -13,12 +13,18 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:geoportal_mobile/config/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Inisialisasi Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+  );
+  // Inisialisasi Supabase
+  await Supabase.initialize(
+    url: 'https://noeywxxoxuyicxtcsier.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5vZXl3eHhveHV5aWN4dGNzaWVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc1MzAwNTksImV4cCI6MjA2MzEwNjA1OX0.q-ktPox08DqxLUpotH74SeYwUdAwr93rKUsMmTi8GuY',
   );
   // Inisialisasi format tanggal untuk bahasa Indonesia
   await initializeDateFormatting('id', '');
