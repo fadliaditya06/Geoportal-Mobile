@@ -80,13 +80,20 @@ class _LihatProfilScreenState extends State<LihatProfilScreen> {
                 final data = snapshot.data!;
                 return Column(
                   children: [
-                    // Ikon Profil
                     Container(
                       padding: const EdgeInsets.only(top: 40, bottom: 40),
-                      child: const CircleAvatar(
+                      child: CircleAvatar(
                         radius: 80,
-                        backgroundColor: Color(0xFF358666),
-                        child: Icon(Icons.person, size: 100, color: Colors.white),
+                        backgroundColor: const Color(0xFF358666),
+                        backgroundImage: data['foto_profil'] != null &&
+                                data['foto_profil'].toString().isNotEmpty
+                            ? NetworkImage(data['foto_profil'])
+                            : null,
+                        child: data['foto_profil'] == null ||
+                                data['foto_profil'].toString().isEmpty
+                            ? const Icon(Icons.person,
+                                size: 100, color: Colors.white)
+                            : null,
                       ),
                     ),
                     // Box Container Profil
@@ -94,7 +101,8 @@ class _LihatProfilScreenState extends State<LihatProfilScreen> {
                       child: Container(
                         margin: const EdgeInsets.symmetric(horizontal: 10.0),
                         width: double.infinity,
-                        padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
+                        padding:
+                            const EdgeInsets.only(top: 40, left: 20, right: 20),
                         decoration: const BoxDecoration(
                           color: Colors.white,
                           borderRadius:

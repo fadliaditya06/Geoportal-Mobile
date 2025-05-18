@@ -16,36 +16,27 @@ class ProfilScreen extends StatefulWidget {
   State<ProfilScreen> createState() => _ProfilScreenState();
 }
 
-// Fungsi untuk mengambil nama user
-Future<String> getNamaUser() async {
-  final uid = FirebaseAuth.instance.currentUser?.uid;
-  if (uid != null) {
-    DocumentSnapshot userDoc =
-        await FirebaseFirestore.instance.collection('user').doc(uid).get();
-    if (userDoc.exists) {
-      return userDoc['nama'] ?? 'Tidak ada nama';
-    }
-  }
-  return 'Tidak ada nama';
-}
-
 class _ProfilScreenState extends State<ProfilScreen> {
   final LoginController controller = LoginController();
 
-  // Fungsi untuk menyimpan nama user
-  String? namaUser = '';
+  late Future<Map<String, dynamic>?> userDataFuture;
 
   @override
   void initState() {
     super.initState();
-    ambilNamaUser();
+    userDataFuture = getUserData();
   }
 
-  void ambilNamaUser() async {
-    String nama = await getNamaUser();
-    setState(() {
-      namaUser = nama;
-    });
+  Future<Map<String, dynamic>?> getUserData() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final userDoc =
+          await FirebaseFirestore.instance.collection('user').doc(uid).get();
+      if (userDoc.exists) {
+        return userDoc.data();
+      }
+    }
+    return null;
   }
 
   @override
@@ -71,125 +62,156 @@ class _ProfilScreenState extends State<ProfilScreen> {
               const Color(0xFFFFFFFF),
               const Color(0xFF72B396).withOpacity(0.15),
               const Color(0xFF358666).withOpacity(0.60),
-              const Color(0xFFFFFFFF).withOpacity(0.98),
+              Colors.white.withOpacity(0.98),
             ],
           ),
         ),
-        // Header Profil
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFB0E1C6),
-                  borderRadius:
-                      BorderRadius.vertical(bottom: Radius.circular(70)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const CircleAvatar(
-                      radius: 80,
-                      backgroundColor: Color(0xFF358666),
-                      child: Icon(Icons.person, size: 100, color: Colors.white),
+        
+        // Menggunakan FutureBuilder untuk mengambil data user dari Firestore
+        child: FutureBuilder<Map<String, dynamic>?>(
+          future: userDataFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(
+                  child: Text('Terjadi kesalahan: ${snapshot.error}'));
+            }
+           
+            // Jika data kosong atau dokumen user tidak ditemukan
+            final data = snapshot.data;
+            if (data == null) {
+              return const Center(child: Text('Data user tidak ditemukan'));
+            }
+
+            // Jika data tersedia, ambil nama user dan URL foto profil dari Firestore
+            final String namaUser = data['nama'] ?? 'Tidak ada nama';
+            final String? fotoProfil = data['foto_profil'];
+
+            // Header Profil
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 20),
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFB0E1C6),
+                      borderRadius:
+                          BorderRadius.vertical(bottom: Radius.circular(70)),
                     ),
-                    const SizedBox(height: 20),
-                    Center(
-                      child: Text(
-                        namaUser ?? '',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 30),
-              // Box Container Profil
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0, vertical: 20.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildProfilMenu(
-                      icon: Icons.person_outlined,
-                      title: "Lihat Profil",
-                      onTap: () =>
-                          _navigateTo(context, const LihatProfilScreen()),
-                    ),
-                    _buildProfilMenu(
-                      icon: Icons.edit_outlined,
-                      title: "Ubah Profil",
-                      onTap: () =>
-                          _navigateTo(context, const UbahProfilScreen()),
-                    ),
-                    _buildProfilMenu(
-                      icon: Icons.lock_outline,
-                      title: "Ubah Kata Sandi",
-                      onTap: () =>
-                          _navigateTo(context, const UbahKataSandiScreen()),
-                    ),
-                    _buildProfilMenu(
-                      icon: Icons.info_outline,
-                      title: "Syarat & Ketentuan",
-                      onTap: () => _navigateTo(
-                          context, const SyaratdanKetentuanScreen()),
-                    ),
-                    const SizedBox(height: 30),
-                    // Tombol Logout
-                    SizedBox(
-                      width: 150,
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 80,
                           backgroundColor: const Color(0xFF358666),
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(40),
+                          backgroundImage:
+                              (fotoProfil != null && fotoProfil.isNotEmpty)
+                                  ? NetworkImage(fotoProfil)
+                                  : null,
+                          child: (fotoProfil == null || fotoProfil.isEmpty)
+                              ? const Icon(Icons.person,
+                                  size: 100, color: Colors.white)
+                              : null,
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          namaUser,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
                         ),
-                        onPressed: () {
-                          showLogoutDialog(
-                            context: context,
-                            onConfirm: () async {
-                              await controller.logout(context); // proses logout
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const LoginScreen(),
-                                ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 20.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildProfilMenu(
+                          icon: Icons.person_outlined,
+                          title: "Lihat Profil",
+                          onTap: () =>
+                              _navigateTo(context, const LihatProfilScreen()),
+                        ),
+                        _buildProfilMenu(
+                          icon: Icons.edit_outlined,
+                          title: "Ubah Profil",
+                          onTap: () =>
+                              _navigateTo(context, const UbahProfilScreen()),
+                        ),
+                        _buildProfilMenu(
+                          icon: Icons.lock_outline,
+                          title: "Ubah Kata Sandi",
+                          onTap: () =>
+                              _navigateTo(context, const UbahKataSandiScreen()),
+                        ),
+                        _buildProfilMenu(
+                          icon: Icons.info_outline,
+                          title: "Syarat & Ketentuan",
+                          onTap: () => _navigateTo(
+                              context, const SyaratdanKetentuanScreen()),
+                        ),
+                        const SizedBox(height: 30),
+                        // Tombol Logout
+                        SizedBox(
+                          width: 150,
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF358666),
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40),
+                              ),
+                            ),
+                            onPressed: () {
+                              showLogoutDialog(
+                                context: context,
+                                onConfirm: () async {
+                                  await controller.logout(context);
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const LoginScreen()),
+                                    (route) => false,
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
-                        icon: const Icon(Icons.logout, color: Colors.white, size: 20),
-                        label: const Text(
-                          'Logout',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            icon: const Icon(Icons.logout,
+                                color: Colors.white, size: 20),
+                            label: const Text(
+                              'Logout',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 30),
+                ],
               ),
-              const SizedBox(height: 30),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -225,10 +247,15 @@ class _ProfilScreenState extends State<ProfilScreen> {
   }
 
   // Method untuk navigasi ke halaman lain
-  void _navigateTo(BuildContext context, Widget screen) {
-    Navigator.push(
+  void _navigateTo(BuildContext context, Widget screen) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => screen),
     );
+
+    // Refresh data setelah dari screen lain
+    setState(() {
+      userDataFuture = getUserData();
+    });
   }
 }
