@@ -16,7 +16,7 @@ class UbahProfilScreen extends StatefulWidget {
 
 class _UbahProfilScreenState extends State<UbahProfilScreen> {
   final UbahProfilController _controller = UbahProfilController();
-  
+
   // Variabel untuk menyimpan URL gambar yang telah diupload
   String? _uploadedImageUrl;
   bool _isUploading = false;
@@ -218,16 +218,19 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                 child: Stack(
                   alignment: Alignment.bottomRight,
                   children: [
-                    CircleAvatar(
-                      radius: 80,
-                      backgroundColor: const Color(0xFF358666),
-                      backgroundImage: _uploadedImageUrl != null
-                          ? CachedNetworkImageProvider(_uploadedImageUrl!)
-                          : null,
-                      child: _uploadedImageUrl == null
-                          ? const Icon(Icons.person,
-                              size: 100, color: Colors.white)
-                          : null,
+                    InkWell(
+                      onTap: _showImageSourceSheet,
+                      child: CircleAvatar(
+                        radius: 80,
+                        backgroundColor: const Color(0xFF358666),
+                        backgroundImage: _uploadedImageUrl != null
+                            ? CachedNetworkImageProvider(_uploadedImageUrl!)
+                            : null,
+                        child: _uploadedImageUrl == null
+                            ? const Icon(Icons.person,
+                                size: 100, color: Colors.white)
+                            : null,
+                      ),
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
