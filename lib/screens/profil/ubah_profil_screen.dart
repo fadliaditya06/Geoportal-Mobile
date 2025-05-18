@@ -17,7 +17,7 @@ class UbahProfilScreen extends StatefulWidget {
 class _UbahProfilScreenState extends State<UbahProfilScreen> {
   final UbahProfilController _controller = UbahProfilController();
   
-  // Variabel untuk menyimpan URL gambar yang telah di-upload
+  // Variabel untuk menyimpan URL gambar yang telah diupload
   String? _uploadedImageUrl;
   bool _isUploading = false;
 
@@ -101,7 +101,7 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
     );
   }
 
-  // Fungsi untuk memilih dan meng-upload gambar
+  // Fungsi untuk memilih dan mengupload gambar
   Future<void> _pickImage(ImageSource source) async {
     setState(() {
       _isUploading = true;
@@ -114,8 +114,10 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
         });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal upload foto: $e')),
+      showCustomSnackbar(
+        context: context,
+        message: 'Gagal upload foto: $e',
+        isSuccess: false,
       );
     } finally {
       setState(() {
@@ -138,7 +140,6 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
         final success =
             await _controller.deleteProfileImage(_uploadedImageUrl!);
         if (success) {
-          // Update Firestore hapus field foto_profil
           await FirebaseFirestore.instance
               .collection('user')
               .doc(userId)
@@ -146,7 +147,6 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
             'foto_profil': FieldValue.delete(),
           });
 
-          // Update SharedPreferences
           final prefs = await SharedPreferences.getInstance();
           await prefs.remove(UbahProfilController.prefKeyPhotoUrl);
 
@@ -162,7 +162,7 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
           showCustomSnackbar(
             context: context,
             message: 'Gagal menghapus foto',
-            isSuccess: true,
+            isSuccess: false,
           );
         }
       }
@@ -170,7 +170,7 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
       showCustomSnackbar(
         context: context,
         message: 'Gagal menghapus foto: $e',
-        isSuccess: true,
+        isSuccess: false,
       );
     } finally {
       setState(() {

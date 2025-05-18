@@ -68,7 +68,7 @@ class UbahProfilController {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(prefKeyPhotoUrl);
 
-      // Hapus juga dari Firestore
+      // Hapus dari Firestore
       await FirebaseFirestore.instance.collection('user').doc(userId).update({
         'foto_profil': FieldValue.delete(),
       });
