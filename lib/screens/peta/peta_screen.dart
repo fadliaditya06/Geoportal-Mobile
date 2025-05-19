@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:geoportal_mobile/screens/peta/detail_peta_screen.dart';
 import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_screen.dart';
 import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_admin_screen.dart';
+import 'package:geoportal_mobile/widget/custom_snackbar.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/services.dart';
@@ -217,15 +218,10 @@ class PetaScreenState extends State<PetaScreen> {
                                             '${point.latitude}, ${point.longitude}'),
                                   );
                                   // Snackbar untuk menampilkan data koordinat yang dipilih
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      backgroundColor: const Color(0xFF92E3A9),
-                                      content: Text(
-                                        'Koordinat disalin: ${point.latitude}, ${point.longitude}',
-                                        style: const TextStyle(
-                                            color: Colors.black),
-                                      ),
-                                    ),
+                                  showCustomSnackbar(
+                                    context: context,
+                                    message: 'Koordinat disalin: ${point.latitude}, ${point.longitude}',
+                                    isSuccess: true,
                                   );
                                 },
                               ),
