@@ -15,16 +15,19 @@ class UbahProfilScreen extends StatefulWidget {
 }
 
 class _UbahProfilScreenState extends State<UbahProfilScreen> {
-  final UbahProfilController _controller = UbahProfilController();
+  final UbahProfilController controller = UbahProfilController();
 
   // Variabel untuk menyimpan URL gambar yang telah diupload
   String? _uploadedImageUrl;
   bool _isUploading = false;
+  bool isLoading = false;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     _loadUserProfilePhoto();
+    controller.loadUserData();
   }
 
   // Fungsi untuk memuat foto profil dari Firestore dan menyimpannya di SharedPreferences
@@ -33,7 +36,8 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
     if (userId == null) return;
 
     // Ambil dokumen user dari Firestore
-    final doc = await FirebaseFirestore.instance.collection('user').doc(userId).get();
+    final doc =
+        await FirebaseFirestore.instance.collection('user').doc(userId).get();
     final photoUrl = doc.data()?['foto_profil'] as String?;
 
     final prefs = await SharedPreferences.getInstance();
@@ -107,7 +111,7 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
       _isUploading = true;
     });
     try {
-      final url = await _controller.pickAndUploadImage(source);
+      final url = await controller.pickAndUploadImage(source);
       if (url != null) {
         setState(() {
           _uploadedImageUrl = url;
@@ -137,8 +141,7 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
     try {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId != null) {
-        final success =
-            await _controller.deleteProfileImage(_uploadedImageUrl!);
+        final success = await controller.deleteProfileImage(_uploadedImageUrl!);
         if (success) {
           await FirebaseFirestore.instance
               .collection('user')
@@ -257,64 +260,116 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                 ),
               const SizedBox(height: 30),
               // Box Container Profil
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                  width: double.infinity,
-                  padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(30)),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildTitle("Email"),
-                        _buildTextField(Icons.email_outlined, "Email",
-                            isEmail: true),
-                        const SizedBox(height: 20),
-                        _buildTitle("Nama Lengkap"),
-                        _buildTextField(Icons.person_outline, "Nama Lengkap"),
-                        const SizedBox(height: 20),
-                        _buildTitle("Alamat"),
-                        _buildTextField(Icons.home_outlined, "Alamat"),
-                        const SizedBox(height: 40),
-                        // Tombol Simpan
-                        Center(
-                          child: SizedBox(
-                            width: 150,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF358666),
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 15),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(40),
+              Form(
+                key: _formKey,
+                child: Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                    width: double.infinity,
+                    padding:
+                        const EdgeInsets.only(top: 40, left: 20, right: 20),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(30)),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildTitle("Email"),
+                          _buildTextField(
+                            Icons.email_outlined,
+                            "Email",
+                            controller: controller.emailController,
+                            isEmail: true,
+                            readOnly: true,
+                            validator: (value) {
+                              if (value != null && value.isNotEmpty) {
+                                final emailRegex =
+                                    RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                                if (!emailRegex.hasMatch(value)) {
+                                  return 'Format email tidak valid';
+                                }
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          _buildTitle("Nama Lengkap"),
+                          _buildTextField(
+                            Icons.person_outline,
+                            "Nama Lengkap",
+                            controller: controller.namaController,
+                          ),
+                          const SizedBox(height: 20),
+                          _buildTitle("Alamat"),
+                          _buildTextField(
+                            Icons.home_outlined, 
+                            "Alamat",
+                            controller: controller.alamatController),
+                          const SizedBox(height: 40),
+                          // Tombol Simpan
+                          Center(
+                            child: SizedBox(
+                              width: 150,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF358666),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 15),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(40),
+                                  ),
                                 ),
-                              ),
-                              onPressed: () {
-                                showCustomSnackbar(
-                                  context: context,
-                                  message: 'Data profil berhasil diubah',
-                                  isSuccess: true,
-                                );
-                                Navigator.pop(context);
-                              },
-                              child: const Text(
-                                'Simpan',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
+                                onPressed: () async {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  final isSuccess = await controller.ubahDataProfil();
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  if (isSuccess) {
+                                    showCustomSnackbar(
+                                      context: context,
+                                      message: 'Profil berhasil diubah',
+                                      isSuccess: true,
+                                    );
+                                    Navigator.pop(context);
+                                  } else {
+                                    showCustomSnackbar(
+                                      context: context,
+                                      message: 'Profil gagal diubah',
+                                      isSuccess: false,
+                                    );
+                                  }
+                                },
+                                child: isLoading
+                                    ? const SizedBox(
+                                        height: 30,
+                                        width: 30,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 4,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  Colors.white),
+                                        ),
+                                      )
+                                    : const Text(
+                                        'Simpan',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 30),
-                      ],
+                          const SizedBox(height: 30),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -341,9 +396,15 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
   }
 
   // Widget untuk menampilkan TextFormField
-  Widget _buildTextField(IconData icon, String label, {bool isEmail = false}) {
+  Widget _buildTextField(IconData icon, String label,
+      {required TextEditingController controller,
+      bool isEmail = false,
+      bool readOnly = false,
+      String? Function(String?)? validator}) {
     return TextFormField(
+      controller: controller,
       keyboardType: isEmail ? TextInputType.emailAddress : TextInputType.text,
+      readOnly: readOnly,
       decoration: InputDecoration(
         prefixIcon: Icon(icon, color: Colors.black),
         labelText: label,
@@ -363,6 +424,7 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
           borderSide: const BorderSide(color: Colors.black, width: 1),
         ),
       ),
+      validator: validator,
     );
   }
 }
