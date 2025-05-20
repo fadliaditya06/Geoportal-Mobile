@@ -66,7 +66,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
             ],
           ),
         ),
-        
+
         // Menggunakan FutureBuilder untuk mengambil data user dari Firestore
         child: FutureBuilder<Map<String, dynamic>?>(
           future: userDataFuture,
@@ -78,7 +78,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
               return Center(
                   child: Text('Terjadi kesalahan: ${snapshot.error}'));
             }
-           
+
             // Jika data kosong atau dokumen user tidak ditemukan
             final data = snapshot.data;
             if (data == null) {
@@ -130,6 +130,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     ),
                   ),
                   const SizedBox(height: 30),
+                  // Card Pengaturan Akun dan Informasi Lainnya
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 10.0),
                     padding: const EdgeInsets.symmetric(
@@ -139,8 +140,17 @@ class _ProfilScreenState extends State<ProfilScreen> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        const Text(
+                          "Pengaturan Akun",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
                         _buildProfilMenu(
                           icon: Icons.person_outlined,
                           title: "Lihat Profil",
@@ -159,6 +169,17 @@ class _ProfilScreenState extends State<ProfilScreen> {
                           onTap: () =>
                               _navigateTo(context, const UbahKataSandiScreen()),
                         ),
+                        const SizedBox(height: 10),
+                        const Divider(thickness: 1, color: Colors.black),
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Informasi Lainnya",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
                         _buildProfilMenu(
                           icon: Icons.info_outline,
                           title: "Syarat & Ketentuan",
@@ -167,39 +188,42 @@ class _ProfilScreenState extends State<ProfilScreen> {
                         ),
                         const SizedBox(height: 30),
                         // Tombol Logout
-                        SizedBox(
-                          width: 150,
-                          child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF358666),
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40),
+                        Center(
+                          child: SizedBox(
+                            width: 150,
+                            child: ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF358666),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
                               ),
-                            ),
-                            onPressed: () {
-                              showLogoutDialog(
-                                context: context,
-                                onConfirm: () async {
-                                  await controller.logout(context);
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const LoginScreen()),
-                                    (route) => false,
-                                  );
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.logout,
-                                color: Colors.white, size: 20),
-                            label: const Text(
-                              'Logout',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
+                              onPressed: () {
+                                showLogoutDialog(
+                                  context: context,
+                                  onConfirm: () async {
+                                    await controller.logout(context);
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginScreen()),
+                                      (route) => false,
+                                    );
+                                  },
+                                );
+                              },
+                              icon: const Icon(Icons.logout,
+                                  color: Colors.white, size: 20),
+                              label: const Text(
+                                'Logout',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
