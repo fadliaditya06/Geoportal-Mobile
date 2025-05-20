@@ -52,7 +52,7 @@ class UbahKataSandiController {
 
       showCustomSnackbar(
         context: context,
-        message: 'Ubah kata sandi berhasil',
+        message: 'Kata sandi berhasil diubah',
         isSuccess: true,
       );
       Navigator.pop(context);
