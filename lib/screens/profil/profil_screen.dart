@@ -45,7 +45,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
       appBar: AppBar(
         title: const Text(
           "Profil",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
         ),
         backgroundColor: const Color(0xFFB0E1C6),
         elevation: 0,
@@ -100,7 +100,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     decoration: const BoxDecoration(
                       color: Color(0xFFB0E1C6),
                       borderRadius:
-                          BorderRadius.vertical(bottom: Radius.circular(70)),
+                          BorderRadius.vertical(bottom: Radius.circular(30)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
