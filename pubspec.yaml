@@ -26,6 +26,7 @@ dependencies:
   path: ^1.9.1
   supabase_flutter: ^2.9.0
   shared_preferences: ^2.5.3
+  smooth_page_indicator: ^1.2.1
 
 dev_dependencies:
   flutter_test:

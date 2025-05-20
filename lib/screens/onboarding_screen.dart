@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geoportal_mobile/screens/auth/login_screen.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnBoardingPage extends StatefulWidget {
   const OnBoardingPage({super.key});
@@ -87,21 +88,17 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                 ),
               ),
               // Indikator Bar
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(3, (index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: index <= _currentPage
-                          ? const Color(0xFF358666)
-                          : Colors.grey,
-                    ),
-                  );
-                }),
+              Center(
+                child: SmoothPageIndicator(
+                  controller: _pageController,
+                  count: 3,
+                  effect: WormEffect(
+                    dotHeight: 10,
+                    dotWidth: 10,
+                    activeDotColor: const Color(0xFF358666),
+                    dotColor: Colors.grey.shade400,
+                  ),
+                ),
               ),
               const SizedBox(height: 24),
               // Tombol navigasi
@@ -151,7 +148,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                     child: Text(
                       _currentPage == 2 ? 'Mulai Sekarang' : 'Selanjutnya',
                       style: TextStyle(
-                        color: _currentPage == 2 ? Colors.black : Colors.white),
+                          color: _currentPage == 2 ? Colors.black : Colors.white),
                     ),
                   ),
                 ],
@@ -200,9 +197,9 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
             child: Text(
               description,
               style: const TextStyle(
-                fontSize: 15,
-                color: Colors.black,
-                fontWeight: FontWeight.w400
+                  fontSize: 15,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400
               ),
             ),
           ),
@@ -273,7 +270,10 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
               ),
               child: Text(
                 description,
-                style: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w400),
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400),
               ),
             ),
           ),
