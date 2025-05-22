@@ -36,6 +36,7 @@ class PetaScreenState extends State<PetaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: Center(
           child: Image.asset(
@@ -47,6 +48,7 @@ class PetaScreenState extends State<PetaScreen> {
           "Geoportal",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
         ),
+        backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
         automaticallyImplyLeading: false,

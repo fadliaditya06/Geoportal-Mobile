@@ -63,11 +63,13 @@ class BerandaScreenState extends State<BerandaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text(
             "Geoportal",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
+          backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
           automaticallyImplyLeading: false,
