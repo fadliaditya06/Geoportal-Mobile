@@ -16,6 +16,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
   // Variabel untuk menyimpan koordinat lokasi yang dipilih
   LatLng? _pickedLocation;
 
+  bool _showCopyrightOSM = false;
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
 
@@ -79,7 +80,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
           // Tombol Search dan Tambah Koordinat
           Positioned(
             left: 10,
-            bottom: 30,
+            bottom: 50,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -178,43 +179,67 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
           // Link Copyright OSM
           Positioned(
             bottom: 4,
-            left: 15,
-            child: GestureDetector(
-              onTap: () async {
-                const url = 'https://openstreetmap.org/copyright';
-                final uri = Uri.parse(url);
-                try {
-                  final bool launched = await launchUrl(
-                    uri,
-                    mode: LaunchMode.externalApplication,
-                  );
-                  if (!launched) {
-                    showCustomSnackbar(
-                      context: context,
-                      message: 'Tidak dapat membuka tautan',
-                      isSuccess: false,
-                    );
-                  }
-                } catch (e) {
-                  showCustomSnackbar(
-                    context: context,
-                    message: 'Terjadi kesalahan saat membuka tautan',
-                    isSuccess: false,
-                  );
-                }
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                color: Colors.white,
-                child: const Text(
-                  'OpenStreetMap Contributors',
-                  style: TextStyle(
-                    fontSize: 12,
-                    decoration: TextDecoration.underline,
-                    color: Colors.blue,
+            left: 12,
+            child: Row(
+              children: [
+                SizedBox(
+                  height: 45,
+                  width: 45,
+                  child: RawMaterialButton(
+                    onPressed: () {
+                      setState(() {
+                        _showCopyrightOSM = !_showCopyrightOSM;
+                      });
+                    },
+                    shape: const CircleBorder(),
+                    fillColor: Colors.white,
+                    elevation: 2,
+                    child: const Icon(
+                      Icons.copyright,
+                      size: 20,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
-              ),
+                if (_showCopyrightOSM) const SizedBox(width: 5),
+                if (_showCopyrightOSM)
+                  GestureDetector(
+                    onTap: () async {
+                      final uri = Uri.parse('https://openstreetmap.org/copyright');
+                      try {
+                        final bool launched = await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                        if (!launched) {
+                          showCustomSnackbar(
+                            context: context,
+                            message: 'Tidak dapat membuka tautan',
+                            isSuccess: false,
+                          );
+                        }
+                      } catch (e) {
+                        showCustomSnackbar(
+                          context: context,
+                          message: 'Terjadi kesalahan saat membuka tautan',
+                          isSuccess: false,
+                        );
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      color: Colors.white,
+                      child: const Text(
+                        'OpenStreetMap Contributors',
+                        style: TextStyle(
+                          fontSize: 12,
+                          decoration: TextDecoration.underline,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ],
