@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geoportal_mobile/widget/custom_snackbar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailPetaScreen extends StatefulWidget {
   const DetailPetaScreen({super.key});
@@ -77,8 +78,8 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
 
           // Tombol Search dan Tambah Koordinat
           Positioned(
-            left: 16,
-            bottom: 16,
+            left: 10,
+            bottom: 30,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -101,9 +102,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                         child: Row(
                           children: [
                             const Icon(Icons.search, color: Colors.black),
-
                             const SizedBox(width: 8),
-
                             // Tombol Search Bar
                             Expanded(
                               child: TextField(
@@ -130,8 +129,8 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                       )
                     // Tombol Mini Search Bar
                     : SizedBox(
-                        height: 55,
-                        width: 55,
+                        height: 45,
+                        width: 45,
                         child: RawMaterialButton(
                           onPressed: () {
                             setState(() {
@@ -145,7 +144,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                               size: 20, color: Colors.black),
                         ),
                       ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 8),
 
                 // Tombol Tambah Koordinat
                 ElevatedButton.icon(
@@ -153,13 +152,13 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                   icon: const Icon(
                     Icons.add,
                     color: Color(0xFF358666),
-                    size: 20,
+                    size: 18,
                   ),
                   label: const Text(
                     'Tambah Koordinat',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 16,
+                      fontSize: 14,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
@@ -171,7 +170,51 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                             color: Color(0xFF358666), width: 1)),
                   ),
                 ),
+                const SizedBox(height: 8),
               ],
+            ),
+          ),
+
+          // Link Copyright OSM
+          Positioned(
+            bottom: 4,
+            left: 15,
+            child: GestureDetector(
+              onTap: () async {
+                const url = 'https://openstreetmap.org/copyright';
+                final uri = Uri.parse(url);
+                try {
+                  final bool launched = await launchUrl(
+                    uri,
+                    mode: LaunchMode.externalApplication,
+                  );
+                  if (!launched) {
+                    showCustomSnackbar(
+                      context: context,
+                      message: 'Tidak dapat membuka tautan',
+                      isSuccess: false,
+                    );
+                  }
+                } catch (e) {
+                  showCustomSnackbar(
+                    context: context,
+                    message: 'Terjadi kesalahan saat membuka tautan',
+                    isSuccess: false,
+                  );
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                color: Colors.white,
+                child: const Text(
+                  'OpenStreetMap Contributors',
+                  style: TextStyle(
+                    fontSize: 12,
+                    decoration: TextDecoration.underline,
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
             ),
           ),
         ],
