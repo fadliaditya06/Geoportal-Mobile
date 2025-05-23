@@ -4,9 +4,12 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geoportal_mobile/widget/custom_snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class DetailPetaScreen extends StatefulWidget {
-  const DetailPetaScreen({super.key});
+  final bool isKonfirmasiKoordinat;
+
+  const DetailPetaScreen({super.key, this.isKonfirmasiKoordinat = false});
 
   @override
   State<DetailPetaScreen> createState() => _DetailPetaScreenState();
@@ -33,12 +36,28 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
       ),
     );
 
-    // Snackbar untuk menampilkan data koordinat yang dipilih
-    showCustomSnackbar(
-      context: context,
-      message: 'Koordinat disalin: ${point.latitude}, ${point.longitude}',
-      isSuccess: true,
-    );
+    // // Snackbar untuk menampilkan data koordinat yang dipilih
+    // showCustomSnackbar(
+    //   context: context,
+    //   message: 'Koordinat disalin: ${point.latitude}, ${point.longitude}',
+    //   isSuccess: true,
+    // );
+  }
+
+  // Fungsi untuk menyimpan lokasi dan kembali ke layar sebelumnya
+  void _saveLocation() {
+    if (_pickedLocation != null) {
+      Navigator.pop(
+        context,
+        '${_pickedLocation!.latitude},${_pickedLocation!.longitude}',
+      );
+    } else {
+      showCustomSnackbar(
+        context: context,
+        message: 'Pilih lokasi terlebih dahulu',
+        isSuccess: false,
+      );
+    }
   }
 
   @override
@@ -46,18 +65,17 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
     return Scaffold(
       body: Stack(
         children: [
+          // Peta
           FlutterMap(
-            // Lokasi koordinat awal peta
             options: MapOptions(
               initialCenter: const LatLng(1.13, 104.0531),
               initialZoom: 12.0,
-              onTap: (tapPosition, point) {
-                _selectLocation(point);
-              },
+              onTap: (tapPosition, point) => _selectLocation(point),
             ),
             children: [
               TileLayer(
-                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                urlTemplate:
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 subdomains: const ['a', 'b', 'c'],
               ),
               // Menampilkan marker jika lokasi telah dipilih
@@ -66,6 +84,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                   markers: [
                     Marker(
                       point: _pickedLocation!,
+                      rotate: false,
                       child: const Icon(
                         Icons.location_on,
                         color: Colors.red,
@@ -80,7 +99,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
           // Tombol Search dan Tambah Koordinat
           Positioned(
             left: 10,
-            bottom: 50,
+            bottom: 100,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -88,7 +107,9 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                     ? Container(
                         width: 330,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(30),
@@ -104,7 +125,6 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                           children: [
                             const Icon(Icons.search, color: Colors.black),
                             const SizedBox(width: 8),
-                            // Tombol Search Bar
                             Expanded(
                               child: TextField(
                                 controller: _searchController,
@@ -116,8 +136,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                               ),
                             ),
                             IconButton(
-                              icon:
-                                  const Icon(Icons.close, color: Colors.black),
+                              icon: const Icon(Icons.close, color: Colors.black),
                               onPressed: () {
                                 setState(() {
                                   _isSearching = false;
@@ -128,7 +147,6 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                           ],
                         ),
                       )
-                    // Tombol Mini Search Bar
                     : SizedBox(
                         height: 45,
                         width: 45,
@@ -141,15 +159,20 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                           shape: const CircleBorder(),
                           fillColor: Colors.white,
                           elevation: 2,
-                          child: const Icon(Icons.search,
-                              size: 20, color: Colors.black),
+                          child: const Icon(
+                            Icons.search,
+                            size: 20,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                 const SizedBox(height: 8),
 
                 // Tombol Tambah Koordinat
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/tambah-data');
+                  },
                   icon: const Icon(
                     Icons.add,
                     color: Color(0xFF358666),
@@ -166,9 +189,8 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                     backgroundColor: const Color(0xFF92E3A9),
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        side: const BorderSide(
-                            color: Color(0xFF358666), width: 1)),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -178,7 +200,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
 
           // Link Copyright OSM
           Positioned(
-            bottom: 4,
+            bottom: 55,
             left: 12,
             child: Row(
               children: [
@@ -205,9 +227,10 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                 if (_showCopyrightOSM)
                   GestureDetector(
                     onTap: () async {
-                      final uri = Uri.parse('https://openstreetmap.org/copyright');
+                      final uri =
+                          Uri.parse('https://openstreetmap.org/copyright');
                       try {
-                        final bool launched = await launchUrl(
+                        final launched = await launchUrl(
                           uri,
                           mode: LaunchMode.externalApplication,
                         );
@@ -218,7 +241,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                             isSuccess: false,
                           );
                         }
-                      } catch (e) {
+                      } catch (_) {
                         showCustomSnackbar(
                           context: context,
                           message: 'Terjadi kesalahan saat membuka tautan',
@@ -227,7 +250,10 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                       }
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 4,
+                      ),
                       color: Colors.white,
                       child: const Text(
                         'OpenStreetMap Contributors',
@@ -240,6 +266,43 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                     ),
                   ),
               ],
+            ),
+          ),
+
+          // Tombol Konfirmasi Koordinat
+          Positioned(
+            bottom: 5,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: SizedBox(
+                width: 200,
+                child: ElevatedButton.icon(
+                  onPressed: widget.isKonfirmasiKoordinat ? null : _saveLocation,
+                  icon: const Icon(
+                    Icons.check,
+                    color: Color(0xFF358666),
+                  ),
+                  label: Text(
+                    'Konfirmasi Koordinat',
+                    style: GoogleFonts.poppins(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: widget.isKonfirmasiKoordinat
+                        ? Colors.grey
+                        : const Color(0xFF92E3A9),
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],

@@ -5,7 +5,9 @@ import 'package:geoportal_mobile/screens/auth/login_screen.dart';
 import 'package:geoportal_mobile/screens/auth/register_screen.dart';
 import 'package:geoportal_mobile/screens/peta/detail_konfirmasi_data_screen.dart';
 import 'package:geoportal_mobile/screens/peta/peta_screen.dart';
+import 'package:geoportal_mobile/screens/peta/tambah_data_screen.dart';
 import 'package:geoportal_mobile/screens/profil/profil_screen.dart';
+import 'package:geoportal_mobile/screens/splash_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -14,6 +16,7 @@ import 'package:geoportal_mobile/config/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,13 +49,24 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('id'), 
+        Locale('en'), 
+      ],
       // Daftar Routes
       routes: {
-        '/': (context) => const OnBoardingPage(),
+        '/': (context) => const SplashScreen(),
+        '/onboarding': (context) => const OnBoardingPage(),
         '/main': (context) => const MainPage(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/detail-konfirmasi': (context) => const DetailKonfirmasiDataScreen(),
+        '/tambah-data': (context) => const TambahDataScreen(),
       },
     );
   }
