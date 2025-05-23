@@ -28,7 +28,7 @@ class PetaScreenState extends State<PetaScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const DetailPetaScreen(),
+        builder: (context) => const DetailPetaScreen(isKonfirmasiKoordinat: true),
       ),
     );
   }
