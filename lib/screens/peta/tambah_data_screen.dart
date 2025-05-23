@@ -40,7 +40,6 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFB0E1C6),
       appBar: AppBar(
         backgroundColor: const Color(0xFFB0E1C6),
         elevation: 0,
@@ -62,133 +61,152 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 21, 16, 8),
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 13, 16, 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0.0, 0.36, 0.76, 1.0],
+            colors: [
+              Color(0xFFB0E1C6),
+              Color(0xFFFFFFFF),
+              Color(0xFF72B396),
+              Color(0xFF358666),
+            ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildSectionTitle('Data Umum'),
-              buildLabel('Judul'),
-              TextFormField(decoration: buildInputDecoration('Judul')),
-              const SizedBox(height: 10),
-              buildLabel('Pemilik'),
-              TextFormField(decoration: buildInputDecoration('Pemilik')),
-              const SizedBox(height: 10),
-              buildLabel('Publikasi'),
-              TextFormField(
-                controller: publikasiController,
-                readOnly: true,
-                decoration: buildInputDecoration('Publikasi'),
-                onTap: () => _selectDate(context),
-              ),
-              const SizedBox(height: 10),
-              buildLabel('Jenis Sumber Daya'),
-              TextFormField(decoration: buildInputDecoration('Jenis Sumber Daya')),
-              const SizedBox(height: 10),
-              buildLabel('Sumber'),
-              TextFormField(decoration: buildInputDecoration('Sumber')),
-              const SizedBox(height: 10),
-              buildLabel('Foto'),
-              GestureDetector(
-                onTap: () {
-                  //
-                },
-                child: Container(
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 175, 223, 193),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: const Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.upload),
-                        SizedBox(width: 8),
-                        Text('Tambah Foto', style: TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                  ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 21, 16, 8),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(16, 13, 16, 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildSectionTitle('Data Umum'),
+                buildLabel('Judul'),
+                TextFormField(decoration: buildInputDecoration('Judul')),
+                const SizedBox(height: 10),
+                buildLabel('Pemilik'),
+                TextFormField(decoration: buildInputDecoration('Pemilik')),
+                const SizedBox(height: 10),
+                buildLabel('Publikasi'),
+                TextFormField(
+                  controller: publikasiController,
+                  readOnly: true,
+                  decoration: buildInputDecoration('Publikasi'),
+                  onTap: () => _selectDate(context),
                 ),
-              ),
-              const SizedBox(height: 40),
-              buildSectionTitle('Data Spasial'),
-              buildLabel('Sistem Proyek'),
-              TextFormField(decoration: buildInputDecoration('Sistem Proyek')),
-              const SizedBox(height: 10),
-              buildLabel('Titik Koordinat'),
-              Stack(
-                alignment: Alignment.centerRight,
-                children: [
-                  TextFormField(
-                    controller: titikKoordinatController,
-                    readOnly: true,
-                    decoration: buildInputDecoration('Titik Koordinat').copyWith(
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.map),
-                        onPressed: () async {
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const DetailPetaScreen(),
-                            ),
-                          );
-                          if (result != null && result is String) {
-                            setState(() {
-                              titikKoordinatController.text = result;
-                            });
-                          }
-                        },
+                const SizedBox(height: 10),
+                buildLabel('Jenis Sumber Daya'),
+                TextFormField(decoration: buildInputDecoration('Jenis Sumber Daya')),
+                const SizedBox(height: 10),
+                buildLabel('Sumber'),
+                TextFormField(decoration: buildInputDecoration('Sumber')),
+                const SizedBox(height: 10),
+                buildLabel('Foto'),
+                GestureDetector(
+                  onTap: () {
+                    //
+                  },
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFB0E1C6),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: const Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.upload),
+                          SizedBox(width: 8),
+                          Text('Tambah Foto', style: TextStyle(fontSize: 16)),
+                        ],
                       ),
                     ),
-                    onTap: () async {
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const DetailPetaScreen(
-                            isKonfirmasiKoordinat: false,
-                          ),
-                        ),
-                      );
-                      if (result != null && result is String) {
-                        setState(() {
-                          titikKoordinatController.text = result;
-                        });
-                      }
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Tombol Simpan
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // 
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 143, 225, 167),
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                    elevation: 10,
-                    shadowColor: const Color.fromARGB(255, 133, 129, 129),
-                  ),
-                  child: const Text(
-                    'Simpan',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 40),
+                buildSectionTitle('Data Spasial'),
+                buildLabel('Sistem Proyek'),
+                TextFormField(decoration: buildInputDecoration('Sistem Proyek')),
+                const SizedBox(height: 10),
+                buildLabel('Titik Koordinat'),
+                Stack(
+                  alignment: Alignment.centerRight,
+                  children: [
+                    TextFormField(
+                      controller: titikKoordinatController,
+                      readOnly: true,
+                      decoration: buildInputDecoration('Titik Koordinat').copyWith(
+                        suffixIcon: IconButton(
+                          icon: const Icon(
+                            Icons.map,
+                            color: Colors.black,
+                          ),
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const DetailPetaScreen(),
+                              ),
+                            );
+                            if (result != null && result is String) {
+                              setState(() {
+                                titikKoordinatController.text = result;
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                      onTap: () async {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const DetailPetaScreen(
+                              isKonfirmasiKoordinat: false,
+                            ),
+                          ),
+                        );
+                        if (result != null && result is String) {
+                          setState(() {
+                            titikKoordinatController.text = result;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                // Tombol Simpan
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      //
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF92E3A9),
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      elevation: 10,
+                      shadowColor: const Color.fromARGB(255, 133, 129, 129),
+                    ),
+                    child: const Text(
+                      'Simpan',
+                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -207,11 +225,11 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(30.0),
-        borderSide: const BorderSide(color: Colors.black, width: 1),
+        borderSide: const BorderSide(color: Color(0xFFB0E1C6), width: 1),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(30.0),
-        borderSide: const BorderSide(color: Colors.black, width: 1),
+        borderSide: const BorderSide(color: Color(0xFFB0E1C6), width: 1),
       ),
     );
   }
@@ -227,7 +245,7 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
     );
   }
 
-  // Fungsi untuk menampilkan judul  
+  // Fungsi untuk menampilkan judul
   Widget buildSectionTitle(String title) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
