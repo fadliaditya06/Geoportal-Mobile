@@ -9,9 +9,10 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter/services.dart';
 
 class PetaScreen extends StatefulWidget {
+  const PetaScreen({super.key, this.role});
+
   // Menyimpan peran user
   final String? role;
-  const PetaScreen({super.key, this.role});
 
   @override
   PetaScreenState createState() => PetaScreenState();
@@ -180,7 +181,7 @@ class PetaScreenState extends State<PetaScreen> {
               Container(
                 decoration: BoxDecoration(
                   color: const Color(0xFFB0E1C6),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
@@ -194,8 +195,8 @@ class PetaScreenState extends State<PetaScreen> {
                   children: [
                     ClipRRect(
                       borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
                       ),
                       child: SizedBox(
                         height: 250,
@@ -207,7 +208,7 @@ class PetaScreenState extends State<PetaScreen> {
                               options: MapOptions(
                                 // Lokasi koordinat awal peta
                                 initialCenter: const LatLng(1.13, 104.0531),
-                                initialZoom: 13.0,
+                                initialZoom: 15.0,
                                 onTap: (tapPosition, point) {
                                   // Fungsi untuk menentukan koordinat saat peta di klik
                                   setState(() {
@@ -216,8 +217,7 @@ class PetaScreenState extends State<PetaScreen> {
                                   // Salin koordinat yang dipilih
                                   Clipboard.setData(
                                     ClipboardData(
-                                        text:
-                                            '${point.latitude}, ${point.longitude}'),
+                                        text:'${point.latitude}, ${point.longitude}'),
                                   );
                                   // Snackbar untuk menampilkan data koordinat yang dipilih
                                   showCustomSnackbar(
@@ -280,7 +280,7 @@ class PetaScreenState extends State<PetaScreen> {
                                   'Peta Batam',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w600,
                                     fontFamily: 'Poppins',
                                   ),
                                 ),
@@ -291,59 +291,63 @@ class PetaScreenState extends State<PetaScreen> {
                                     fontSize: 13,
                                     color: Colors.black87,
                                     fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          // Tombol Download
+                          // Tombol Download dan View
                           Padding(
                             padding: const EdgeInsets.only(top: 18.0),
                             child: Row(
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF92E3A9),
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: Colors.black,
-                                      width: 1,
+                                // Tombol Download
+                                Material(
+                                  elevation: 4,
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.transparent,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF92E3A9),
+                                      borderRadius: BorderRadius.circular(20),
                                     ),
-                                  ),
-                                  width: 50,
-                                  height: 35,
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.download,
-                                      size: 18,
-                                      color: Colors.black,
+                                    width: 50,
+                                    height: 35,
+                                    child: IconButton(
+                                      icon: const Icon(
+                                        Icons.download,
+                                        size: 18,
+                                        color: Colors.black,
+                                      ),
+                                      onPressed: () {
+                                        // 
+                                      },
                                     ),
-                                    onPressed: () {
-                                      //
-                                    },
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 // Tombol View
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF92E3A9),
-                                    borderRadius: BorderRadius.circular(30),
-                                    border: Border.all(
-                                      color: Colors.black,
-                                      width: 1,
+                                Material(
+                                  elevation: 4,
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.transparent,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF92E3A9),
+                                      borderRadius: BorderRadius.circular(20),
                                     ),
-                                  ),
-                                  width: 70,
-                                  height: 35,
-                                  child: TextButton(
-                                    onPressed: _goToFullScreen,
-                                    child: const Text(
-                                      'View',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12,
-                                        fontFamily: 'Poppins',
+                                    width: 70,
+                                    height: 35,
+                                    child: TextButton(
+                                      onPressed: _goToFullScreen,
+                                      child: const Text(
+                                        'View',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -353,7 +357,7 @@ class PetaScreenState extends State<PetaScreen> {
                           ),
                         ],
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),

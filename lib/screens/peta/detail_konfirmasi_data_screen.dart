@@ -9,9 +9,8 @@ class DetailKonfirmasiDataScreen extends StatefulWidget {
       DetailKonfirmasiDataScreenState();
 }
 
-class DetailKonfirmasiDataScreenState
-    extends State<DetailKonfirmasiDataScreen> {
-      // Menyimpan status visibilitas gambar (tampil atau tidak)
+class DetailKonfirmasiDataScreenState extends State<DetailKonfirmasiDataScreen> {
+  // Menyimpan status visibilitas gambar (tampil atau tidak)
   final Map<String, bool> _imageVisibilityMap = {};
 
   @override
@@ -216,19 +215,11 @@ class DetailKonfirmasiDataScreenState
                                     const Divider(color: Colors.black),
                                     _buildInfoRow('Publikasi', '10 April 2024'),
                                     const Divider(color: Colors.black),
-                                    _buildInfoRow('Ditambahkan ke Katalog',
-                                        '10 April 2024'),
-                                    const Divider(color: Colors.black),
-                                    _buildInfoRow(
-                                        'Modifikasi Terakhir', '10 April 2024'),
-                                    const Divider(color: Colors.black),
                                     _buildInfoRow('Jenis Sumber Daya', '-'),
                                     const Divider(color: Colors.black),
                                     _buildInfoRow('Sumber', 'Lokal'),
                                     const Divider(color: Colors.black),
-                                    _buildInfoRow('Informasi Tambahan', '-'),
-                                    const Divider(color: Colors.black),
-                                    _buildInfoRow('Gambar',
+                                    _buildInfoRow('Foto',
                                         'assets/images/one-mall-batam.jpeg'),
                                     const Divider(color: Colors.black),
                                   ],
@@ -295,6 +286,7 @@ class DetailKonfirmasiDataScreenState
       ),
     );
   }
+
   // Fungsi untuk menampilkan informasi data
   Widget _buildInfoRow(String label, String value) {
     // Memeriksa apakah value memiliki ekstensi gambar (png, jpg, jpeg)
@@ -378,6 +370,7 @@ class DetailKonfirmasiDataScreenState
       );
     }
   }
+
   // Fungsi untuk membuat icon disetujui dan ditolak
   Widget _buildActionIcon(IconData icon) {
     return Container(
