@@ -5,7 +5,7 @@ import 'package:geoportal_mobile/controllers/ubah_profil_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:geoportal_mobile/widget/custom_snackbar.dart';
+import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
 
 class UbahProfilScreen extends StatefulWidget {
   const UbahProfilScreen({super.key});

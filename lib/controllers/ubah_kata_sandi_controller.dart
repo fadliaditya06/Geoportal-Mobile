@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:geoportal_mobile/widget/custom_snackbar.dart';
+import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
 
 class UbahKataSandiController {
   final TextEditingController kataSandiLamaController = TextEditingController();
