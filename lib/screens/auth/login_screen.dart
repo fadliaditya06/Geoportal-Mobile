@@ -14,7 +14,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final LoginController controller = LoginController();
   bool isLoading = false;
   bool _isObscure = true;
-  bool _rememberMe = false;
   String? selectedRole;
   final _formKey = GlobalKey<FormState>();
 
@@ -39,13 +38,14 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           Column(
             children: [
-              const SizedBox(height: 70),
+              const SizedBox(height: 20),
               Center(
                 child: Column(
                   children: [
                     Image.asset(
                       'assets/images/icon/login.png',
                       width: 300,
+                      height: 300,
                     ),
                   ],
                 ),
@@ -146,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           onChanged: (value) {
                             setState(() {
                               selectedRole = value;
-                              controller.selectedRole = value; 
+                              controller.selectedRole = value;
                             });
                           },
                           validator: (value) {
@@ -269,28 +269,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             return null;
                           },
                         ),
-                        // Checkbox "Ingat Saya"
-                        Row(
-                          children: [
-                            Checkbox(
-                              value: _rememberMe,
-                              onChanged: (value) {
-                                setState(() {
-                                  _rememberMe = value!;
-                                });
-                              },
-                              activeColor: const Color(0xFF358666),
-                            ),
-                            const Text(
-                              'Ingat Saya',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xFF358666),
-                              ),
-                            ),
-                          ],
-                        ),
                         const SizedBox(height: 20),
                         // Tombol Masuk
                         SizedBox(
@@ -314,7 +292,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         setState(() {
                                           isLoading = true;
                                         });
-                                        await controller.login(context); 
+                                        await controller.login(context);
                                         setState(() {
                                           isLoading = false;
                                         });
