@@ -180,7 +180,7 @@ class _ProfilItem extends StatelessWidget {
             ),
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(
-                vertical: 10,
+                vertical: 5,
                 horizontal: 20,
               ),
               leading: Icon(icon, color: Colors.black),

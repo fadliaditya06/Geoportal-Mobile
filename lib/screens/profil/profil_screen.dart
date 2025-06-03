@@ -255,9 +255,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
       ),
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
         leading: Icon(icon, color: Colors.black),
+        trailing:
+            const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 15),
         title: Text(
           title,
           style: const TextStyle(
