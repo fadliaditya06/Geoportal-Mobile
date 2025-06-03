@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
+import 'package:geoportal_mobile/models/user_model.dart';
 
 class RegisterController {
   final TextEditingController emailController = TextEditingController();
@@ -24,7 +25,8 @@ class RegisterController {
       );
 
       // Simpan data ke Firestore
-      await _storeUserData(userCredential.user!);
+      final user = userCredential.user!;
+      await _storeUserData(user);
 
       // Fungsi untuk menampilkan snackbar dengan pesan sukses
       if (!context.mounted) return;
@@ -55,15 +57,17 @@ class RegisterController {
 
   // Fungsi untuk menyimpan data user ke Firestore
   Future<void> _storeUserData(User user) async {
-    await _firestore.collection('user').doc(user.uid).set({
-      'uid': user.uid,
-      'email': emailController.text.trim(),
-      'nama': namaController.text.trim(),
-      'alamat': alamatController.text.trim(),
-      'peran': selectedRole,
-      'foto_profil': '',
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+    final userModel = UserModel(
+      uid: user.uid,
+      email: user.email ?? '',
+      nama: namaController.text.trim(),
+      alamat: alamatController.text.trim(),
+      peran: selectedRole ?? 'pengguna',
+      fotoProfil: '',
+      createdAt: null, 
+    );
+
+    await _firestore.collection('user').doc(user.uid).set(userModel.toMap());
   }
 
   // Fungsi untuk menangani kesalahan autentikasi dan menampilkan snackbar

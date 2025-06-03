@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
 import 'package:geoportal_mobile/utils/secure_storage.dart';
+import 'package:geoportal_mobile/models/user_model.dart';
 
 class LoginController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -24,11 +25,24 @@ class LoginController {
       );
 
       String uid = userCredential.user!.uid;
-      DocumentSnapshot userData = await _firestore.collection('user').doc(uid).get();
+      // Ambil data pengguna dari Firestore
+      DocumentSnapshot userDoc = await _firestore.collection('user').doc(uid).get();
+
+      if (!userDoc.exists) {
+        if (!context.mounted) return;
+        showCustomSnackbar(
+          context: context,
+          message: 'Data pengguna tidak ditemukan',
+          isSuccess: false,
+        );
+        return;
+      }
+
+      // Konversi ke model
+      UserModel user = UserModel.fromMap(userDoc.data() as Map<String, dynamic>);
 
       // Validasi peran pengguna
-      String role = userData['peran'];
-      if (role != selectedRole) {
+      if (user.peran != selectedRole) {
         if (!context.mounted) return;
         showCustomSnackbar(
           context: context,
@@ -39,7 +53,7 @@ class LoginController {
       }
 
       // Simpan token dan peran pengguna menggunakan SecureStorage
-      await SecureStorage.simpanDataLogin(uid, role);
+      await SecureStorage.simpanDataLogin(user.uid, user.peran);
 
       // Jika berhasil login, arahkan ke dashboard sesuai peran
       if (!context.mounted) return;
