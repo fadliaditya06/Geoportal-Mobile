@@ -48,6 +48,7 @@ flutter:
     - assets/images/logo/
     - assets/images/onboarding/
     - assets/carousel/
+    - assets/geojson/dummy-geojson/
 
   fonts:
     - family: Poppins
