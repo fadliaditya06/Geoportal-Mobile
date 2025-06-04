@@ -1,6 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geoportal_mobile/screens/peta/detail_peta_screen.dart';
-import 'package:intl/intl.dart';
+import 'package:geoportal_mobile/controllers/tambah_data_controller.dart';
 
 class TambahDataScreen extends StatefulWidget {
   const TambahDataScreen({super.key});
@@ -10,30 +11,11 @@ class TambahDataScreen extends StatefulWidget {
 }
 
 class _TambahDataScreenState extends State<TambahDataScreen> {
-  final TextEditingController publikasiController = TextEditingController();
-  final TextEditingController titikKoordinatController = TextEditingController();
-
-  // Fungsi untuk memilih tanggal menggunakan date picker
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
-      locale: const Locale('id'),
-    );
-
-    if (pickedDate != null) {
-      setState(() {
-        publikasiController.text = DateFormat('dd MMMM yyyy', 'id').format(pickedDate);
-      });
-    }
-  }
+  final TambahDataController controller = TambahDataController();
 
   @override
   void dispose() {
-    publikasiController.dispose();
-    titikKoordinatController.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -43,14 +25,9 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFFB0E1C6),
         elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 4),
-          child: IconButton(
-            iconSize: 36,
-            icon: const Icon(Icons.chevron_left),
-            onPressed: () => Navigator.pop(context),
-            tooltip: 'Back',
-          ),
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left, size: 36),
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'Tambah Data',
@@ -78,134 +55,276 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
         ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 21, 16, 8),
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(16, 13, 16, 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildSectionTitle('Data Umum'),
-                buildLabel('Judul'),
-                TextFormField(decoration: buildInputDecoration('Judul')),
-                const SizedBox(height: 10),
-                buildLabel('Pemilik'),
-                TextFormField(decoration: buildInputDecoration('Pemilik')),
-                const SizedBox(height: 10),
-                buildLabel('Publikasi'),
-                TextFormField(
-                  controller: publikasiController,
-                  readOnly: true,
-                  decoration: buildInputDecoration('Publikasi'),
-                  onTap: () => _selectDate(context),
-                ),
-                const SizedBox(height: 10),
-                buildLabel('Jenis Sumber Daya'),
-                TextFormField(decoration: buildInputDecoration('Jenis Sumber Daya')),
-                const SizedBox(height: 10),
-                buildLabel('Sumber'),
-                TextFormField(decoration: buildInputDecoration('Sumber')),
-                const SizedBox(height: 10),
-                buildLabel('Foto'),
-                GestureDetector(
-                  onTap: () {
-                    //
-                  },
-                  child: Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFB0E1C6),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: const Center(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.upload),
-                          SizedBox(width: 8),
-                          Text('Tambah Foto', style: TextStyle(fontSize: 16)),
-                        ],
-                      ),
-                    ),
+          child: Form(
+            key: controller.formKey,
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionTitle('Data Umum'),
+                  _buildTitle("Nama Lokasi"),
+                  _buildTextField(
+                    controller: controller.namaLokasiController,
+                    label: 'Nama Lokasi',
+                    validator: (value) =>
+                        value!.isEmpty ? 'Silahkan masukkan nama lokasi' : null,
                   ),
-                ),
-                const SizedBox(height: 40),
-                buildSectionTitle('Data Spasial'),
-                buildLabel('Sistem Proyek'),
-                TextFormField(decoration: buildInputDecoration('Sistem Proyek')),
-                const SizedBox(height: 10),
-                buildLabel('Titik Koordinat'),
-                Stack(
-                  alignment: Alignment.centerRight,
-                  children: [
-                    TextFormField(
-                      controller: titikKoordinatController,
-                      readOnly: true,
-                      decoration: buildInputDecoration('Titik Koordinat').copyWith(
-                        suffixIcon: IconButton(
-                          icon: const Icon(
-                            Icons.map,
-                            color: Colors.black,
-                          ),
-                          onPressed: () async {
-                            final result = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const DetailPetaScreen(),
+                  const SizedBox(height: 10),
+                  _buildTitle("Pemilik"),
+                  _buildTextField(
+                    controller: controller.pemilikController,
+                    label: 'Pemilik',
+                    validator: (value) =>
+                        value!.isEmpty ? 'Silahkan masukkan pemilik' : null,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildTitle("Publikasi"),
+                  _buildTextField(
+                    label: 'Publikasi',
+                    controller: controller.publikasiController,
+                    readOnly: true,
+                    onTap: () => controller.selectDate(context),
+                    validator: (value) => value!.isEmpty
+                        ? 'Silahkan masukkan tanggal publikasi'
+                        : null,
+                    suffixIcon: Icons.calendar_today,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildTitle("Jenis Sumber Daya"),
+                  _buildTextField(
+                    controller: controller.jenisSumberDayaController,
+                    label: 'Jenis Sumber Daya',
+                    validator: (value) => value!.isEmpty
+                        ? 'Silahkan masukkan jenis sumber daya'
+                        : null,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildTitle("Sumber"),
+                  _buildTextField(
+                    controller: controller.sumberController,
+                    label: 'Sumber',
+                    validator: (value) =>
+                        value!.isEmpty ? 'Silahkan masukkan sumber' : null,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildTitle("Foto"),
+                  FormField<List<File>>(
+                    validator: (files) {
+                      if (controller.fotoFiles.isEmpty) {
+                        return 'Silahkan masukkan maksimal 3 foto';
+                      } else if (controller.fotoFiles.length > 3) {
+                        return 'Silahkan masukkan maksimal 3 foto';
+                      }
+                      return null;
+                    },
+                    builder: (FormFieldState<List<File>> state) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              await controller.pilihFoto(context);
+                              state.didChange(controller.fotoFiles);
+                              setState(() {});
+                            },
+                            child: Container(
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFB0E1C6),
+                                borderRadius: BorderRadius.circular(30),
                               ),
-                            );
-                            if (result != null && result is String) {
-                              setState(() {
-                                titikKoordinatController.text = result;
-                              });
-                            }
-                          },
-                        ),
-                      ),
-                      onTap: () async {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const DetailPetaScreen(
-                              isKonfirmasiKoordinat: false,
+                              child: const Center(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.upload),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Tambah Foto',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                        );
-                        if (result != null && result is String) {
-                          setState(() {
-                            titikKoordinatController.text = result;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                // Tombol Simpan
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      //
+                          const SizedBox(height: 10),
+                          // Preview foto
+                          if (controller.fotoFiles.isNotEmpty)
+                            Column(
+                              children: controller.fotoFiles
+                                  .asMap()
+                                  .entries
+                                  .map((entry) {
+                                int index = entry.key;
+                                File file = entry.value;
+                                return Stack(
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.only(bottom: 8),
+                                      width: 360,
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        image: DecorationImage(
+                                          image: FileImage(file),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 10,
+                                      right: 10,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          controller.hapusFoto(index);
+                                          state.didChange(controller.fotoFiles);
+                                          setState(() {});
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.2),
+                                                blurRadius: 4,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: const Padding(
+                                            padding: EdgeInsets.all(8),
+                                            child: Icon(
+                                              Icons.close,
+                                              color: Colors.black,
+                                              size: 20,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
+                          // Error message dari validator
+                          if (state.hasError)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20),
+                              child: Text(
+                                state.errorText!,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          const SizedBox(height: 40),
+                        ],
+                      );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF92E3A9),
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  ),
+                  _buildSectionTitle('Data Spasial'),
+                  _buildTitle("Sistem Proyeksi"),
+                  _buildTextField(
+                    controller: controller.sistemProyeksiController,
+                    label: 'Sistem Proyeksi',
+                    validator: (value) => value!.isEmpty
+                        ? 'Silahkan masukkan sistem proyeksi'
+                        : null,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildTitle("Titik Koordinat"),
+                  _buildTextField(
+                    label: 'Titik Koordinat',
+                    controller: controller.titikKoordinatController,
+                    readOnly: true,
+                    validator: (value) => value == null || value.isEmpty
+                        ? 'Silahkan masukkan titik koordinat'
+                        : null,
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const DetailPetaScreen(
+                              isKonfirmasiKoordinat: false),
+                        ),
+                      );
+                      if (result != null && result is String) {
+                        setState(() {
+                          controller.titikKoordinatController.text = result;
+                        });
+                      }
+                    },
+                    suffixIcon: Icons.map,
+                    onSuffixTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const DetailPetaScreen(),
+                        ),
+                      );
+                      if (result != null && result is String) {
+                        setState(() {
+                          controller.titikKoordinatController.text = result;
+                        });
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: SizedBox(
+                      width: 150,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF92E3A9),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          elevation: 10,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                        ),
+                        onPressed: controller.isLoading
+                            ? null
+                            : () async {
+                                setState(() {
+                                  controller.isLoading = true;
+                                });
+                                await controller.simpanData(context);
+                                setState(() {
+                                  controller.isLoading = false;
+                                });
+                              },
+                        child: controller.isLoading
+                            ? const SizedBox(
+                                height: 30,
+                                width: 30,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 4,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              )
+                            : const Text(
+                                'Simpan',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
+                              ),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                      elevation: 10,
-                      shadowColor: const Color.fromARGB(255, 133, 129, 129),
-                    ),
-                    child: const Text(
-                      'Simpan',
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -213,40 +332,22 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
     );
   }
 
-  // Membuat input decoration untuk form field
-  InputDecoration buildInputDecoration(String hint) {
-    return InputDecoration(
-      hintText: hint,
-      filled: true,
-      fillColor: const Color(0xFFB0E1C6),
-      contentPadding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30.0),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30.0),
-        borderSide: const BorderSide(color: Color(0xFFB0E1C6), width: 1),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30.0),
-        borderSide: const BorderSide(color: Color(0xFFB0E1C6), width: 1),
-      ),
-    );
-  }
-
-  // Fungsi untuk menampilkan label
-  Widget buildLabel(String text) {
+  // Widget untuk menampilkan judul
+  Widget _buildTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(top: 6, bottom: 4),
+      padding: const EdgeInsets.only(top: 6, bottom: 10),
       child: Text(
-        text,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        title,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
 
   // Fungsi untuk menampilkan judul
-  Widget buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -257,6 +358,46 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
         const Divider(color: Colors.black),
         const SizedBox(height: 8),
       ],
+    );
+  }
+
+  // Fungsi untuk membangun TextField dengan label
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    bool readOnly = false,
+    VoidCallback? onTap,
+    String? Function(String?)? validator,
+    IconData? suffixIcon,
+    VoidCallback? onSuffixTap,
+  }) {
+    return TextFormField(
+      controller: controller,
+      readOnly: readOnly,
+      decoration: InputDecoration(
+        labelText: label, 
+        labelStyle: const TextStyle(color: Colors.black),
+        filled: true,
+        fillColor: const Color(0xFFB0E1C6),
+        contentPadding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: const BorderSide(color: Color(0xFFB0E1C6), width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide: const BorderSide(color: Color(0xFFB0E1C6), width: 1),
+        ),
+        suffixIcon: suffixIcon != null
+            ? IconButton(
+                icon: Icon(suffixIcon, color: Colors.black, size: 22),
+                onPressed: onSuffixTap,
+              )
+            : null,
+      ),
+      onTap: onTap,
+      validator: validator,
     );
   }
 }
