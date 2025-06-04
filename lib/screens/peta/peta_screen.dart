@@ -3,7 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:geoportal_mobile/screens/peta/detail_peta_screen.dart';
 import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_screen.dart';
 import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_admin_screen.dart';
-import 'package:geoportal_mobile/widget/custom_snackbar.dart';
+import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/services.dart';
@@ -29,7 +29,8 @@ class PetaScreenState extends State<PetaScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const DetailPetaScreen(isKonfirmasiKoordinat: true),
+        builder: (context) => const DetailPetaScreen(
+            isKonfirmasiKoordinat: true, isTambahData: false),
       ),
     );
   }
@@ -93,31 +94,31 @@ class PetaScreenState extends State<PetaScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Cari peta...',
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: Color(0xFF52525C),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide:
-                        const BorderSide(color: Color(0xFF358666), width: 1),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide:
-                        const BorderSide(color: Color(0xFF358666), width: 1),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide:
-                        const BorderSide(color: Color(0xFF358666), width: 1),
-                  ),
-                ),
-              ),
+              // TextField(
+              //   decoration: InputDecoration(
+              //     hintText: 'Cari peta...',
+              //     prefixIcon: const Icon(
+              //       Icons.search,
+              //       color: Color(0xFF52525C),
+              //     ),
+              //     contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
+              //     border: OutlineInputBorder(
+              //       borderRadius: BorderRadius.circular(12.0),
+              //       borderSide:
+              //           const BorderSide(color: Color(0xFF358666), width: 1),
+              //     ),
+              //     enabledBorder: OutlineInputBorder(
+              //       borderRadius: BorderRadius.circular(12.0),
+              //       borderSide:
+              //           const BorderSide(color: Color(0xFF358666), width: 1),
+              //     ),
+              //     focusedBorder: OutlineInputBorder(
+              //       borderRadius: BorderRadius.circular(12.0),
+              //       borderSide:
+              //           const BorderSide(color: Color(0xFF358666), width: 1),
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 20),
               // Carousel Peta
               CarouselSlider(
@@ -217,12 +218,14 @@ class PetaScreenState extends State<PetaScreen> {
                                   // Salin koordinat yang dipilih
                                   Clipboard.setData(
                                     ClipboardData(
-                                        text:'${point.latitude}, ${point.longitude}'),
+                                        text:
+                                            '${point.latitude}, ${point.longitude}'),
                                   );
                                   // Snackbar untuk menampilkan data koordinat yang dipilih
                                   showCustomSnackbar(
                                     context: context,
-                                    message: 'Koordinat disalin: ${point.latitude}, ${point.longitude}',
+                                    message:
+                                        'Koordinat disalin: ${point.latitude}, ${point.longitude}',
                                     isSuccess: true,
                                   );
                                 },
@@ -321,7 +324,7 @@ class PetaScreenState extends State<PetaScreen> {
                                         color: Colors.black,
                                       ),
                                       onPressed: () {
-                                        // 
+                                        //
                                       },
                                     ),
                                   ),
