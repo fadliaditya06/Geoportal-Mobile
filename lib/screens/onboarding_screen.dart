@@ -93,8 +93,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                   controller: _pageController,
                   count: 3,
                   effect: WormEffect(
-                    dotHeight: 9,
-                    dotWidth: 9,
+                    dotHeight: 8,
+                    dotWidth: 8,
                     activeDotColor: const Color(0xFF358666),
                     dotColor: Colors.grey.shade400,
                   ),
@@ -148,7 +148,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                     child: Text(
                       _currentPage == 2 ? 'Mulai Sekarang' : 'Selanjutnya',
                       style: TextStyle(
-                          color: _currentPage == 2 ? Colors.black : Colors.white),
+                          color:
+                              _currentPage == 2 ? Colors.black : Colors.white),
                     ),
                   ),
                 ],
@@ -199,8 +200,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
               style: const TextStyle(
                   fontSize: 15,
                   color: Colors.black,
-                  fontWeight: FontWeight.w400
-              ),
+                  fontWeight: FontWeight.w400),
             ),
           ),
       ],
@@ -256,7 +256,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           const SizedBox(width: 5),
           Text(
             title,
-            style: const TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w600),
+            style: const TextStyle(
+                fontSize: 15, color: Colors.black, fontWeight: FontWeight.w600),
           ),
           const SizedBox(width: 5),
           const Icon(Icons.arrow_forward, size: 15, color: Colors.black),
