@@ -22,6 +22,7 @@ class DetailPetaScreen extends StatefulWidget {
 
 class _DetailPetaScreenState extends State<DetailPetaScreen> {
   late DetailPetaController _controller;
+  List<String> _suggestions = [];
   final MapController mapController = MapController();
   List<Marker> propertyMarkers = [];
   List<Polygon> geoJsonPolygons = [];
@@ -29,13 +30,13 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = DetailPetaController(); 
-    _loadGeoJson(); 
+    _controller = DetailPetaController();
+    _loadGeoJson();
   }
 
   Future<void> _loadGeoJson() async {
     await _controller.loadGeoJsonMultiple(context);
-    setState(() {}); 
+    setState(() {});
   }
 
   @override
@@ -48,11 +49,11 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
             options: MapOptions(
               initialCenter:
                   const LatLng(-0.17325329329556474, 127.88725441653283),
-              initialZoom: 6.0,
+              initialZoom: 8.0,
               onMapReady: () {
                 _controller.mapController.move(
                     const LatLng(-0.17325329329556474, 127.88725441653283),
-                    6.0);
+                    8.0);
               },
               onTap: (tapPosition, latLng) async {
                 final nearbyData =
@@ -80,46 +81,143 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
             left: 20,
             right: 20,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: const [
                   BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 5,
-                      offset: Offset(0, 2)),
+                    color: Colors.black12,
+                    blurRadius: 5,
+                    offset: Offset(0, 2),
+                  ),
                 ],
               ),
-              child: Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.search, color: Colors.black),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TextField(
-                      controller: _controller.searchController,
-                      decoration: const InputDecoration(
-                        hintText: 'Cari peta...',
-                        border: InputBorder.none,
-                        isDense: true,
-                      ),
-                      onSubmitted: (value) async {
-                        if (value.isNotEmpty) {
-                          final data = await _controller.cariDanTampilkanLokasi(
-                              context, value);
-                          if (data != null) {
-                            _tampilkanBottomSheet(context, data);
-                          }
-                        }
-                      },
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.search, color: Colors.black),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: TextField(
+                            controller: _controller.searchController,
+                            decoration: const InputDecoration(
+                              hintText: 'Cari peta...',
+                              border: InputBorder.none,
+                              isDense: true,
+                            ),
+                            onChanged: (value) async {
+                              if (value.isNotEmpty) {
+                                final results =
+                                    await _controller.getSuggestions(value);
+                                setState(() {
+                                  _suggestions = results;
+                                });
+                              } else {
+                                setState(() {
+                                  _suggestions = [];
+                                });
+                              }
+                            },
+                            onSubmitted: (value) async {
+                              if (value.isNotEmpty) {
+                                final data = await _controller
+                                    .cariDanTampilkanLokasi(context, value);
+                                if (data != null) {
+                                  _tampilkanBottomSheet(context, data);
+                                }
+                              }
+                            },
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.black),
+                          onPressed: () {
+                            _controller.searchController.clear();
+                            setState(() {
+                              _suggestions = [];
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.black),
-                    onPressed: () {
-                      _controller.searchController.clear();
-                    },
-                  ),
+
+                  // Rekomendasi Search
+                  if (_suggestions.isNotEmpty)
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      constraints: const BoxConstraints(
+                        maxHeight: 200,
+                      ),
+                      child: ListView(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        children: _suggestions.map((s) {
+                          return ListTile(
+                            title: Text(s),
+                            leading: const Icon(Icons.location_on,
+                                color: Colors.black),
+                            onTap: () async {
+                              _controller.searchController.text = s;
+                              setState(() {
+                                _suggestions = [];
+                              });
+                              final data = await _controller
+                                  .cariDanTampilkanLokasi(context, s);
+                              if (data != null) {
+                                _tampilkanBottomSheet(context, data);
+                              }
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    )
+
+                  // Fungsi untuk menampilkan pesan jika tidak ada data
+                  else if (_controller.searchController.text.isNotEmpty)
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      constraints: const BoxConstraints(
+                        maxHeight: 60,
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'Tidak ada data',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),

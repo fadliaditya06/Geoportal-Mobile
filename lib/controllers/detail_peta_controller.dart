@@ -20,6 +20,7 @@ class DetailPetaController with ChangeNotifier {
   List<Marker> get markers => _markers;
   List<Polygon> get polygons => _polygons;
 
+  // Load beberapa file GeoJSON, parsing dan buat markers & polygons
   Future<void> loadGeoJsonMultiple(BuildContext context) async {
     try {
       final String indexData = await rootBundle
@@ -44,6 +45,7 @@ class DetailPetaController with ChangeNotifier {
             final coordinates = geometry['coordinates'][0];
             if (coordinates.isEmpty) continue;
 
+            // Konversi koordinat ke LatLng dan buat polygon
             List<LatLng> points = coordinates
                 .map<LatLng>((c) => LatLng(c[1].toDouble(), c[0].toDouble()))
                 .toList();
@@ -57,6 +59,7 @@ class DetailPetaController with ChangeNotifier {
               ),
             );
 
+            // Tambahkan marker di pusat polygon
             LatLng center = _getPolygonCenter(points);
             _markers.add(_buildMarker(center, feature, context));
           } else if (geometry['type'] == 'MultiPolygon') {
@@ -108,6 +111,7 @@ class DetailPetaController with ChangeNotifier {
     return LatLng(lat / points.length, lng / points.length);
   }
 
+  // Marker yang bisa diklik, akan menampilkan info dalam bottomsheet
   Marker _buildMarker(
     LatLng position,
     Map<String, dynamic> feature,
@@ -126,16 +130,17 @@ class DetailPetaController with ChangeNotifier {
     );
   }
 
+  // Menampilkan bottomsheet dari data dummy GeoJSON
   void _showDynamicBottomSheet(
       BuildContext context, Map<String, dynamic> feature) {
     final properties = feature['properties'] as Map<String, dynamic>? ?? {};
     final geometry = feature['geometry'] as Map<String, dynamic>? ?? {};
 
-    // Ambil koordinat, format ke string lat,lng
+    // Ambil koordinat polygon pertama untuk ditampilkan
     String coordinatesText = '-';
     final rawCoordinates = geometry['coordinates'];
     if (rawCoordinates != null && rawCoordinates is List) {
-      var polygonPoints = rawCoordinates[0]; // ambil polygon pertama
+      var polygonPoints = rawCoordinates[0]; 
       if (polygonPoints is List && polygonPoints.isNotEmpty) {
         final point = polygonPoints[0];
         coordinatesText = 'Lat: ${point[1]}, Lng: ${point[0]}';
@@ -163,6 +168,7 @@ class DetailPetaController with ChangeNotifier {
     return 0;
   }
 
+  // Mencari data spasial terdekat berdasarkan titik koordinat
   Future<Map<String, dynamic>?> findNearbyData(LatLng point) async {
     try {
       final snapshot =
@@ -219,7 +225,7 @@ class DetailPetaController with ChangeNotifier {
       // Hapus semua marker lama
       _markers.clear();
 
-      // Tambahkan marker merah saja
+      // Tambahkan marker merah 
       _markers.add(
         Marker(
           point: point,
@@ -237,7 +243,6 @@ class DetailPetaController with ChangeNotifier {
 
       notifyListeners();
 
-      // Kamu bisa tetap kembalikan data terdekat jika mau, tapi tidak buat marker biru
       final nearbyData = await findNearbyData(point);
       return nearbyData;
     } catch (e) {
@@ -253,6 +258,7 @@ class DetailPetaController with ChangeNotifier {
     return null;
   }
 
+  // Mencari dan menampilkan data spasial dan data umum terdekat berdasarkan koordinat dari Firestore
   Future<Map<String, dynamic>?> cariDanTampilkanLokasi(
       BuildContext context, String inputNamaLokasi) async {
     try {
@@ -361,6 +367,25 @@ class DetailPetaController with ChangeNotifier {
     return null;
   }
 
+  // Mencari saran nama lokasi berdasarkan input
+  Future<List<String>> getSuggestions(String query) async {
+    final snapshot =
+        await FirebaseFirestore.instance.collection('data_umum').get();
+
+    final inputLower = query.toLowerCase();
+    List<String> suggestions = [];
+
+    for (var doc in snapshot.docs) {
+      final namaLokasi = doc['nama_lokasi']?.toString().toLowerCase() ?? '';
+      if (namaLokasi.contains(inputLower)) {
+        suggestions.add(doc['nama_lokasi']);
+      }
+    }
+
+    return suggestions;
+  }
+
+  // Fungsi untuk membuka link hak cipta OSM
   Future<void> openOSMCopyrightLink(BuildContext context) async {
     final uri = Uri.parse('https://openstreetmap.org/copyright');
     try {
