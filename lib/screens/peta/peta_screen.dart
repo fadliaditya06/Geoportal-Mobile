@@ -209,7 +209,7 @@ class PetaScreenState extends State<PetaScreen> {
                               options: MapOptions(
                                 // Lokasi koordinat awal peta
                                 initialCenter: const LatLng(1.13, 104.0531),
-                                initialZoom: 15.0,
+                                initialZoom: 12.0,
                                 onTap: (tapPosition, point) {
                                   // Fungsi untuk menentukan koordinat saat peta di klik
                                   setState(() {
