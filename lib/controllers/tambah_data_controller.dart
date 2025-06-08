@@ -124,7 +124,11 @@ class TambahDataController {
           'createdAt': Timestamp.now(),
         });
 
-        await FirebaseFirestore.instance.collection('data_umum').add({
+        final docUmum =
+            FirebaseFirestore.instance.collection('data_umum').doc();
+
+        await docUmum.set({
+          'id_data_umum': docUmum.id, 
           'nama_lokasi': namaLokasiController.text,
           'pemilik': pemilikController.text,
           'publikasi': publikasiController.text,
