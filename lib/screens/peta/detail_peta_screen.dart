@@ -234,7 +234,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                       Navigator.pushNamed(context, '/tambah-data');
                     },
               icon: const Icon(Icons.add_location_alt,
-                  color: Color(0xFF358666), size: 18),
+                  color: Colors.black, size: 18),
               label: const Text(
                 'Tambah Data',
                 style: TextStyle(
@@ -371,7 +371,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                             );
                           }
                         },
-                  icon: const Icon(Icons.check, color: Color(0xFF358666)),
+                  icon: const Icon(Icons.check, color: Colors.black),
                   label: Text(
                     'Konfirmasi Koordinat',
                     style: GoogleFonts.poppins(
