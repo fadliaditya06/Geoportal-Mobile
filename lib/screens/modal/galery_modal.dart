@@ -20,20 +20,33 @@ class GaleriModal {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Tombol Kembali dan Judul untuk Modal
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: IconButton(
-                        icon: const Icon(Icons.chevron_left, color: Colors.black),
-                        onPressed: () {
-                          Navigator.of(context).pop(); 
-                        },
+                // Tombol Tutup
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Material(
+                      shape: const CircleBorder(),
+                      elevation: 4,
+                      color: Colors.white,
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: () => Navigator.pop(context),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8),
+                          child:
+                              Icon(Icons.close, color: Colors.black, size: 20),
+                        ),
                       ),
                     ),
-                    const Text(
+                  ),
+                ),
+
+                // Judul untuk Modal
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 20),
+                  child: Center(
+                    child: Text(
                       'Semua Galery Kami',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
@@ -41,19 +54,20 @@ class GaleriModal {
                         color: Colors.black,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-                const SizedBox(height: 16),
-                // Konten Galeri 
+
+                // Konten Galeri
                 SizedBox(
                   height: 340,
                   child: ListView.builder(
-                    itemCount: 4, 
+                    itemCount: 4,
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
                           _semuaGalery(
-                            image: 'assets/images/galeri/galeri-${index + 1}.png',
+                            image:
+                                'assets/images/galeri/galeri-${index + 1}.png',
                             title: index == 0
                                 ? 'Sekupang'
                                 : index == 1
@@ -62,12 +76,12 @@ class GaleriModal {
                                         ? 'Nongsa'
                                         : 'Batu Aji',
                             description: index == 0
-                                ? 'Luas Kecamatan Sekupang, Kota Batam adalah 106,78 kilometer persegi (km2).'
+                                ? 'Luas Kecamatan Sekupang, Kota Batam adalah 106,78 kilometer persegi (km²).'
                                 : index == 1
-                                    ? 'Luas Kecamatan Sei Beduk, Kota Batam adalah 101,63 kilometer persegi (km2).'
+                                    ? 'Luas Kecamatan Sei Beduk, Kota Batam adalah 101,63 kilometer persegi (km²).'
                                     : index == 2
-                                        ? 'Luas Kecamatan Nongsa, Kota Batam adalah 145,32 kilometer persegi (km2).'
-                                        : 'Luas Kecamatan Batu Aji, Kota Batam adalah 20,13 kilometer persegi (km2).',
+                                        ? 'Luas Kecamatan Nongsa, Kota Batam adalah 145,32 kilometer persegi (km²).'
+                                        : 'Luas Kecamatan Batu Aji, Kota Batam adalah 20,13 kilometer persegi (km²).',
                           ),
                           if (index != 3) const SizedBox(height: 16),
                         ],
@@ -90,12 +104,12 @@ class GaleriModal {
     required String description,
   }) {
     return Container(
-      padding: const EdgeInsets.all(6), 
+      padding: const EdgeInsets.all(6),
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: const Color(0XFFB0E1C6), 
+        color: const Color(0xFFB0E1C6),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFD8D8D8), width: 3), 
+        border: Border.all(color: const Color(0xFFD8D8D8), width: 3),
         boxShadow: const [BoxShadow(blurRadius: 4, color: Colors.black12)],
       ),
       child: Row(
@@ -110,6 +124,7 @@ class GaleriModal {
               fit: BoxFit.cover,
             ),
           ),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
