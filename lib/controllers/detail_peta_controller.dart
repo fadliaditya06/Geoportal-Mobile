@@ -1,146 +1,119 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:convert';
+import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
 import 'package:geoportal_mobile/widgets/dummy_bottom_sheet.dart';
+import 'package:geoportal_mobile/services/geojson_service.dart';
 
 class DetailPetaController with ChangeNotifier {
   final MapController mapController = MapController();
-  LatLng? pickedLocation;
+
   final List<Marker> _markers = [];
   final List<Polygon> _polygons = [];
-  bool showCopyrightOSM = false;
-  bool isSearching = false;
   final TextEditingController searchController = TextEditingController();
+
+  bool isLoading = false;
+  bool isSearching = false;
+  bool showCopyrightOSM = false;
+  LatLng? pickedLocation;
 
   List<Marker> get markers => _markers;
   List<Polygon> get polygons => _polygons;
 
-  // Load beberapa file GeoJSON, parsing dan buat markers & polygons
+  // Fungsi memuat GeoJSON dari URL Supabase Storage
+  // Future<void> loadGeoJsonMultiple(BuildContext context) async {
+  //   const String url =
+  //       'https://noeywxxoxuyicxtcsier.supabase.co/storage/v1/object/public/images/geojson/lubuk_baja.geojson';
+
+  //   try {
+  //     isLoading = true;
+  //     notifyListeners();
+
+  //     _markers.clear();
+  //     _polygons.clear();
+
+  //     // Ambil dan batasi jumlah polygon dan marker
+  //     final polygons = await GeoJsonService.loadPolygons(url);
+  //     final markersData = await GeoJsonService.loadMarkers(
+  //       url,
+  //       context,
+  //       _buildMarker,
+  //     );
+
+  //     // Membuat minimal marker dan polygon agar tidak crash
+  //     _polygons.addAll(polygons.take(500));
+  //     _markers.addAll(markersData.take(500));
+  //   } catch (e) {
+  //     debugPrint('Gagal load GeoJSON: $e');
+  //   } finally {
+  //     isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
+
+  // Fungsi memuat GeoJSON dari asset
   Future<void> loadGeoJsonMultiple(BuildContext context) async {
     try {
-      final String indexData = await rootBundle
-          .loadString('assets/geojson/dummy-geojson/index.json');
-      final List<dynamic> fileList = jsonDecode(indexData);
+      isLoading = true;
+      notifyListeners();
 
       _markers.clear();
       _polygons.clear();
 
-      for (final filename in fileList) {
-        final String data = await rootBundle
-            .loadString('assets/geojson/dummy-geojson/$filename');
-        final geoJson = jsonDecode(data);
+      // Load daftar file dari index.json
+      final String indexData = await rootBundle
+          .loadString('assets/geojson/dummy-geojson/index.json');
+      final List<dynamic> fileList = jsonDecode(indexData);
 
-        for (var feature in geoJson['features']) {
-          final geometry = feature['geometry'];
-          // final properties = feature['properties'];
+      for (final fileName in fileList) {
+        final String assetPath = 'assets/geojson/dummy-geojson/$fileName';
 
-          if (geometry == null || geometry['coordinates'] == null) continue;
+        // Muat polygon dari asset
+        final polygons = await GeoJsonService.loadPolygonsFromAsset(assetPath);
+        final markers = await GeoJsonService.loadMarkersFromAsset(
+          assetPath,
+          context,
+          _buildMarker,
+        );
 
-          if (geometry['type'] == 'Polygon') {
-            final coordinates = geometry['coordinates'][0];
-            if (coordinates.isEmpty) continue;
-
-            // Konversi koordinat ke LatLng dan buat polygon
-            List<LatLng> points = coordinates
-                .map<LatLng>((c) => LatLng(c[1].toDouble(), c[0].toDouble()))
-                .toList();
-
-            _polygons.add(
-              Polygon(
-                points: points,
-                color: Colors.yellow.withOpacity(0.3),
-                borderColor: Colors.yellow,
-                borderStrokeWidth: 2,
-              ),
-            );
-
-            // Tambahkan marker di pusat polygon
-            LatLng center = _getPolygonCenter(points);
-            _markers.add(_buildMarker(center, feature, context));
-          } else if (geometry['type'] == 'MultiPolygon') {
-            for (final polygon in geometry['coordinates']) {
-              final coordinates = polygon[0];
-              if (coordinates.isEmpty) continue;
-
-              List<LatLng> points = coordinates
-                  .map<LatLng>((c) => LatLng(c[1].toDouble(), c[0].toDouble()))
-                  .toList();
-
-              _polygons.add(
-                Polygon(
-                  points: points,
-                  color: Colors.yellow.withOpacity(0.3),
-                  borderColor: Colors.yellow,
-                  borderStrokeWidth: 2,
-                ),
-              );
-
-              LatLng center = _getPolygonCenter(points);
-              _markers.add(_buildMarker(center, feature, context));
-            }
-          } else if (geometry['type'] == 'Point') {
-            final coordinates = geometry['coordinates'];
-            if (coordinates.length < 2) continue;
-
-            LatLng point =
-                LatLng(coordinates[1].toDouble(), coordinates[0].toDouble());
-
-            _markers.add(_buildMarker(point, feature, context));
-          }
-        }
+        _polygons.addAll(polygons.take(2000));
+        _markers.addAll(markers.take(2000));
       }
-
-      notifyListeners();
     } catch (e) {
-      debugPrint('Error loading GeoJSON: $e');
+      debugPrint('Gagal load GeoJSON dari assets: $e');
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
   }
 
-  LatLng _getPolygonCenter(List<LatLng> points) {
-    double lat = 0;
-    double lng = 0;
-    for (var point in points) {
-      lat += point.latitude;
-      lng += point.longitude;
-    }
-    return LatLng(lat / points.length, lng / points.length);
-  }
-
-  // Marker yang bisa diklik, akan menampilkan info dalam bottomsheet
+  // Fungsi membangun marker
   Marker _buildMarker(
-    LatLng position,
-    Map<String, dynamic> feature,
-    BuildContext context,
-  ) {
+      LatLng position, Map<String, dynamic> feature, BuildContext context) {
     return Marker(
       point: position,
       width: 40,
       height: 40,
       child: GestureDetector(
-        onTap: () {
-          _showDynamicBottomSheet(context, feature);
-        },
-        child: const Icon(Icons.location_on, color: Colors.blue, size: 40),
+        onTap: () => _showDynamicBottomSheet(context, feature),
       ),
     );
   }
 
-  // Menampilkan bottomsheet dari data dummy GeoJSON
+  // BottomSheet untuk menampilkan properti dari fitur GeoJSON
   void _showDynamicBottomSheet(
       BuildContext context, Map<String, dynamic> feature) {
     final properties = feature['properties'] as Map<String, dynamic>? ?? {};
     final geometry = feature['geometry'] as Map<String, dynamic>? ?? {};
 
-    // Ambil koordinat polygon pertama untuk ditampilkan
     String coordinatesText = '-';
     final rawCoordinates = geometry['coordinates'];
-    if (rawCoordinates != null && rawCoordinates is List) {
-      var polygonPoints = rawCoordinates[0]; 
+    if (rawCoordinates is List && rawCoordinates.isNotEmpty) {
+      final polygonPoints = rawCoordinates[0];
       if (polygonPoints is List && polygonPoints.isNotEmpty) {
         final point = polygonPoints[0];
         coordinatesText = 'Lat: ${point[1]}, Lng: ${point[0]}';
@@ -151,267 +124,242 @@ class DetailPetaController with ChangeNotifier {
       context: context,
       isScrollControlled: true,
       builder: (_) => DummyBottomSheet(
-        fclass: (properties['fclass'] ?? 'unknown').toString(),
-        name: (properties['name'] ?? 'Tidak diketahui').toString(),
-        code: _parseInt(properties['code']),
-        population: _parseInt(properties['population']),
-        osmId: (properties['osm_id'] ?? '-').toString(),
+        kelurahan: (properties['Kelurahan'] ?? '').toString(),
+        kecamatan: (properties['Kecamatan'] ?? '').toString(),
+        kawasan: (properties['Kawasan'] ?? '').toString(),
+        lokasi: (properties['Lokasi'] ?? '').toString(),
+        alamat: (properties['Alamat'] ?? 'Tidak ada data').toString(),
+        rt: (properties['RT'] ?? 0).toString(),
+        rw: (properties['RW'] ?? 0).toString(),
+        shapeLength: properties['Shape_Leng'].toString(),
+        shapeArea: properties['Shape_Area'].toString(),
         coordinates: coordinatesText,
       ),
     );
   }
 
-  int _parseInt(dynamic value) {
-    if (value == null) return 0;
-    if (value is int) return value;
-    if (value is String) return int.tryParse(value) ?? 0;
-    return 0;
+  // Menentukan lokasi berdasarkan tap di peta dan cari data terdekat
+  Future<Map<String, dynamic>?> selectLocation(
+      LatLng point, BuildContext context) async {
+    pickedLocation = point;
+    _markers.clear();
+
+    _markers.add(
+      Marker(
+        point: point,
+        width: 40,
+        height: 40,
+        child: const Icon(Icons.location_on, color: Colors.red, size: 40),
+      ),
+    );
+
+    mapController.move(point, 18.0);
+    await Clipboard.setData(
+        ClipboardData(text: '${point.latitude}, ${point.longitude}'));
+
+    notifyListeners();
+
+    return await findNearbyData(point);
   }
 
-  // Mencari data spasial terdekat berdasarkan titik koordinat
+  // Mencari data spasial terdekat dari Firestore
   Future<Map<String, dynamic>?> findNearbyData(LatLng point) async {
     try {
-      final snapshot =
-          await FirebaseFirestore.instance.collection('data_spasial').get();
-      const toleranceMeters = 50;
+      final snapshot = await FirebaseFirestore.instance
+          .collection('data_spasial')
+          .where('status', isEqualTo: 'disetujui')
+          .get();
+
+      const double toleranceMeters = 50;
 
       for (var doc in snapshot.docs) {
-        final koordinatString = doc['titik_koordinat'] ?? '';
-        final coords = koordinatString.split(',');
+        final coords = (doc['titik_koordinat'] ?? '').split(',');
+        if (coords.length != 2) continue;
 
-        if (coords.length == 2) {
-          final lat = double.tryParse(coords[0].trim());
-          final lng = double.tryParse(coords[1].trim());
+        final lat = double.tryParse(coords[0].trim());
+        final lng = double.tryParse(coords[1].trim());
 
-          if (lat != null && lng != null) {
-            final firestorePoint = LatLng(lat, lng);
-            final distance = const Distance().as(
-              LengthUnit.Meter,
-              point,
-              firestorePoint,
-            );
+        if (lat != null && lng != null) {
+          final firestorePoint = LatLng(lat, lng);
+          final distance =
+              const Distance().as(LengthUnit.Meter, point, firestorePoint);
 
-            if (distance <= toleranceMeters) {
-              final idDataSpasial = doc.id;
+          if (distance <= toleranceMeters) {
+            final id = doc.id;
 
-              final querySnapshot = await FirebaseFirestore.instance
-                  .collection('data_umum')
-                  .where('id_data_spasial', isEqualTo: idDataSpasial)
-                  .get();
+            final dataUmumSnapshot = await FirebaseFirestore.instance
+                .collection('data_umum')
+                .where('id_data_spasial', isEqualTo: id)
+                .get();
 
-              if (querySnapshot.docs.isNotEmpty) {
-                final dataUmum = querySnapshot.docs.first.data();
-                final dataSpasial = doc.data();
-                return {
-                  ...dataUmum,
-                  ...dataSpasial,
-                };
-              }
+            if (dataUmumSnapshot.docs.isNotEmpty) {
+              return {
+                ...dataUmumSnapshot.docs.first.data(),
+                ...doc.data(),
+              };
             }
           }
         }
       }
     } catch (e) {
-      debugPrint("Error: $e");
+      debugPrint("Error saat mencari data terdekat: $e");
     }
     return null;
   }
 
-  Future<Map<String, dynamic>?> selectLocation(
-      LatLng point, BuildContext context) async {
-    try {
-      pickedLocation = point;
-
-      // Hapus semua marker lama
-      _markers.clear();
-
-      // Tambahkan marker merah 
-      _markers.add(
-        Marker(
-          point: point,
-          width: 40,
-          height: 40,
-          child: const Icon(Icons.location_on, color: Colors.red, size: 40),
-        ),
-      );
-
-      mapController.move(point, 18.0);
-
-      await Clipboard.setData(
-        ClipboardData(text: '${point.latitude}, ${point.longitude}'),
-      );
-
-      notifyListeners();
-
-      final nearbyData = await findNearbyData(point);
-      return nearbyData;
-    } catch (e) {
-      debugPrint("Error in selectLocation: $e");
-      return null;
-    }
-  }
-
+  // Simpan lokasi terpilih
   String? saveLocation() {
-    if (pickedLocation != null) {
-      return '${pickedLocation!.latitude},${pickedLocation!.longitude}';
-    }
-    return null;
+    return pickedLocation != null
+        ? '${pickedLocation!.latitude},${pickedLocation!.longitude}'
+        : null;
   }
 
-  // Mencari dan menampilkan data spasial dan data umum terdekat berdasarkan koordinat dari Firestore
+  // Cari lokasi berdasarkan nama dan tampilkan di peta
   Future<Map<String, dynamic>?> cariDanTampilkanLokasi(
       BuildContext context, String inputNamaLokasi) async {
     try {
       final snapshot =
           await FirebaseFirestore.instance.collection('data_umum').get();
-      final inputLower = inputNamaLokasi.toLowerCase();
+      final namaDicari = inputNamaLokasi.toLowerCase();
 
-      QueryDocumentSnapshot? matchingDoc;
       for (var doc in snapshot.docs) {
-        final data = doc.data();
-        final namaLokasi = data['nama_lokasi']?.toString().toLowerCase() ?? '';
-        if (namaLokasi == inputLower) {
-          matchingDoc = doc;
-          break;
-        }
-      }
+        final nama = doc['nama_lokasi']?.toString().toLowerCase() ?? '';
+        if (nama == namaDicari) {
+          final idSpasial = doc['id_data_spasial'];
+          if (idSpasial == null || idSpasial.isEmpty) {
+            showCustomSnackbar(
+                context: context,
+                message: 'ID spasial tidak ditemukan',
+                isSuccess: false);
+            return null;
+          }
 
-      if (matchingDoc != null) {
-        final dataUmum = matchingDoc.data() as Map<String, dynamic>;
-        final String? idDataSpasial = dataUmum['id_data_spasial'];
+          final spasialDoc = await FirebaseFirestore.instance
+              .collection('data_spasial')
+              .doc(idSpasial)
+              .get();
 
-        if (idDataSpasial == null || idDataSpasial.isEmpty) {
-          showCustomSnackbar(
-            context: context,
-            message: 'ID data spasial tidak ditemukan',
-            isSuccess: false,
-          );
-          return null;
-        }
+          if (!spasialDoc.exists || spasialDoc['status'] != 'disetujui') {
+            showCustomSnackbar(
+                context: context,
+                message: 'Data tidak disetujui',
+                isSuccess: false);
+            return null;
+          }
 
-        final dataSpasialSnapshot = await FirebaseFirestore.instance
-            .collection('data_spasial')
-            .doc(idDataSpasial)
-            .get();
+          final coords = (spasialDoc['titik_koordinat'] ?? '').split(',');
+          if (coords.length == 2) {
+            final lat = double.tryParse(coords[0].trim());
+            final lng = double.tryParse(coords[1].trim());
 
-        if (!dataSpasialSnapshot.exists) {
-          showCustomSnackbar(
-            context: context,
-            message: 'Data spasial tidak ditemukan',
-            isSuccess: false,
-          );
-          return null;
-        }
+            if (lat != null && lng != null) {
+              final point = LatLng(lat, lng);
+              pickedLocation = point;
 
-        final koordinatString = dataSpasialSnapshot['titik_koordinat'] ?? '';
-        final coords = koordinatString.split(',');
-
-        if (coords.length == 2) {
-          final lat = double.tryParse(coords[0].trim());
-          final lng = double.tryParse(coords[1].trim());
-
-          if (lat != null && lng != null) {
-            final selectedPoint = LatLng(lat, lng);
-
-            pickedLocation = selectedPoint;
-
-            _markers.clear();
-
-            _markers.add(
-              Marker(
-                point: selectedPoint,
+              _markers.clear();
+              _markers.add(Marker(
+                point: point,
                 width: 40,
                 height: 40,
                 child:
                     const Icon(Icons.location_on, color: Colors.red, size: 40),
-              ),
-            );
+              ));
 
-            notifyListeners();
+              mapController.move(point, 18.0);
+              notifyListeners();
 
-            mapController.move(selectedPoint, 18.0);
-            await Future.delayed(const Duration(milliseconds: 1200));
-
-            return {
-              ...dataUmum,
-              ...?dataSpasialSnapshot.data(),
-            };
-          } else {
-            showCustomSnackbar(
-              context: context,
-              message: 'Format koordinat tidak valid',
-              isSuccess: false,
-            );
+              return {
+                ...doc.data(),
+                ...spasialDoc.data()!,
+              };
+            }
           }
-        } else {
+
           showCustomSnackbar(
-            context: context,
-            message: 'Format koordinat tidak valid',
-            isSuccess: false,
-          );
+              context: context,
+              message: 'Koordinat tidak valid',
+              isSuccess: false);
+          return null;
         }
-      } else {
-        showCustomSnackbar(
-          context: context,
-          message: 'Data tidak ditemukan',
-          isSuccess: false,
-        );
       }
+
+      showCustomSnackbar(
+          context: context, message: 'Data tidak ditemukan', isSuccess: false);
     } catch (e) {
       showCustomSnackbar(
-        context: context,
-        message: 'Terjadi kesalahan: $e',
-        isSuccess: false,
-      );
+          context: context, message: 'Error: $e', isSuccess: false);
     }
     return null;
   }
 
-  // Mencari saran nama lokasi berdasarkan input
+  // Menyediakan saran pencarian
   Future<List<String>> getSuggestions(String query) async {
     final snapshot =
         await FirebaseFirestore.instance.collection('data_umum').get();
-
-    final inputLower = query.toLowerCase();
-    List<String> suggestions = [];
+    final input = query.toLowerCase();
+    List<String> hasil = [];
 
     for (var doc in snapshot.docs) {
-      final namaLokasi = doc['nama_lokasi']?.toString().toLowerCase() ?? '';
-      if (namaLokasi.contains(inputLower)) {
-        suggestions.add(doc['nama_lokasi']);
+      final nama = doc['nama_lokasi']?.toString().toLowerCase() ?? '';
+      final id = doc['id_data_spasial'];
+      if (id == null) continue;
+
+      final spasialDoc = await FirebaseFirestore.instance
+          .collection('data_spasial')
+          .doc(id)
+          .get();
+
+      if (spasialDoc.exists &&
+          spasialDoc['status'] == 'disetujui' &&
+          nama.contains(input)) {
+        hasil.add(doc['nama_lokasi']);
       }
     }
 
-    return suggestions;
+    return hasil;
   }
 
-  // Fungsi untuk membuka link hak cipta OSM
+  // Toggle tampilan hak cipta OSM
+  void toggleCopyrightVisibility() {
+    showCopyrightOSM = !showCopyrightOSM;
+    notifyListeners();
+  }
+
+  // Buka link OSM
   Future<void> openOSMCopyrightLink(BuildContext context) async {
     final uri = Uri.parse('https://openstreetmap.org/copyright');
     try {
       if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
         showCustomSnackbar(
-          context: context,
-          message: 'Tidak dapat membuka tautan',
-          isSuccess: false,
-        );
+            context: context,
+            message: 'Tidak dapat membuka tautan',
+            isSuccess: false);
       }
     } catch (_) {
       showCustomSnackbar(
-        context: context,
-        message: 'Terjadi kesalahan saat membuka tautan',
-        isSuccess: false,
-      );
+          context: context, message: 'Gagal membuka tautan', isSuccess: false);
+    }
+  }
+
+  // Buka link Esri
+  Future<void> openEsriCopyrightLink(BuildContext context) async {
+    final uri = Uri.parse(
+        'https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9');
+    try {
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        showCustomSnackbar(
+            context: context,
+            message: 'Tidak dapat membuka tautan',
+            isSuccess: false);
+      }
+    } catch (_) {
+      showCustomSnackbar(
+          context: context, message: 'Gagal membuka tautan', isSuccess: false);
     }
   }
 
   void toggleSearch(bool value) {
     isSearching = value;
-    notifyListeners();
-  }
-
-  void toggleCopyrightVisibility() {
-    showCopyrightOSM = !showCopyrightOSM;
     notifyListeners();
   }
 }
