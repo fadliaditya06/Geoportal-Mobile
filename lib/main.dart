@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geoportal_mobile/controllers/detail_peta_controller.dart';
 import 'package:geoportal_mobile/screens/beranda_screen.dart';
 import 'package:geoportal_mobile/screens/onboarding_screen.dart';
 import 'package:geoportal_mobile/screens/auth/login_screen.dart';
@@ -17,21 +18,36 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:geoportal_mobile/controllers/unduh_data_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   // Inisialisasi Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   // Inisialisasi Supabase
   await Supabase.initialize(
     url: 'https://noeywxxoxuyicxtcsier.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5vZXl3eHhveHV5aWN4dGNzaWVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc1MzAwNTksImV4cCI6MjA2MzEwNjA1OX0.q-ktPox08DqxLUpotH74SeYwUdAwr93rKUsMmTi8GuY',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5vZXl3eHhveHV5aWN4dGNzaWVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc1MzAwNTksImV4cCI6MjA2MzEwNjA1OX0.q-ktPox08DqxLUpotH74SeYwUdAwr93rKUsMmTi8GuY',
   );
+
   // Inisialisasi format tanggal untuk bahasa Indonesia
   await initializeDateFormatting('id', '');
-  runApp(const MyApp());
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UnduhDataController()),
+        ChangeNotifierProvider(create: (_) => DetailPetaController()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -44,7 +60,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF358666)),
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-        progressIndicatorTheme: const ProgressIndicatorThemeData(color: Color(0xFF358666)),
+        progressIndicatorTheme:
+            const ProgressIndicatorThemeData(color: Color(0xFF358666)),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
@@ -55,9 +72,10 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('id'), 
-        Locale('en'), 
+        Locale('id'),
+        Locale('en'),
       ],
+
       // Daftar Routes
       routes: {
         '/': (context) => const SplashScreen(),
@@ -92,12 +110,8 @@ class _MainPageState extends State<MainPage> {
     if (user != null) {
       uid = user.uid;
 
-      // Ambil peran user 
-      FirebaseFirestore.instance
-          .collection('user')
-          .doc(uid)
-          .get()
-          .then((doc) {
+      // Ambil peran user
+      FirebaseFirestore.instance.collection('user').doc(uid).get().then((doc) {
         if (doc.exists) {
           setState(() {
             role = doc.data()?['peran'] ?? 'Pengguna';
@@ -117,7 +131,7 @@ class _MainPageState extends State<MainPage> {
 
     final List<Widget> pages = [
       BerandaScreen(uid: uid!),
-      PetaScreen(role: role),  
+      PetaScreen(role: role),
       const ProfilScreen(),
     ];
 
