@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
 
 class DummyBottomSheet extends StatelessWidget {
-  final String fclass;
-  final String name;
-  final int code;
-  final int population;
-  final String osmId;
+  final String kelurahan;
+  final String kecamatan;
+  final String kawasan;
+  final String lokasi;
+  final String alamat;
+  final String rt;
+  final String rw;
+  final String shapeLength;
+  final String shapeArea;
   final String coordinates;
 
   const DummyBottomSheet({
     super.key,
-    required this.fclass,
-    required this.name,
-    required this.code,
-    required this.population,
-    required this.osmId,
+    required this.kelurahan,
+    required this.kecamatan,
+    required this.kawasan,
+    required this.lokasi,
+    required this.alamat,
+    required this.rt,
+    required this.rw,
+    required this.shapeLength,
+    required this.shapeArea,
     required this.coordinates,
   });
-
-  String _capitalize(String s) {
-    if (s.isEmpty) return s;
-    return s[0].toUpperCase() + s.substring(1);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,6 @@ class DummyBottomSheet extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Garis hitam di tengah atas
                 const Center(
                   child: SizedBox(
                     width: 40,
@@ -51,29 +53,35 @@ class DummyBottomSheet extends StatelessWidget {
                 const SizedBox(height: 40),
                 Center(
                   child: Text(
-                    '${_capitalize(fclass)}: $name',
+                    lokasi.isNotEmpty ? lokasi : 'Detail Lokasi',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
                 const Divider(thickness: 1, color: Colors.black),
                 const SizedBox(height: 16),
-                _buildDataRow("Kode", code.toString()),
+                _buildDataRow("Kelurahan", kelurahan),
                 const Divider(thickness: 1, color: Colors.black),
-                if (population > 0) ...[
-                  _buildDataRow("Populasi", population.toString()),
-                  const Divider(thickness: 1, color: Colors.black),
-                ],
-                _buildDataRow("OSM ID", osmId.toString()),
+                _buildDataRow("Kecamatan", kecamatan),
                 const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Titik Koordinat", coordinates),
+                _buildDataRow("Kawasan", kawasan),
+                const Divider(thickness: 1, color: Colors.black),
+                _buildDataRow("Alamat", alamat),
+                const Divider(thickness: 1, color: Colors.black),
+                _buildDataRow("RT/RW", '$rt/$rw'),
+                const Divider(thickness: 1, color: Colors.black),
+                _buildDataRow("Panjang Bentuk", shapeLength),
+                const Divider(thickness: 1, color: Colors.black),
+                _buildDataRow("Luas Bentuk", shapeArea),
+                const Divider(thickness: 1, color: Colors.black),
+                _buildDataRow("Koordinat", coordinates),
                 const SizedBox(height: 24),
               ],
             ),
           ),
-          // Tombol silang di kanan atas
           Positioned(
             top: 10,
             right: 0,
