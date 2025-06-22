@@ -8,7 +8,6 @@ import 'package:geoportal_mobile/models/user_model.dart';
 class LoginController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   final TextEditingController emailController = TextEditingController();
   final TextEditingController kataSandiController = TextEditingController();
   String? selectedRole;
