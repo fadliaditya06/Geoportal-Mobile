@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class DetailKonfirmasiDataScreen extends StatefulWidget {
   const DetailKonfirmasiDataScreen({super.key});
@@ -9,9 +11,50 @@ class DetailKonfirmasiDataScreen extends StatefulWidget {
       DetailKonfirmasiDataScreenState();
 }
 
-class DetailKonfirmasiDataScreenState extends State<DetailKonfirmasiDataScreen> {
-  // Menyimpan status visibilitas gambar (tampil atau tidak)
+class DetailKonfirmasiDataScreenState
+    extends State<DetailKonfirmasiDataScreen> {
   final Map<String, bool> _imageVisibilityMap = {};
+  Map<String, dynamic>? dataUmum;
+  Map<String, dynamic>? dataSpasial;
+  Map<String, dynamic>? user;
+  bool isLoading = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final idUmum = args['id_data_umum'];
+    final idSpasial = args['id_data_spasial'];
+    final uid = args['uid'];
+    _fetchAllData(idUmum, idSpasial, uid);
+  }
+
+  Future<void> _fetchAllData(
+      String idUmum, String idSpasial, String uid) async {
+    try {
+      final docUmum = await FirebaseFirestore.instance
+          .collection('data_umum')
+          .doc(idUmum)
+          .get();
+      final docSpasial = await FirebaseFirestore.instance
+          .collection('data_spasial')
+          .doc(idSpasial)
+          .get();
+      final docUser =
+          await FirebaseFirestore.instance.collection('user').doc(uid).get();
+
+      setState(() {
+        dataUmum = docUmum.data();
+        dataSpasial = docSpasial.data();
+        user = docUser.data();
+        isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Gagal memuat data: $e');
+      setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,372 +62,329 @@ class DetailKonfirmasiDataScreenState extends State<DetailKonfirmasiDataScreen> 
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.chevron_left, size: 30, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          "Detail Data",
-          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
-        ),
+        title: const Text("Detail Data",
+            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black)),
         backgroundColor: const Color(0xFFB0E1C6),
         elevation: 0,
       ),
-      // Gradien Background
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.0, 0.36, 0.76, 0.93],
-            colors: [
-              Color(0xFFB0E1C6),
-              Color(0xFFFFFFFF),
-              Color(0xFF72B396),
-              Color(0xFFFFFFFF),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Card Permintaan Konfirmasi Data
-                Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: const BorderSide(color: Color(0xFF358666)),
-                  ),
-                  color: Colors.white,
-                  elevation: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(0xFF358666),
-                              width: 1,
-                            ),
-                          ),
-                          child: CircleAvatar(
-                            radius: 30,
-                            backgroundColor: Colors.grey[300],
-                            child: Icon(
-                              Icons.person,
-                              size: 30,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        const Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 5),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Hana Annisa',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                SizedBox(height: 3),
-                                Text(
-                                  'Permintaan Konfirmasi \nData',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12,
-                                    color: Colors.black,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 3,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [0.0, 0.36, 0.76, 0.93],
+                  colors: [
+                    Color(0xFFB0E1C6),
+                    Color(0xFFFFFFFF),
+                    Color(0xFF72B396),
+                    Color(0xFFFFFFFF),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                const Padding(
-                  padding: EdgeInsets.only(left: 8.0, right: 12),
+              ),
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Hana Annisa',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Permintaan Konfirmasi - One Batam Mall',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                        ),
-                      ),
-                      SizedBox(height: 12),
-                      Row(
+                      _buildUserCard(),
+                      const SizedBox(height: 16),
+                      _buildHeaderInfo(),
+                      const SizedBox(height: 20),
+                      _buildIdentifikasiCard(),
+                      const SizedBox(height: 16),
+                      _buildSpasialCard(),
+                      const SizedBox(height: 16),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Icon(CupertinoIcons.doc_fill,
-                              size: 20, color: Color(0xFF358666)),
-                          SizedBox(width: 8),
-                          Text(
-                            'Katalog Lokal',
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w400),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Icon(Icons.access_time_filled,
-                              size: 20, color: Color(0xFF358666)),
-                          SizedBox(width: 8),
-                          Text(
-                            '10 April 2024',
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w400),
-                          ),
+                          // _buildActionIcon(Icons.check),
+                          SizedBox(width: 12),
+                          // _buildActionIcon(Icons.close),
                         ],
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
-                Card(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                  ),
-                  color: const Color(0xFFB0E1C6),
-                  elevation: 0,
-                  child: SizedBox(
-                    height: 500,
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            // Card Identifikasi
-                            Card(
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(20)),
-                                side: BorderSide(
-                                    color: Color(0xFFD9D9D9), width: 2),
-                              ),
-                              color: const Color(0xFFD6F0E1),
-                              elevation: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Center(
-                                      child: Text(
-                                        'Identifikasi',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                    const Divider(color: Colors.black),
-                                    const SizedBox(height: 8),
-                                    _buildInfoRow('Judul', 'One Batam Mall'),
-                                    const Divider(color: Colors.black),
-                                    _buildInfoRow('Pemilik', 'Fadli Aditya'),
-                                    const Divider(color: Colors.black),
-                                    _buildInfoRow('Publikasi', '10 April 2024'),
-                                    const Divider(color: Colors.black),
-                                    _buildInfoRow('Jenis Sumber Daya', '-'),
-                                    const Divider(color: Colors.black),
-                                    _buildInfoRow('Sumber', 'Lokal'),
-                                    const Divider(color: Colors.black),
-                                    _buildInfoRow('Foto',
-                                        'assets/images/one-mall-batam.jpeg'),
-                                    const Divider(color: Colors.black),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            // Card Informasi Spasial
-                            Card(
-                              shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                                side: BorderSide(
-                                    color: Color(0xFFD9D9D9), width: 2),
-                              ),
-                              color: const Color(0xFFD6F0E1),
-                              elevation: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Center(
-                                      child: Text(
-                                        'Informasi Spasial',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                    const Divider(color: Colors.black),
-                                    const SizedBox(height: 8),
-                                    _buildInfoRow('Sistem Proyeksi',
-                                        'EPSG:4326 (WGS 84)'),
-                                    const Divider(color: Colors.black),
-                                    _buildInfoRow('Titik Koordinat',
-                                        '1.123656080648241, \n104.04652457983983'),
-                                    const Divider(color: Colors.black),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    _buildActionIcon(Icons.check),
-                    const SizedBox(width: 12),
-                    _buildActionIcon(Icons.close),
-                  ],
-                ),
-              ],
+              ),
             ),
-          ),
+    );
+  }
+
+  Widget _buildUserCard() {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Color(0xFF358666)),
+      ),
+      color: Colors.white,
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: Colors.grey[300],
+              backgroundImage: user?['foto_profil'] != null
+                  ? NetworkImage(user!['foto_profil'])
+                  : null,
+              child: user?['foto_profil'] == null
+                  ? Icon(Icons.person, size: 30, color: Colors.grey[700])
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user?['nama'] ?? '-',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  const SizedBox(height: 3),
+                  const Text(
+                    'Permintaan Konfirmasi Data',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  // Fungsi untuk menampilkan informasi data
-  Widget _buildInfoRow(String label, String value) {
-    // Memeriksa apakah value memiliki ekstensi gambar (png, jpg, jpeg)
-    bool isImage = value.endsWith('.png') ||
-        value.endsWith('.jpg') ||
-        value.endsWith('.jpeg');
-    // Jika value adalah gambar, tampilkan gambar dengan toggle
-    if (isImage) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
+  Widget _buildHeaderInfo() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0, right: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            user?['nama'] ?? '-',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Permintaan Konfirmasi - ${dataUmum?['nama_lokasi'] ?? '-'}',
+            style: const TextStyle(fontSize: 14),
+          ),
+          const SizedBox(height: 12),
+          const Row(
+            children: [
+              Icon(CupertinoIcons.doc_fill, size: 20, color: Color(0xFF358666)),
+              SizedBox(width: 8),
+              Text('Katalog Lokal', style: TextStyle(fontSize: 14)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              const Icon(Icons.access_time_filled,
+                  size: 20, color: Color(0xFF358666)),
+              const SizedBox(width: 8),
+              Text(
+                  dataUmum?['createdAt'] != null
+                      ? DateFormat('dd MMMM yyyy', 'id').format(
+                          (dataUmum?['createdAt'] as Timestamp).toDate())
+                      : '-',
+                  style: const TextStyle(fontSize: 14)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIdentifikasiCard() {
+    final fotoList = dataUmum?['foto_lokasi'];
+
+    return _buildInfoCard('Identifikasi', {
+      'Nama Lokasi': dataUmum?['nama_lokasi'] ?? '-',
+      'Kelurahan': dataUmum?['kelurahan'] ?? '-',
+      'Kecamatan': dataUmum?['kecamatan'] ?? '-',
+      'Kawasan': dataUmum?['kawasan'] ?? '-',
+      'Alamat': dataUmum?['alamat'] ?? '-',
+      'RT': dataUmum?['rt'] ?? '-',
+      'RW': dataUmum?['rw'] ?? '-',
+      'Panjang Bentuk': dataUmum?['panjang_bentuk'] ?? '-',
+      'Luas Bentuk': dataUmum?['luas_bentuk'] ?? '-',
+      'Foto': (fotoList is List && fotoList.isNotEmpty && fotoList[0] is String)
+          ? List<String>.from(fotoList.take(3))
+          : [],
+    });
+  }
+
+  Widget _buildSpasialCard() {
+    final koordinat = dataSpasial?['titik_koordinat'];
+
+    String formatKoordinat = '-';
+    if (koordinat is List && koordinat.length == 2) {
+      formatKoordinat =
+          '${koordinat[0].toString()}\n${koordinat[1].toString()}';
+    } else if (koordinat is String && koordinat.contains(',')) {
+      final parts = koordinat.split(',');
+      if (parts.length == 2) {
+        formatKoordinat = '${parts[0]}\n${parts[1]}';
+      }
+    }
+
+    return _buildInfoCard('Informasi Spasial', {
+      'Titik Koordinat': formatKoordinat,
+    });
+  }
+
+  Widget _buildInfoCard(String title, Map<String, dynamic> fields) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Color(0xFFD9D9D9), width: 2),
+      ),
+      color: const Color(0xFFD6F0E1),
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  label,
+            Center(
+              child: Text(title,
                   style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _imageVisibilityMap[label] =
-                          !_imageVisibilityMap.containsKey(label) ||
-                              !_imageVisibilityMap[label]!;
-                    });
-                  },
-                  child: Icon(
-                    _imageVisibilityMap[label] == true
-                        ? Icons.expand_less
-                        : Icons.expand_more,
-                    size: 18,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
+                      fontSize: 12, fontWeight: FontWeight.w500)),
             ),
-            if (_imageVisibilityMap[label] == true)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Image.asset(
-                  value,
-                  width: 300,
-                  height: 200,
-                  fit: BoxFit.cover,
-                ),
-              ),
+            const Divider(color: Colors.black),
+            ...fields.entries.map((entry) => Column(
+                  children: [
+                    _buildInfoRow(entry.key, entry.value),
+                    const Divider(color: Colors.black),
+                  ],
+                )),
           ],
         ),
-      );
-    } else {
-      // Jika bukan value gambar, tampilkan teks biasa
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
-              ),
-            ),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-  }
-
-  // Fungsi untuk membuat icon disetujui dan ditolak
-  Widget _buildActionIcon(IconData icon) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        border: Border.all(color: const Color(0xFF358666), width: 1),
-      ),
-      padding: const EdgeInsets.all(10),
-      child: Icon(
-        icon,
-        color: Colors.black,
-        size: 20,
       ),
     );
   }
+
+  Widget _buildInfoRow(String label, dynamic value) {
+    if (value is List && value.every((e) => e is String)) {
+      return _buildImageRow(label, value.cast<String>());
+    }
+
+    if (value is String &&
+        (value.endsWith('.jpg') ||
+            value.endsWith('.png') ||
+            value.endsWith('.jpeg'))) {
+      return _buildImageRow(label, [value]); // Bungkus jadi list
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+                fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
+          ),
+          Expanded(
+            child: Text(
+              value.toString(),
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImageRow(String label, List<String> imageList) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Label + Toggle
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _imageVisibilityMap[label] =
+                        !(_imageVisibilityMap[label] ?? false);
+                  });
+                },
+                child: Icon(
+                  _imageVisibilityMap[label] == true
+                      ? Icons.expand_less
+                      : Icons.expand_more,
+                  size: 18,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+
+          // Menampilkan foto
+          if (_imageVisibilityMap[label] == true)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: SizedBox(
+                height: 200,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: imageList.length.clamp(0, 3),
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.network(
+                          imageList[index],
+                          width: 320,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  // Widget _buildActionIcon(IconData icon) {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       color: Colors.white,
+  //       shape: BoxShape.circle,
+  //       border: Border.all(color: const Color(0xFF358666), width: 1),
+  //     ),
+  //     padding: const EdgeInsets.all(10),
+  //     child: Icon(icon, color: Colors.black, size: 20),
+  //   );
+  // }
 }
