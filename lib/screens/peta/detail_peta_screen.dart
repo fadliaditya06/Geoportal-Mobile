@@ -6,6 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:geoportal_mobile/controllers/detail_peta_controller.dart';
 import 'package:geoportal_mobile/widgets/detail_data_bottom_sheet.dart';
 
+enum MapType { osm, satelit }
+
+MapType selectedMapType = MapType.osm;
+
 class DetailPetaScreen extends StatefulWidget {
   final bool isKonfirmasiKoordinat;
   final bool isTambahData;
@@ -36,7 +40,12 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
 
   Future<void> _loadGeoJson() async {
     await _controller.loadGeoJsonMultiple(context);
-    setState(() {});
+    print("Jumlah polygon: ${_controller.polygons.length}");
+
+    if (!mounted) return;
+    setState(() {
+      geoJsonPolygons = _controller.polygons;
+    });
   }
 
   @override
@@ -47,13 +56,11 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
           FlutterMap(
             mapController: _controller.mapController,
             options: MapOptions(
-              initialCenter:
-                  const LatLng(-0.17325329329556474, 127.88725441653283),
-              initialZoom: 8.0,
+              initialCenter: const LatLng(1.1324, 104.0022),
+              initialZoom: 14.0,
               onMapReady: () {
-                _controller.mapController.move(
-                    const LatLng(-0.17325329329556474, 127.88725441653283),
-                    8.0);
+                _controller.mapController
+                    .move(const LatLng(1.1324, 104.0022), 14.0);
               },
               onTap: (tapPosition, latLng) async {
                 final nearbyData =
@@ -65,11 +72,14 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
             ),
             children: [
               TileLayer(
-                urlTemplate:
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                subdomains: const ['a', 'b', 'c'],
+                urlTemplate: selectedMapType == MapType.satelit
+                    ? 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+                    : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                subdomains:
+                    selectedMapType == MapType.satelit ? [] : ['a', 'b', 'c'],
+                userAgentPackageName: 'com.example.geoportal_mobile',
               ),
-              PolygonLayer(polygons: geoJsonPolygons),
+              PolygonLayer(polygons: _controller.polygons),
               MarkerLayer(markers: _controller.markers),
               MarkerLayer(markers: propertyMarkers),
             ],
@@ -223,6 +233,57 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
             ),
           ),
 
+          // Tombol Ganti Jenis Peta
+          Positioned(
+            top: 130,
+            right: 18,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: const [
+                  BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 4,
+                      offset: Offset(0, 2)),
+                ],
+              ),
+              child: PopupMenuButton<MapType>(
+                icon: const Icon(Icons.layers_outlined, color: Colors.black),
+                onSelected: (MapType value) {
+                  setState(() {
+                    selectedMapType = value;
+                  });
+                },
+                itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<MapType>>[
+                  PopupMenuItem<MapType>(
+                    value: MapType.osm,
+                    child: Text(
+                      'Peta Biasa',
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem<MapType>(
+                    value: MapType.satelit,
+                    child: Text(
+                      'Peta Satelit',
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           // Tombol Tambah Data
           Positioned(
             left: 10,
@@ -280,14 +341,22 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                 if (_controller.showCopyrightOSM) const SizedBox(width: 5),
                 if (_controller.showCopyrightOSM)
                   GestureDetector(
-                    onTap: () => _controller.openOSMCopyrightLink(context),
+                    onTap: () {
+                      if (selectedMapType == MapType.osm) {
+                        _controller.openOSMCopyrightLink(context);
+                      } else {
+                        _controller.openEsriCopyrightLink(context);
+                      }
+                    },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 6, vertical: 4),
                       color: Colors.white,
-                      child: const Text(
-                        'OpenStreetMap Contributors',
-                        style: TextStyle(
+                      child: Text(
+                        selectedMapType == MapType.osm
+                            ? 'OpenStreetMap Contributors'
+                            : 'Esri Contributors',
+                        style: const TextStyle(
                           fontSize: 12,
                           decoration: TextDecoration.underline,
                           color: Colors.blue,
