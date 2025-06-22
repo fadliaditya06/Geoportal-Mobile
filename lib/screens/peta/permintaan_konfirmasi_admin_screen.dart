@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
+import 'package:geoportal_mobile/screens/modal/permintaan_disetujui_modal.dart';
+import 'package:geoportal_mobile/screens/modal/permintaan_ditolak_modal.dart';
 
 class PermintaanKonfirmasiAdminScreen extends StatefulWidget {
   const PermintaanKonfirmasiAdminScreen({super.key});
@@ -27,7 +32,6 @@ class PermintaanKonfirmasiAdminScreenState
         elevation: 0,
         automaticallyImplyLeading: false,
       ),
-      // Gradien Background
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
@@ -43,47 +47,123 @@ class PermintaanKonfirmasiAdminScreenState
             ],
           ),
         ),
-        // Isi Konten
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: ListView.builder(
-            itemCount: 7,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Data Dummy untuk Card Permintaan Konfirmasi
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/detail-konfirmasi');
-                        },
-                        child: _permintaanKonfirmasiCard(
-                          title: 'Hana Annisa',
-                          description: 'Permintaan Konfirmasi Data',
-                        ),
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('log_konfirmasi')
+                .where('status', isEqualTo: 'menunggu')
+                // .orderBy('timestamp', descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      const SizedBox(height: 100),
+                      Image.asset(
+                        'assets/images/icon/permintaan-konfirmasi-kosong.png',
+                        width: double.infinity,
+                        height: 300,
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    // Tombol Disetujui dan Ditolak
-                    Row(
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Tidak ada permintaan konfirmasi data',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              final docs = snapshot.data!.docs;
+
+              return ListView.builder(
+                itemCount: docs.length,
+                itemBuilder: (context, index) {
+                  final data = docs[index].data() as Map<String, dynamic>;
+                  final docId = docs[index].id;
+
+                  final nama = data['nama'] ?? '-';
+                  final deskripsi = data['deskripsi'] ?? '-';
+                  final waktu = data['timestamp'] != null
+                      ? DateFormat('dd MMMM yyyy - HH:mm', 'id')
+                          .format((data['timestamp'] as Timestamp).toDate())
+                      : '-';
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30),
-                          child: _permintaanKonfirmasiIcon(
-                              icon: CupertinoIcons.checkmark_alt),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/detail-konfirmasi',
+                                arguments: {
+                                  'id_data_umum': data['data']?['id_data_umum'],
+                                  'id_data_spasial': data['data']
+                                      ?['id_data_spasial'],
+                                  'uid': data['uid'],
+                                },
+                              );
+                            },
+                            child: _permintaanKonfirmasiCard(
+                              uid: data['uid'] ?? '-',
+                              title: nama,
+                              description: '$deskripsi\n$waktu',
+                            ),
+                          ),
                         ),
-                        const SizedBox(width: 5),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30),
-                          child: _permintaanKonfirmasiIcon(icon: Icons.close),
-                        ),
+                        const SizedBox(width: 8),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 30),
+                              child: GestureDetector(
+                                onTap: () {
+                                  showPermintaanDisetujuiDialog(
+                                    context: context,
+                                    onConfirm: () =>
+                                        _updateStatus(docId, 'disetujui'),
+                                  );
+                                },
+                                child: _permintaanKonfirmasiIcon(
+                                  icon: CupertinoIcons.checkmark_alt,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 30),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  await showPenolakanDialog(
+                                    context: context,
+                                    onConfirm: (alasanList) async {
+                                      await _updateStatus(
+                                          docId, 'ditolak', alasanList);
+                                    },
+                                  );
+                                },
+                                child: _permintaanKonfirmasiIcon(
+                                  icon: Icons.close,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
                       ],
-                    )
-                  ],
-                ),
+                    ),
+                  );
+                },
               );
             },
           ),
@@ -91,10 +171,66 @@ class PermintaanKonfirmasiAdminScreenState
       ),
     );
   }
-  // Fungsi untuk membuat card permintaan konfirmasi
+
+  // Fungsi untuk update status konfirmasi dan update data_spasial
+  Future<void> _updateStatus(String docId, String status,
+      [List<String>? alasan]) async {
+    try {
+      final logDoc = await FirebaseFirestore.instance
+          .collection('log_konfirmasi')
+          .doc(docId)
+          .get();
+
+      if (!logDoc.exists) {
+        showCustomSnackbar(
+          context: context,
+          message: 'Data log konfirmasi tidak ditemukan',
+          isSuccess: false,
+        );
+        return;
+      }
+
+      final data = logDoc.data();
+      final idDataSpasial = data?['data']?['id_data_spasial'];
+
+      final Map<String, dynamic> updateData = {'status': status};
+      if (alasan != null && alasan.isNotEmpty) {
+        updateData['alasan'] = alasan;
+      }
+
+      // Update collection log konfirmasi
+      await FirebaseFirestore.instance
+          .collection('log_konfirmasi')
+          .doc(docId)
+          .update(updateData);
+
+      // Update status di data spasial
+      if (idDataSpasial != null) {
+        await FirebaseFirestore.instance
+            .collection('data_spasial')
+            .doc(idDataSpasial)
+            .update({'status': status});
+      }
+
+      showCustomSnackbar(
+        context: context,
+        message: 'Data berhasil $status',
+        isSuccess: true,
+      );
+    } catch (e) {
+      showCustomSnackbar(
+        context: context,
+        message: 'Gagal mengupdate status: $e',
+        isSuccess: false,
+      );
+    }
+  }
+
+  // Card tampilan permintaan konfirmasi
   Widget _permintaanKonfirmasiCard({
     required String title,
     required String description,
+    required String uid,
   }) {
     return Card(
       shape: RoundedRectangleBorder(
@@ -108,27 +244,45 @@ class PermintaanKonfirmasiAdminScreenState
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Foto Profil
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: const Color(0xFF358666),
-                  width: 1,
-                ),
-              ),
-              child: CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.grey[300],
-                child: Icon(
-                  Icons.person,
-                  size: 30,
-                  color: Colors.grey[700],
-                ),
-              ),
+            // Avatar user menggunakan FutureBuilder
+            FutureBuilder<DocumentSnapshot>(
+              future:
+                  FirebaseFirestore.instance.collection('user').doc(uid).get(),
+              builder: (context, snapshotUser) {
+                String? fotoProfil;
+                if (snapshotUser.connectionState == ConnectionState.done &&
+                    snapshotUser.hasData &&
+                    snapshotUser.data!.exists) {
+                  final userData =
+                      snapshotUser.data!.data() as Map<String, dynamic>;
+                  fotoProfil = userData['foto_profil'] as String?;
+                }
+
+                return Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFF358666),
+                      width: 1,
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.grey[300],
+                    backgroundImage:
+                        (fotoProfil != null && fotoProfil.isNotEmpty)
+                            ? NetworkImage(fotoProfil)
+                            : null,
+                    child: (fotoProfil == null || fotoProfil.isEmpty)
+                        ? Icon(Icons.person, size: 30, color: Colors.grey[700])
+                        : null,
+                  ),
+                );
+              },
             ),
             const SizedBox(width: 12),
-            // Fungsi untuk menampilkan nama dan deskripsi
+
+            // Bagian teks
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(top: 5),
@@ -163,7 +317,8 @@ class PermintaanKonfirmasiAdminScreenState
       ),
     );
   }
-  // Fungsi untuk membuat icon disetujui dan ditolak
+
+  // Icon ACC dan Tolak
   Widget _permintaanKonfirmasiIcon({required IconData icon}) {
     return Container(
       decoration: BoxDecoration(
