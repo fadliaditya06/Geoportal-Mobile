@@ -1,24 +1,43 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:geoportal_mobile/models/data_umum_model.dart';
+import 'package:geoportal_mobile/models/data_spasial_model.dart';
+import 'package:geoportal_mobile/models/log_konfirmasi_model.dart';
 
 class TambahDataController {
-  final TextEditingController namaLokasiController = TextEditingController();
-  final TextEditingController pemilikController = TextEditingController();
-  final TextEditingController publikasiController = TextEditingController();
-  final TextEditingController jenisSumberDayaController =
-      TextEditingController();
-  final TextEditingController sumberController = TextEditingController();
-  final TextEditingController sistemProyeksiController =
-      TextEditingController();
-  final TextEditingController titikKoordinatController =
-      TextEditingController();
+  // Text Controllers
+  final TextEditingController lokasiController;
+  final TextEditingController kelurahanController;
+  final TextEditingController kecamatanController;
+  final TextEditingController kawasanController;
+  final TextEditingController alamatController;
+  final TextEditingController rtController;
+  final TextEditingController rwController;
+  final TextEditingController panjangBentukController;
+  final TextEditingController luasBentukController;
+  final TextEditingController titikKoordinatController;
 
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey;
+
+  TambahDataController({
+    required this.titikKoordinatController,
+    required this.lokasiController,
+    required this.kelurahanController,
+    required this.kecamatanController,
+    required this.kawasanController,
+    required this.alamatController,
+    required this.rtController,
+    required this.rwController,
+    required this.panjangBentukController,
+    required this.luasBentukController,
+    required this.formKey,
+  });
 
   final List<File> _fotoFiles = [];
   final List<String> _fotoUrls = [];
@@ -109,76 +128,121 @@ class TambahDataController {
     }
   }
 
-  // Simpan data ke Firebase Firestore
   Future<void> simpanData(BuildContext context) async {
-    if (formKey.currentState!.validate()) {
-      try {
-        if (_fotoFiles.isNotEmpty) {
-          await uploadFoto();
-        }
+    if (!formKey.currentState!.validate()) return;
 
-        final docSpasial =
-            await FirebaseFirestore.instance.collection('data_spasial').add({
-          'sistem_proyeksi': sistemProyeksiController.text,
-          'titik_koordinat': titikKoordinatController.text,
-          'createdAt': Timestamp.now(),
-        });
-
-        final docUmum =
-            FirebaseFirestore.instance.collection('data_umum').doc();
-
-        await docUmum.set({
-          'id_data_umum': docUmum.id, 
-          'nama_lokasi': namaLokasiController.text,
-          'pemilik': pemilikController.text,
-          'publikasi': publikasiController.text,
-          'jenis_sumber_daya': jenisSumberDayaController.text,
-          'sumber': sumberController.text,
-          'foto_lokasi': _fotoUrls,
-          'id_data_spasial': docSpasial.id,
-          'createdAt': Timestamp.now(),
-        });
-
-        showCustomSnackbar(
-          context: context,
-          message: 'Data berhasil disimpan',
-          isSuccess: true,
-        );
-        Navigator.pop(context);
-      } catch (e) {
-        showCustomSnackbar(
-          context: context,
-          message: 'Gagal menyimpan data: $e',
-          isSuccess: false,
-        );
+    try {
+      // Upload foto jika ada
+      if (_fotoFiles.isNotEmpty) {
+        await uploadFoto();
       }
+
+      // Ambil user saat ini
+      final currentUser = FirebaseAuth.instance.currentUser;
+      final userDoc = await FirebaseFirestore.instance
+          .collection('user')
+          .doc(currentUser!.uid)
+          .get();
+
+      final dataUser = userDoc.data();
+      final role = dataUser?['peran']?.toString().toLowerCase() ?? '';
+      final bool isAdmin = role == 'admin';
+
+      // Simpan data spasial
+      final dataSpasial = DataSpasialModel(
+        titikKoordinat: titikKoordinatController.text,
+        status: isAdmin ? 'disetujui' : 'menunggu',
+        createdAt: DateTime.now(),
+      );
+
+      final docSpasial = await FirebaseFirestore.instance
+          .collection('data_spasial')
+          .add(dataSpasial.toMap());
+
+      // Simpan data umum
+      final docUmum = FirebaseFirestore.instance.collection('data_umum').doc();
+
+      final dataUmum = DataUmumModel(
+        id: docUmum.id,
+        namaLokasi: lokasiController.text,
+        kelurahan: kelurahanController.text,
+        kecamatan: kecamatanController.text,
+        kawasan: kawasanController.text,
+        alamat: alamatController.text,
+        rt: rtController.text,
+        rw: rwController.text,
+        panjangBentuk: panjangBentukController.text,
+        luasBentuk: luasBentukController.text,
+        fotoLokasi: _fotoUrls,
+        idDataSpasial: docSpasial.id,
+        createdAt: DateTime.now(),
+      );
+
+      await docUmum.set(dataUmum.toMap());
+
+      // Jika bukan admin, buat log konfirmasi
+      if (!isAdmin) {
+        final log = LogKonfirmasiModel(
+          uid: currentUser.uid,
+          nama: dataUser?['nama'] ?? '',
+          peran: role,
+          deskripsi: 'Permintaan Konfirmasi Data',
+          status: 'menunggu',
+          timestamp: Timestamp.now(),
+          data: {
+            'id_data_umum': docUmum.id,
+            'id_data_spasial': docSpasial.id,
+          },
+        );
+
+        await FirebaseFirestore.instance
+            .collection('log_konfirmasi')
+            .add(log.toMap());
+      }
+
+      // Notifikasi
+      showCustomSnackbar(
+        context: context,
+        message:
+            'Data berhasil diajukan${isAdmin ? '' : ' untuk dikonfirmasi'}',
+        isSuccess: true,
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      showCustomSnackbar(
+        context: context,
+        message: 'Gagal menyimpan data: $e',
+        isSuccess: false,
+      );
     }
   }
 
-  // Memilih tanggal publikasi
-  Future<void> selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
-      locale: const Locale('id'),
-    );
+  // // Memilih tanggal publikasi
+  // Future<void> selectDate(BuildContext context) async {
+  //   final DateTime? pickedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(),
+  //     firstDate: DateTime(1900),
+  //     lastDate: DateTime(2100),
+  //     locale: const Locale('id'),
+  //   );
 
-    if (pickedDate != null) {
-      publikasiController.text =
-          DateFormat('dd MMMM yyyy', 'id').format(pickedDate);
-    }
-  }
+  //   if (pickedDate != null) {
+  //     publikasiController.text =
+  //         DateFormat('dd MMMM yyyy', 'id').format(pickedDate);
+  //   }
+  // }
 
   // Dispose semua controller
   void dispose() {
-    namaLokasiController.dispose();
-    pemilikController.dispose();
-    publikasiController.dispose();
-    jenisSumberDayaController.dispose();
-    sumberController.dispose();
-    sistemProyeksiController.dispose();
+    lokasiController.dispose();
+    kelurahanController.dispose();
+    kecamatanController.dispose();
+    alamatController.dispose();
+    rtController.dispose();
+    rwController.dispose();
+    panjangBentukController.dispose();
+    luasBentukController.dispose();
     titikKoordinatController.dispose();
   }
 }

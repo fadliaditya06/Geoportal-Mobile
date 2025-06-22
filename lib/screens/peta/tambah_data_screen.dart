@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geoportal_mobile/screens/peta/detail_peta_screen.dart';
 import 'package:geoportal_mobile/controllers/tambah_data_controller.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 
 class TambahDataScreen extends StatefulWidget {
   const TambahDataScreen({super.key});
@@ -11,7 +13,25 @@ class TambahDataScreen extends StatefulWidget {
 }
 
 class _TambahDataScreenState extends State<TambahDataScreen> {
-  final TambahDataController controller = TambahDataController();
+  late final TambahDataController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TambahDataController(
+      lokasiController: TextEditingController(),
+      kelurahanController: TextEditingController(),
+      kecamatanController: TextEditingController(),
+      kawasanController: TextEditingController(),
+      alamatController: TextEditingController(),
+      rtController: TextEditingController(),
+      rwController: TextEditingController(),
+      panjangBentukController: TextEditingController(),
+      luasBentukController: TextEditingController(),
+      formKey: GlobalKey<FormState>(),
+      titikKoordinatController: TextEditingController(),
+    );
+  }
 
   @override
   void dispose() {
@@ -67,51 +87,215 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSectionTitle('Data Umum'),
+                  _buildTitle("Nama Kelurahan"),
+                  _buildTextField(
+                    controller: controller.kelurahanController,
+                    label: 'Contoh: Kelurahan Duriangkang',
+                    validator: (value) => value!.isEmpty
+                        ? 'Silahkan masukkan nama kelurahan'
+                        : null,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildTitle("Nama Kecamatan"),
+                  _buildTextField(
+                    controller: controller.kecamatanController,
+                    label: 'Contoh: Kecamatan Sei Beduk',
+                    validator: (value) => value!.isEmpty
+                        ? 'Silahkan masukkan nama kecamatan'
+                        : null,
+                  ),
+                  const SizedBox(height: 10),
+                  // _buildTitle("Publikasi"),
+                  // _buildTextField(
+                  //   label: 'Publikasi',
+                  //   controller: controller.publikasiController,
+                  //   readOnly: true,
+                  //   onTap: () => controller.selectDate(context),
+                  //   validator: (value) => value!.isEmpty
+                  //       ? 'Silahkan masukkan tanggal publikasi'
+                  //       : null,
+                  //   suffixIcon: Icons.calendar_today,
+                  // ),
+                  // const SizedBox(height: 10),
+                  _buildTitle("Kawasan"),
+                  DropdownButtonFormField<String>(
+                    value: controller.kawasanController.text.isNotEmpty
+                        ? controller.kawasanController.text
+                        : null,
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'Kawasan Pengembang',
+                        child: Text(
+                          'Kawasan Pengembang',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Kawasan Non Pengembang',
+                        child: Text(
+                          'Kawasan Non Pengembang',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        controller.kawasanController.text = value;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Jenis Kawasan',
+                      labelStyle: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15,
+                        color: Colors.black,
+                      ),
+                      filled: true,
+                      fillColor: const Color(0xFFB0E1C6),
+                      contentPadding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFB0E1C6),
+                          width: 1,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFB0E1C6),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    validator: (value) => (value == null || value.isEmpty)
+                        ? 'Silahkan pilih jenis kawasan'
+                        : null,
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
                   _buildTitle("Nama Lokasi"),
                   _buildTextField(
-                    controller: controller.namaLokasiController,
-                    label: 'Nama Lokasi',
+                    controller: controller.lokasiController,
+                    label: 'Contoh: Perumahan Mutiara Hijau ',
                     validator: (value) =>
                         value!.isEmpty ? 'Silahkan masukkan nama lokasi' : null,
                   ),
                   const SizedBox(height: 10),
-                  _buildTitle("Pemilik"),
+                  _buildTitle("Alamat"),
                   _buildTextField(
-                    controller: controller.pemilikController,
-                    label: 'Pemilik',
+                    controller: controller.alamatController,
+                    label: 'Contoh: Blok C2 No 15',
                     validator: (value) =>
-                        value!.isEmpty ? 'Silahkan masukkan pemilik' : null,
+                        value!.isEmpty ? 'Silahkan masukkan alamat' : null,
                   ),
                   const SizedBox(height: 10),
-                  _buildTitle("Publikasi"),
+                  _buildTitle("RT"),
                   _buildTextField(
-                    label: 'Publikasi',
-                    controller: controller.publikasiController,
-                    readOnly: true,
-                    onTap: () => controller.selectDate(context),
-                    validator: (value) => value!.isEmpty
-                        ? 'Silahkan masukkan tanggal publikasi'
-                        : null,
-                    suffixIcon: Icons.calendar_today,
+                    controller: controller.rtController,
+                    label: 'Contoh: 003',
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Silahkan masukkan nomor RT';
+                      }
+                      if (!RegExp(r'^\d{1,3}$').hasMatch(value)) {
+                        return 'Nomor RT maksimal 3 digit angka';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 10),
-                  _buildTitle("Jenis Sumber Daya"),
+                  _buildTitle("RW"),
                   _buildTextField(
-                    controller: controller.jenisSumberDayaController,
-                    label: 'Jenis Sumber Daya',
-                    validator: (value) => value!.isEmpty
-                        ? 'Silahkan masukkan jenis sumber daya'
-                        : null,
+                    controller: controller.rwController,
+                    label: 'Contoh: 006',
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Silahkan masukkan nomor RW';
+                      }
+                      if (!RegExp(r'^\d{1,3}$').hasMatch(value)) {
+                        return 'Nomor RW maksimal 3 digit angka';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 10),
-                  _buildTitle("Sumber"),
+                  _buildTitle("Panjang Bentuk"),
                   _buildTextField(
-                    controller: controller.sumberController,
-                    label: 'Sumber',
-                    validator: (value) =>
-                        value!.isEmpty ? 'Silahkan masukkan sumber' : null,
+                    controller: controller.panjangBentukController,
+                    label: 'Contoh: 0.00079236174892200004',
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'^[0-9eE\.\-]*$')),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Silahkan masukkan panjang bentuk';
+                      }
+
+                      final parsed = double.tryParse(value);
+                      if (parsed == null) {
+                        return 'Masukkan angka desimal yang valid';
+                      }
+
+                      if (parsed <= 0) {
+                        return 'Panjang harus lebih dari 0';
+                      }
+
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 10),
+
+                  _buildTitle("Luas Bentuk"),
+                  _buildTextField(
+                    controller: controller.luasBentukController,
+                    label: 'Contoh: 1.14035827148e-08',
+                    keyboardType: TextInputType.text,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'^[0-9eE\.\-]*$')),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Silahkan masukkan luas bentuk';
+                      }
+
+                      final parsed = double.tryParse(value);
+                      if (parsed == null) {
+                        return 'Masukkan angka desimal yang valid';
+                      }
+
+                      if (parsed <= 0) {
+                        return 'Luas harus lebih dari 0';
+                      }
+
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+
                   _buildTitle("Foto"),
                   FormField<List<File>>(
                     validator: (files) {
@@ -232,15 +416,6 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
                     },
                   ),
                   _buildSectionTitle('Data Spasial'),
-                  _buildTitle("Sistem Proyeksi"),
-                  _buildTextField(
-                    controller: controller.sistemProyeksiController,
-                    label: 'Sistem Proyeksi',
-                    validator: (value) => value!.isEmpty
-                        ? 'Silahkan masukkan sistem proyeksi'
-                        : null,
-                  ),
-                  const SizedBox(height: 10),
                   _buildTitle("Titik Koordinat"),
                   _buildTextField(
                     label: 'Titik Koordinat',
@@ -370,13 +545,18 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
     String? Function(String?)? validator,
     IconData? suffixIcon,
     VoidCallback? onSuffixTap,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return TextFormField(
       controller: controller,
       readOnly: readOnly,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
-        labelText: label, 
-        labelStyle: const TextStyle(color: Colors.black),
+        labelText: label,
+        labelStyle: const TextStyle(
+            color: Colors.black, fontSize: 15, fontWeight: FontWeight.w400),
         filled: true,
         fillColor: const Color(0xFFB0E1C6),
         contentPadding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
