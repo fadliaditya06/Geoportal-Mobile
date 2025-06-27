@@ -112,6 +112,7 @@ class PermintaanKonfirmasiAdminScreenState
                                   'id_data_spasial': data['data']
                                       ?['id_data_spasial'],
                                   'uid': data['uid'],
+                                  'deskripsi': data['deskripsi'],
                                 },
                               );
                             },
@@ -131,6 +132,7 @@ class PermintaanKonfirmasiAdminScreenState
                                 onTap: () {
                                   showPermintaanDisetujuiDialog(
                                     context: context,
+                                    deskripsi: data['deskripsi'] ?? '',
                                     onConfirm: () =>
                                         _updateStatus(docId, 'disetujui'),
                                   );
@@ -145,8 +147,13 @@ class PermintaanKonfirmasiAdminScreenState
                               padding: const EdgeInsets.only(top: 30),
                               child: GestureDetector(
                                 onTap: () async {
-                                  await showPenolakanDialog(
+                                  final jenisPermintaan =
+                                      deskripsi.toLowerCase().contains('hapus')
+                                          ? 'hapus'
+                                          : 'tambah';
+                                  await showPenolakanDialogDinamis(
                                     context: context,
+                                    jenisPermintaan: jenisPermintaan,
                                     onConfirm: (alasanList) async {
                                       await _updateStatus(
                                           docId, 'ditolak', alasanList);
@@ -172,7 +179,7 @@ class PermintaanKonfirmasiAdminScreenState
     );
   }
 
-  // Fungsi untuk update status konfirmasi dan update data_spasial
+  // Fungsi untuk update status konfirmasi dan update data spasial
   Future<void> _updateStatus(String docId, String status,
       [List<String>? alasan]) async {
     try {
@@ -192,24 +199,33 @@ class PermintaanKonfirmasiAdminScreenState
 
       final data = logDoc.data();
       final idDataSpasial = data?['data']?['id_data_spasial'];
+      final idDataUmum = data?['data']?['id_data_umum'];
+      final deskripsi = data?['deskripsi'] ?? '';
 
+      // Update status dan alasan
       final Map<String, dynamic> updateData = {'status': status};
       if (alasan != null && alasan.isNotEmpty) {
         updateData['alasan'] = alasan;
       }
 
-      // Update collection log konfirmasi
       await FirebaseFirestore.instance
           .collection('log_konfirmasi')
           .doc(docId)
           .update(updateData);
 
-      // Update status di data spasial
-      if (idDataSpasial != null) {
+      // Hanya hapus data jika disetujui dan deskripsi mengandung 'hapus'
+      if (status == 'disetujui' &&
+          deskripsi.toLowerCase().contains('hapus') &&
+          idDataSpasial != null &&
+          idDataUmum != null) {
+        await FirebaseFirestore.instance
+            .collection('data_umum')
+            .doc(idDataUmum)
+            .delete();
         await FirebaseFirestore.instance
             .collection('data_spasial')
             .doc(idDataSpasial)
-            .update({'status': status});
+            .delete();
       }
 
       showCustomSnackbar(

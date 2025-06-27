@@ -18,6 +18,7 @@ class DetailKonfirmasiDataScreenState
   Map<String, dynamic>? dataSpasial;
   Map<String, dynamic>? user;
   bool isLoading = true;
+  String? deskripsi;
 
   @override
   void didChangeDependencies() {
@@ -27,6 +28,7 @@ class DetailKonfirmasiDataScreenState
     final idUmum = args['id_data_umum'];
     final idSpasial = args['id_data_spasial'];
     final uid = args['uid'];
+    deskripsi = args['deskripsi'];
     _fetchAllData(idUmum, idSpasial, uid);
   }
 
@@ -54,6 +56,15 @@ class DetailKonfirmasiDataScreenState
       debugPrint('Gagal memuat data: $e');
       setState(() => isLoading = false);
     }
+  }
+
+  String _labelJenisPermintaan(String deskripsi) {
+    if (deskripsi.toLowerCase().contains('hapus')) {
+      return 'Hapus';
+    } else if (deskripsi.toLowerCase().contains('tambah')) {
+      return 'Tambah';
+    }
+    return '';
   }
 
   @override
@@ -148,10 +159,10 @@ class DetailKonfirmasiDataScreenState
                         fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                   const SizedBox(height: 3),
-                  const Text(
-                    'Permintaan Konfirmasi Data',
-                    style: TextStyle(fontSize: 12),
-                  ),
+                  Text(
+                    'Permintaan Konfirmasi ${_labelJenisPermintaan(deskripsi ?? '')} Data',
+                    style: const TextStyle(fontSize: 12),
+                  )
                 ],
               ),
             ),
@@ -173,7 +184,7 @@ class DetailKonfirmasiDataScreenState
           ),
           const SizedBox(height: 4),
           Text(
-            'Permintaan Konfirmasi - ${dataUmum?['nama_lokasi'] ?? '-'}',
+            'Permintaan Konfirmasi ${_labelJenisPermintaan(deskripsi ?? '')} Data - ${dataUmum?['nama_lokasi'] ?? '-'}',
             style: const TextStyle(fontSize: 14),
           ),
           const SizedBox(height: 12),
