@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
-Future<void> showPenolakanDialog({
+Future<void> showPenolakanDialogDinamis({
   required BuildContext context,
+  required String jenisPermintaan, // 'tambah' atau 'hapus'
   required Function(List<String> alasan) onConfirm,
 }) async {
-  final List<String> alasanList = [
-    'Data tidak valid',
-    'Data tidak sesuai',
-    'Alasan lainnya',
-  ];
+  final bool isHapus = jenisPermintaan.toLowerCase() == 'hapus';
+
+  final List<String> alasanList = isHapus
+      ? ['Data masih valid', 'Alasan tidak jelas', 'Alasan lainnya']
+      : ['Data tidak lengkap', 'Tidak relevan', 'Alasan lainnya'];
+
   final Map<String, bool> selected = {
     for (var alasan in alasanList) alasan: false,
   };
@@ -19,15 +21,16 @@ Future<void> showPenolakanDialog({
     context: context,
     builder: (context) => StatefulBuilder(
       builder: (context, setState) => AlertDialog(
-        title: const Text.rich(
+        title: Text.rich(
           TextSpan(
             children: [
+              const TextSpan(
+                text: 'Silahkan Berikan Alasan Penolakan ',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
               TextSpan(
-                  text: 'Silahkan Berikan Alasan',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              TextSpan(
-                text: ' Penolakan',
-                style: TextStyle(
+                text: isHapus ? 'Hapus Data' : 'Tambah Data',
+                style: const TextStyle(
                   color: Color(0xFF358666),
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -58,8 +61,6 @@ Future<void> showPenolakanDialog({
                   },
                 );
               }).toList(),
-
-              // Tampilkan textfield jika memilih alasan lainnya
               if (selected['Alasan lainnya'] == true) ...[
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
@@ -101,8 +102,7 @@ Future<void> showPenolakanDialog({
             ],
           ),
         ),
-        actionsPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         actions: [
           Row(
             children: [
