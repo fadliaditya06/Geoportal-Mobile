@@ -75,7 +75,8 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
               const SizedBox(height: 10),
               if (_uploadedImageUrl != null)
                 ListTile(
-                  leading: const Icon(Icons.delete_outline),
+                  leading: const Icon(Icons.delete_outline,
+                      color: Color(0xFFEA3535)),
                   title: const Text('Hapus Foto'),
                   onTap: () {
                     Navigator.of(context).pop();
@@ -83,7 +84,8 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                   },
                 ),
               ListTile(
-                leading: const Icon(Icons.camera_alt_outlined),
+                leading: const Icon(Icons.camera_alt_outlined,
+                    color: Color(0xFF358666)),
                 title: const Text('Ambil Foto'),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -91,7 +93,8 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library_outlined),
+                leading: const Icon(Icons.photo_library_outlined,
+                    color: Color(0xFF358666)),
                 title: const Text('Pilih dari Galeri'),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -284,16 +287,6 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                             controller: controller.emailController,
                             isEmail: true,
                             readOnly: true,
-                            validator: (value) {
-                              if (value != null && value.isNotEmpty) {
-                                final emailRegex =
-                                    RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                                if (!emailRegex.hasMatch(value)) {
-                                  return 'Format email tidak valid';
-                                }
-                              }
-                              return null;
-                            },
                           ),
                           const SizedBox(height: 20),
                           _buildTitle("Nama Lengkap"),
@@ -304,10 +297,8 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                           ),
                           const SizedBox(height: 20),
                           _buildTitle("Alamat"),
-                          _buildTextField(
-                            Icons.home_outlined, 
-                            "Alamat",
-                            controller: controller.alamatController),
+                          _buildTextField(Icons.home_outlined, "Alamat",
+                              controller: controller.alamatController),
                           const SizedBox(height: 40),
                           // Tombol Simpan
                           Center(
@@ -326,7 +317,8 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                                   setState(() {
                                     isLoading = true;
                                   });
-                                  final isSuccess = await controller.ubahDataProfil();
+                                  final isSuccess =
+                                      await controller.ubahDataProfil();
                                   setState(() {
                                     isLoading = false;
                                   });

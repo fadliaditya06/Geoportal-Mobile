@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoportal_mobile/screens/auth/login_screen.dart';
+import 'package:geoportal_mobile/screens/profil/faq_screen.dart';
 import 'package:geoportal_mobile/screens/profil/lihat_profil_screen.dart';
 import 'package:geoportal_mobile/screens/profil/syarat_dan_ketentuan_screen.dart';
 import 'package:geoportal_mobile/screens/profil/ubah_kata_sandi_screen.dart';
@@ -185,6 +186,11 @@ class _ProfilScreenState extends State<ProfilScreen> {
                           title: "Syarat & Ketentuan",
                           onTap: () => _navigateTo(
                               context, const SyaratdanKetentuanScreen()),
+                        ),
+                        _buildProfilMenu(
+                          icon: Icons.question_answer_outlined,
+                          title: "FAQ",
+                          onTap: () => _navigateTo(context, const FAQScreen()),
                         ),
                         const SizedBox(height: 30),
                         // Tombol Logout
