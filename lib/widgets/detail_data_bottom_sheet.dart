@@ -3,6 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:geoportal_mobile/screens/peta/ubah_data_screen.dart';
 import 'package:geoportal_mobile/controllers/unduh_data_controller.dart';
 import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geoportal_mobile/models/log_konfirmasi_model.dart';
+import 'package:geoportal_mobile/screens/modal/hapus_data_modal.dart';
 
 class DetailDataBottomSheet extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -94,7 +98,7 @@ class DetailDataBottomSheet extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      ElevatedButton.icon(
+                      ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF92E3A9),
                           foregroundColor: Colors.black,
@@ -104,9 +108,6 @@ class DetailDataBottomSheet extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 12),
                         ),
-                        icon: const Icon(Icons.edit_location_alt,
-                            size: 18, color: Colors.black),
-                        label: const Text("Ubah Data"),
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -115,11 +116,118 @@ class DetailDataBottomSheet extends StatelessWidget {
                             ),
                           );
                         },
+                        child: const Icon(
+                          Icons.edit_location_alt,
+                          size: 18,
+                          color: Colors.black,
+                        ),
                       ),
-                      const SizedBox(width: 40),
+                      const SizedBox(width: 70),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFEA3535),
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
+                        ),
+                        onPressed: () async {
+                          final user = FirebaseAuth.instance.currentUser;
+                          if (user == null) return;
+
+                          final userDoc = await FirebaseFirestore.instance
+                              .collection('user')
+                              .doc(user.uid)
+                              .get();
+
+                          final namaUser = userDoc['nama'] ?? 'Pengguna';
+                          final peranUser = userDoc['peran'] ?? 'pengguna';
+
+                          final idDataUmum = data['id_data_umum'];
+                          final idDataSpasial = data['id_data_spasial'];
+
+                          if (idDataUmum == null || idDataSpasial == null) {
+                            showCustomSnackbar(
+                              context: context,
+                              message: 'Data tidak lengkap',
+                              isSuccess: false,
+                            );
+                            return;
+                          }
+
+                          await showDeleteDataDialog(
+                            context: context,
+                            onConfirm: () async {
+                              // Jika role admin maka tidak memerlukan konfirmasi
+                              if (peranUser.toLowerCase() == 'admin') {
+                                try {
+                                  await FirebaseFirestore.instance
+                                      .collection('data_umum')
+                                      .doc(idDataUmum)
+                                      .delete();
+
+                                  await FirebaseFirestore.instance
+                                      .collection('data_spasial')
+                                      .doc(idDataSpasial)
+                                      .delete();
+
+                                  Navigator.pop(
+                                      context); // Keluar dari halaman detail
+                                  showCustomSnackbar(
+                                    context: context,
+                                    message: 'Data berhasil dihapus oleh admin',
+                                    isSuccess: true,
+                                  );
+                                } catch (e) {
+                                  showCustomSnackbar(
+                                    context: context,
+                                    message: 'Gagal menghapus data: $e',
+                                    isSuccess: false,
+                                  );
+                                }
+                              } else {
+                                // Jika role pengguna, maka memerlukan konfirmasi
+                                final log = LogKonfirmasiModel(
+                                  uid: user.uid,
+                                  nama: namaUser,
+                                  peran: peranUser,
+                                  deskripsi: 'Permintaan Konfirmasi Hapus Data',
+                                  status: 'menunggu',
+                                  timestamp: Timestamp.now(),
+                                  data: {
+                                    'id_data_umum': idDataUmum,
+                                    'id_data_spasial': idDataSpasial,
+                                  },
+                                );
+
+                                await FirebaseFirestore.instance
+                                    .collection('log_konfirmasi')
+                                    .add(log.toMap());
+
+                                Navigator.pop(
+                                    context); // Keluar dari halaman detail
+                                showCustomSnackbar(
+                                  context: context,
+                                  message:
+                                      'Data berhasil diajukan untuk dihapus',
+                                  isSuccess: true,
+                                );
+                              }
+                            },
+                          );
+                        },
+                        child: const Icon(
+                          Icons.delete_outline,
+                          size: 18,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(width: 80),
                       Consumer<UnduhDataController>(
                         builder: (context, c, _) {
-                          return ElevatedButton.icon(
+                          return ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF92E3A9),
                               foregroundColor: Colors.black,
@@ -127,21 +235,8 @@ class DetailDataBottomSheet extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 12),
+                                  horizontal: 15, vertical: 12),
                             ),
-                            icon: c.loadingPdf
-                                ? const SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Colors.white),
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Icon(Icons.download,
-                                    size: 18, color: Colors.black),
-                            label: const Text("Unduh Data"),
                             onPressed: c.loadingPdf
                                 ? null
                                 : () async {
@@ -169,8 +264,21 @@ class DetailDataBottomSheet extends StatelessWidget {
                                         isSuccess: true,
                                       );
                                     }
+
                                     Navigator.pop(context);
                                   },
+                            child: c.loadingPdf
+                                ? const SizedBox(
+                                    width: 15,
+                                    height: 15,
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.download,
+                                    size: 18, color: Colors.black),
                           );
                         },
                       ),
