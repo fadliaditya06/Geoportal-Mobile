@@ -186,7 +186,7 @@ class TambahDataController {
           uid: currentUser.uid,
           nama: dataUser?['nama'] ?? '',
           peran: role,
-          deskripsi: 'Permintaan Konfirmasi Data',
+          deskripsi: 'Permintaan Konfirmasi Tambah Data',
           status: 'menunggu',
           timestamp: Timestamp.now(),
           data: {

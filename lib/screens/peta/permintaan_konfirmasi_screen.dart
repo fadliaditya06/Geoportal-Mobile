@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -116,7 +117,7 @@ class _PermintaanKonfirmasiScreenState
                       final nestedData = data['data'] as Map<String, dynamic>?;
 
                       final nama = data['nama'] ?? '-';
-                      final jenisPermintaan = data['deskripsi'] ?? '-';
+                      final deskripsi = data['deskripsi'] ?? '-';
                       final status = data['status'] ?? '';
                       final alasanList = data['alasan'] as List<dynamic>? ?? [];
                       final alasanGabungan = alasanList.join(', ');
@@ -151,143 +152,210 @@ class _PermintaanKonfirmasiScreenState
                             }
                           }
 
-                          return SizedBox(
-                            child: Card(
-                              shape: RoundedRectangleBorder(
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            margin: const EdgeInsets.only(bottom: 16),
+                            elevation: 3,
+                            child: Container(
+                              decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                              ),
-                              margin: const EdgeInsets.only(bottom: 16),
-                              elevation: 3,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: const Color(0xFF358666),
-                                    width: 1,
-                                  ),
+                                border: Border.all(
+                                  color: const Color(0xFF358666),
+                                  width: 1,
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      FutureBuilder<DocumentSnapshot>(
-                                        future: FirebaseFirestore.instance
-                                            .collection('user')
-                                            .doc(data['uid'])
-                                            .get(),
-                                        builder: (context, snapshotUser) {
-                                          String? fotoProfil;
-                                          if (snapshotUser.connectionState ==
-                                                  ConnectionState.done &&
-                                              snapshotUser.hasData &&
-                                              snapshotUser.data!.exists) {
-                                            final userData = snapshotUser.data!
-                                                .data() as Map<String, dynamic>;
-                                            fotoProfil = userData['foto_profil']
-                                                as String?;
-                                          }
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    FutureBuilder<DocumentSnapshot>(
+                                      future: FirebaseFirestore.instance
+                                          .collection('user')
+                                          .doc(data['uid'])
+                                          .get(),
+                                      builder: (context, snapshotUser) {
+                                        String? fotoProfil;
+                                        if (snapshotUser.connectionState ==
+                                                ConnectionState.done &&
+                                            snapshotUser.hasData &&
+                                            snapshotUser.data!.exists) {
+                                          final userData = snapshotUser.data!
+                                              .data() as Map<String, dynamic>;
+                                          fotoProfil = userData['foto_profil']
+                                              as String?;
+                                        }
 
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                color: const Color(0xFF358666),
-                                                width: 1,
-                                              ),
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: const Color(0xFF358666),
+                                              width: 1,
                                             ),
-                                            child: CircleAvatar(
-                                              radius: 30,
-                                              backgroundColor: Colors.grey[300],
-                                              backgroundImage:
-                                                  (fotoProfil != null &&
-                                                          fotoProfil.isNotEmpty)
-                                                      ? NetworkImage(fotoProfil)
-                                                      : null,
-                                              child: (fotoProfil == null ||
-                                                      fotoProfil.isEmpty)
-                                                  ? Icon(Icons.person,
-                                                      size: 30,
-                                                      color: Colors.grey[700])
-                                                  : null,
+                                          ),
+                                          child: CircleAvatar(
+                                            radius: 30,
+                                            backgroundColor: Colors.grey[300],
+                                            backgroundImage:
+                                                (fotoProfil != null &&
+                                                        fotoProfil.isNotEmpty)
+                                                    ? NetworkImage(fotoProfil)
+                                                    : null,
+                                            child: (fotoProfil == null ||
+                                                    fotoProfil.isEmpty)
+                                                ? Icon(Icons.person,
+                                                    size: 30,
+                                                    color: Colors.grey[700])
+                                                : null,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            nama,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
                                             ),
-                                          );
-                                        },
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              nama,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              status == 'ditolak' &&
-                                                      alasanGabungan.isNotEmpty
-                                                  ? 'Ditolak - $alasanGabungan'
-                                                  : _statusLabel(status),
-                                              style: const TextStyle(
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            () {
+                                              if (status == 'ditolak' &&
+                                                  alasanGabungan.isNotEmpty) {
+                                                return 'Ditolak - $alasanGabungan';
+                                              } else if (status == 'menunggu') {
+                                                if (deskripsi
+                                                    .toLowerCase()
+                                                    .contains('hapus')) {
+                                                  return 'Menunggu Konfirmasi Hapus Data';
+                                                } else if (deskripsi
+                                                    .toLowerCase()
+                                                    .contains('tambah')) {
+                                                  return 'Menunggu Konfirmasi Tambah Data';
+                                                } else {
+                                                  return 'Menunggu Konfirmasi';
+                                                }
+                                              } else {
+                                                return _statusLabel(status);
+                                              }
+                                            }(),
+                                            style: const TextStyle(
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w400,
-                                              ),
+                                                fontSize: 12),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            lokasi,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w400,
                                             ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              lokasi,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Row(
-                                              children: [
-                                                const Icon(Icons.description,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Icon(
+                                                    Icons.description,
                                                     size: 18,
-                                                    color: Color(0xFF358666)),
-                                                const SizedBox(width: 6),
-                                                Text(
-                                                  jenisPermintaan,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.w400,
+                                                    color: Color(0xFF358666),
                                                   ),
+                                                  const SizedBox(width: 6),
+                                                  Flexible(
+                                                    child: RichText(
+                                                      text: TextSpan(
+                                                        style: const TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                'Permintaan Konfirmasi ',
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400),
+                                                          ),
+                                                          TextSpan(
+                                                            text: deskripsi
+                                                                    .toLowerCase()
+                                                                    .contains(
+                                                                        'hapus')
+                                                                ? 'Hapus'
+                                                                : deskripsi
+                                                                        .toLowerCase()
+                                                                        .contains(
+                                                                            'tambah')
+                                                                    ? 'Tambah'
+                                                                    : '',
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400),
+                                                          ),
+                                                          const TextSpan(
+                                                              text: '\n'),
+                                                          TextSpan(
+                                                            text: 'Data',
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.access_time_filled,
+                                                size: 16,
+                                                color: Color(0xFF358666),
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                formatTanggal(tanggal),
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w400,
                                                 ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Row(
-                                              children: [
-                                                const Icon(
-                                                    Icons.access_time_filled,
-                                                    size: 18,
-                                                    color: Color(0xFF358666)),
-                                                const SizedBox(width: 6),
-                                                Text(
-                                                  formatTanggal(tanggal),
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                )
-                                              ],
-                                            )
-                                          ],
-                                        ),
+                                              )
+                                            ],
+                                          )
+                                        ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -332,14 +400,16 @@ class _PermintaanKonfirmasiScreenState
     );
   }
 
-  String _statusLabel(StatusKonfirmasi status) {
+  String _statusLabel(String status) {
     switch (status) {
-      case StatusKonfirmasi.disetujui:
+      case 'disetujui':
         return 'Disetujui';
-      case StatusKonfirmasi.ditolak:
+      case 'ditolak':
         return 'Ditolak';
-      case StatusKonfirmasi.menunggu:
+      case 'menunggu':
         return 'Menunggu Konfirmasi';
+      default:
+        return status;
     }
   }
 }
