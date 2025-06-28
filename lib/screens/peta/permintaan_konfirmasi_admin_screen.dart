@@ -230,7 +230,7 @@ class PermintaanKonfirmasiAdminScreenState
 
       showCustomSnackbar(
         context: context,
-        message: 'Data berhasil $status',
+        message: 'Konfirmasi data berhasil $status',
         isSuccess: true,
       );
     } catch (e) {
@@ -314,15 +314,31 @@ class PermintaanKonfirmasiAdminScreenState
                       ),
                     ),
                     const SizedBox(height: 3),
-                    Text(
-                      description,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          description.split('\n').first,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12,
+                            color: Colors.black,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          description.split('\n').last,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12,
+                            color: Colors.black,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ],
                     ),
                   ],
                 ),
