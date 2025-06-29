@@ -150,6 +150,56 @@ class PetaScreenState extends State<PetaScreen> {
                 }).toList(),
               ),
               const SizedBox(height: 40),
+              RichText(
+                text: const TextSpan(
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: 'Info',
+                      style:
+                          TextStyle(color: Colors.black, fontFamily: 'Poppins'),
+                    ),
+                    TextSpan(
+                      text: 'grafis',
+                      style: TextStyle(
+                          color: Color(0xFF358666), fontFamily: 'Poppins'),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(color: Colors.black, thickness: 1),
+              const SizedBox(height: 20),
+              InkWell(
+                onTap: () {},
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 6,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      'assets/images/infografis-perumahan-batam.jpg',
+                      height: 520,
+                      width: 250,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
               // Judul Akses Peta Digital
               RichText(
                 text: const TextSpan(
@@ -215,17 +265,17 @@ class PetaScreenState extends State<PetaScreen> {
                                   setState(() {
                                     _pickedLocation = point;
                                   });
-                                  // Salin koordinat yang dipilih
-                                  Clipboard.setData(
-                                    ClipboardData(
-                                        text:
-                                            '${point.latitude}, ${point.longitude}'),
-                                  );
+                                  // // Salin koordinat yang dipilih
+                                  // Clipboard.setData(
+                                  //   ClipboardData(
+                                  //       text:
+                                  //           '${point.latitude}, ${point.longitude}'),
+                                  // );
                                   // Snackbar untuk menampilkan data koordinat yang dipilih
                                   showCustomSnackbar(
                                     context: context,
                                     message:
-                                        'Koordinat disalin: ${point.latitude}, ${point.longitude}',
+                                        'Koordinat: ${point.latitude}, ${point.longitude}',
                                     isSuccess: true,
                                   );
                                 },
