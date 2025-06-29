@@ -29,11 +29,12 @@ class DetailKonfirmasiDataScreenState
     final idSpasial = args['id_data_spasial'];
     final uid = args['uid'];
     deskripsi = args['deskripsi'];
-    _fetchAllData(idUmum, idSpasial, uid);
+    final docId = args['docId'];
+    _fetchAllData(idUmum, idSpasial, uid, docId);
   }
 
   Future<void> _fetchAllData(
-      String idUmum, String idSpasial, String uid) async {
+      String idUmum, String idSpasial, String uid, String docId) async {
     try {
       final docUmum = await FirebaseFirestore.instance
           .collection('data_umum')
@@ -45,10 +46,32 @@ class DetailKonfirmasiDataScreenState
           .get();
       final docUser =
           await FirebaseFirestore.instance.collection('user').doc(uid).get();
+      final docLog = await FirebaseFirestore.instance
+          .collection('log_konfirmasi')
+          .doc(docId)
+          .get();
+
+      final dataBaru = docLog.data()?['data_baru'];
+
+      // Gabungkan jika ada dataBaru
+      Map<String, dynamic>? finalDataUmum = docUmum.data();
+      Map<String, dynamic>? finalDataSpasial = docSpasial.data();
+
+      if (dataBaru != null) {
+        final baru = Map<String, dynamic>.from(dataBaru);
+        finalDataUmum = {
+          ...finalDataUmum ?? {},
+          ...baru,
+        };
+        finalDataSpasial = {
+          ...finalDataSpasial ?? {},
+          'titik_koordinat': baru['titik_koordinat'],
+        };
+      }
 
       setState(() {
-        dataUmum = docUmum.data();
-        dataSpasial = docSpasial.data();
+        dataUmum = finalDataUmum;
+        dataSpasial = finalDataSpasial;
         user = docUser.data();
         isLoading = false;
       });
@@ -63,6 +86,8 @@ class DetailKonfirmasiDataScreenState
       return 'Hapus';
     } else if (deskripsi.toLowerCase().contains('tambah')) {
       return 'Tambah';
+    } else if (deskripsi.toLowerCase().contains('ubah')) {
+      return 'Ubah';
     }
     return '';
   }

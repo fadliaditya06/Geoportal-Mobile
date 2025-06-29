@@ -112,7 +112,11 @@ class DetailDataBottomSheet extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const UbahDataScreen(),
+                              builder: (context) => UbahDataScreen(
+                                idDataUmum: data['id_data_umum'],
+                                idDataSpasial: data['id_data_spasial'],
+                                data: data,
+                              ),
                             ),
                           );
                         },
@@ -174,7 +178,7 @@ class DetailDataBottomSheet extends StatelessWidget {
                                       .delete();
 
                                   Navigator.pop(
-                                      context); // Keluar dari halaman detail
+                                      context);
                                   showCustomSnackbar(
                                     context: context,
                                     message: 'Data berhasil dihapus oleh admin',
@@ -206,12 +210,11 @@ class DetailDataBottomSheet extends StatelessWidget {
                                     .collection('log_konfirmasi')
                                     .add(log.toMap());
 
-                                Navigator.pop(
-                                    context); // Keluar dari halaman detail
+                                Navigator.pop(context);
                                 showCustomSnackbar(
                                   context: context,
                                   message:
-                                      'Data berhasil diajukan untuk dihapus',
+                                      'Permintaan hapus data berhasil diajukan',
                                   isSuccess: true,
                                 );
                               }
