@@ -7,8 +7,8 @@ class LogKonfirmasiModel {
   final String deskripsi;
   final String status;
   final Timestamp timestamp;
-  final Map<String, String> data;
-  final List<String>? alasan; 
+  final Map<String, dynamic> data;
+  final Map<String, dynamic>? dataBaru; // nullable untuk kasus tambah data
 
   LogKonfirmasiModel({
     required this.uid,
@@ -18,7 +18,7 @@ class LogKonfirmasiModel {
     required this.status,
     required this.timestamp,
     required this.data,
-    this.alasan,
+    this.dataBaru,
   });
 
   Map<String, dynamic> toMap() {
@@ -30,20 +30,7 @@ class LogKonfirmasiModel {
       'status': status,
       'timestamp': timestamp,
       'data': data,
-      if (alasan != null && alasan!.isNotEmpty) 'alasan': alasan,
+      if (dataBaru != null) 'data_baru': dataBaru,
     };
-  }
-
-  factory LogKonfirmasiModel.fromMap(Map<String, dynamic> map) {
-    return LogKonfirmasiModel(
-      uid: map['uid'] ?? '',
-      nama: map['nama'] ?? '',
-      peran: map['peran'] ?? '',
-      deskripsi: map['deskripsi'] ?? '',
-      status: map['status'] ?? '',
-      timestamp: map['timestamp'] ?? Timestamp.now(),
-      data: Map<String, String>.from(map['data'] ?? {}),
-      alasan: map['alasan'] != null ? List<String>.from(map['alasan']) : null,
-    );
   }
 }
