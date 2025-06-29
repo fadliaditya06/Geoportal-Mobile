@@ -53,7 +53,7 @@ class DetailKonfirmasiDataScreenState
 
       final dataBaru = docLog.data()?['data_baru'];
 
-      // Gabungkan jika ada dataBaru
+      // Gabungkan jika ada data baru
       Map<String, dynamic>? finalDataUmum = docUmum.data();
       Map<String, dynamic>? finalDataSpasial = docSpasial.data();
 
