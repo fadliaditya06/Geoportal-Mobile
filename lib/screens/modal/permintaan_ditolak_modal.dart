@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 
 Future<void> showPenolakanDialogDinamis({
   required BuildContext context,
-  required String jenisPermintaan, // 'tambah' atau 'hapus'
+  required String jenisPermintaan, 
   required Function(List<String> alasan) onConfirm,
 }) async {
   final bool isHapus = jenisPermintaan.toLowerCase() == 'hapus';
+  final bool isUbah = jenisPermintaan.toLowerCase() == 'ubah';
 
   final List<String> alasanList = isHapus
       ? ['Data masih valid', 'Alasan tidak jelas', 'Alasan lainnya']
-      : ['Data tidak lengkap', 'Tidak relevan', 'Alasan lainnya'];
+      : isUbah
+          ? ['Data tidak sesuai', 'Perlu revisi ulang', 'Alasan lainnya']
+          : ['Data tidak lengkap', 'Tidak relevan', 'Alasan lainnya'];
 
   final Map<String, bool> selected = {
     for (var alasan in alasanList) alasan: false,
@@ -29,7 +32,11 @@ Future<void> showPenolakanDialogDinamis({
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               TextSpan(
-                text: isHapus ? 'Hapus Data' : 'Tambah Data',
+                text: isHapus
+                    ? 'Hapus Data'
+                    : isUbah
+                        ? 'Ubah Data'
+                        : 'Tambah Data',
                 style: const TextStyle(
                   color: Color(0xFF358666),
                   fontSize: 20,
@@ -102,7 +109,8 @@ Future<void> showPenolakanDialogDinamis({
             ],
           ),
         ),
-        actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        actionsPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         actions: [
           Row(
             children: [
