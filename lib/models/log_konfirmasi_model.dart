@@ -8,7 +8,7 @@ class LogKonfirmasiModel {
   final String status;
   final Timestamp timestamp;
   final Map<String, dynamic> data;
-  final Map<String, dynamic>? dataBaru; // nullable untuk kasus tambah data
+  final Map<String, dynamic>? dataBaru;
 
   LogKonfirmasiModel({
     required this.uid,
