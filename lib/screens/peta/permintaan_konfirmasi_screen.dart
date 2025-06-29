@@ -234,14 +234,16 @@ class _PermintaanKonfirmasiScreenState
                                                   alasanGabungan.isNotEmpty) {
                                                 return 'Ditolak - $alasanGabungan';
                                               } else if (status == 'menunggu') {
-                                                if (deskripsi
-                                                    .toLowerCase()
-                                                    .contains('hapus')) {
+                                                final desc =
+                                                    deskripsi.toLowerCase();
+                                                if (desc.contains('hapus')) {
                                                   return 'Menunggu Konfirmasi Hapus Data';
-                                                } else if (deskripsi
-                                                    .toLowerCase()
+                                                } else if (desc
                                                     .contains('tambah')) {
                                                   return 'Menunggu Konfirmasi Tambah Data';
+                                                } else if (desc
+                                                    .contains('ubah')) {
+                                                  return 'Menunggu Konfirmasi Ubah Data';
                                                 } else {
                                                   return 'Menunggu Konfirmasi';
                                                 }
@@ -250,9 +252,10 @@ class _PermintaanKonfirmasiScreenState
                                               }
                                             }(),
                                             style: const TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 12),
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 12,
+                                            ),
                                           ),
                                           const SizedBox(height: 8),
                                           Text(
@@ -308,7 +311,11 @@ class _PermintaanKonfirmasiScreenState
                                                                         .contains(
                                                                             'tambah')
                                                                     ? 'Tambah'
-                                                                    : '',
+                                                                    : deskripsi
+                                                                            .toLowerCase()
+                                                                            .contains('ubah')
+                                                                        ? 'Ubah'
+                                                                        : '',
                                                             style: GoogleFonts
                                                                 .poppins(
                                                                     fontWeight:

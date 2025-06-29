@@ -113,6 +113,7 @@ class PermintaanKonfirmasiAdminScreenState
                                       ?['id_data_spasial'],
                                   'uid': data['uid'],
                                   'deskripsi': data['deskripsi'],
+                                  'docId': docId,
                                 },
                               );
                             },
@@ -147,10 +148,21 @@ class PermintaanKonfirmasiAdminScreenState
                               padding: const EdgeInsets.only(top: 30),
                               child: GestureDetector(
                                 onTap: () async {
-                                  final jenisPermintaan =
-                                      deskripsi.toLowerCase().contains('hapus')
-                                          ? 'hapus'
-                                          : 'tambah';
+                                  late String jenisPermintaan;
+
+                                  final deskripsiLower =
+                                      deskripsi.toLowerCase();
+                                  if (deskripsiLower.contains('hapus')) {
+                                    jenisPermintaan = 'hapus';
+                                  } else if (deskripsiLower
+                                      .contains('tambah')) {
+                                    jenisPermintaan = 'tambah';
+                                  } else if (deskripsiLower.contains('ubah')) {
+                                    jenisPermintaan = 'ubah';
+                                  } else {
+                                    jenisPermintaan = 'lainnya';
+                                  }
+
                                   await showPenolakanDialogDinamis(
                                     context: context,
                                     jenisPermintaan: jenisPermintaan,
@@ -200,10 +212,14 @@ class PermintaanKonfirmasiAdminScreenState
       final data = logDoc.data();
       final idDataSpasial = data?['data']?['id_data_spasial'];
       final idDataUmum = data?['data']?['id_data_umum'];
-      final deskripsi = data?['deskripsi'] ?? '';
+      final deskripsi = (data?['deskripsi'] ?? '').toString().toLowerCase();
+      final dataBaru = data?['data_baru'];
 
-      // Update status dan alasan
-      final Map<String, dynamic> updateData = {'status': status};
+      // Update status dan alasan di log konfirmasi
+      final Map<String, dynamic> updateData = {
+        'status': status,
+        'updated_at': DateTime.now(),
+      };
       if (alasan != null && alasan.isNotEmpty) {
         updateData['alasan'] = alasan;
       }
@@ -213,19 +229,79 @@ class PermintaanKonfirmasiAdminScreenState
           .doc(docId)
           .update(updateData);
 
-      // Hanya hapus data jika disetujui dan deskripsi mengandung 'hapus'
-      if (status == 'disetujui' &&
-          deskripsi.toLowerCase().contains('hapus') &&
-          idDataSpasial != null &&
-          idDataUmum != null) {
-        await FirebaseFirestore.instance
-            .collection('data_umum')
-            .doc(idDataUmum)
-            .delete();
-        await FirebaseFirestore.instance
-            .collection('data_spasial')
-            .doc(idDataSpasial)
-            .delete();
+      // Jika hapus data disetujui maka hapus data
+      if (status == 'disetujui') {
+        if (deskripsi.contains('hapus') &&
+            idDataSpasial != null &&
+            idDataUmum != null) {
+          await FirebaseFirestore.instance
+              .collection('data_umum')
+              .doc(idDataUmum)
+              .delete();
+          await FirebaseFirestore.instance
+              .collection('data_spasial')
+              .doc(idDataSpasial)
+              .delete();
+          // Ubah data
+        } else if (deskripsi.contains('ubah') &&
+            dataBaru != null &&
+            idDataSpasial != null &&
+            idDataUmum != null) {
+          final baru = Map<String, dynamic>.from(dataBaru);
+
+          // Update data spasial
+          await FirebaseFirestore.instance
+              .collection('data_spasial')
+              .doc(idDataSpasial)
+              .update({
+            'titik_koordinat': baru['titik_koordinat'],
+            'status': 'disetujui',
+            'updated_at': DateTime.now(),
+          });
+
+          // Update data umum
+          await FirebaseFirestore.instance
+              .collection('data_umum')
+              .doc(idDataUmum)
+              .update({
+            'nama_lokasi': baru['nama_lokasi'],
+            'kelurahan': baru['kelurahan'],
+            'kecamatan': baru['kecamatan'],
+            'kawasan': baru['kawasan'],
+            'alamat': baru['alamat'],
+            'rt': baru['rt'],
+            'rw': baru['rw'],
+            'panjang_bentuk': baru['panjang_bentuk'],
+            'luas_bentuk': baru['luas_bentuk'],
+            'foto_lokasi': baru['foto_lokasi'],
+            'updated_at': DateTime.now(),
+          });
+        } else if (deskripsi.contains('tambah') && idDataSpasial != null) {
+          // Jika tambah data disetujui
+          await FirebaseFirestore.instance
+              .collection('data_spasial')
+              .doc(idDataSpasial)
+              .update({
+            'status': 'disetujui',
+            'updated_at': DateTime.now(),
+          });
+        }
+      }
+
+      // Jika tambah data ditolak maka hapus data
+      else if (status == 'ditolak') {
+        if (deskripsi.contains('tambah') &&
+            idDataSpasial != null &&
+            idDataUmum != null) {
+          await FirebaseFirestore.instance
+              .collection('data_umum')
+              .doc(idDataUmum)
+              .delete();
+          await FirebaseFirestore.instance
+              .collection('data_spasial')
+              .doc(idDataSpasial)
+              .delete();
+        } else {}
       }
 
       showCustomSnackbar(
