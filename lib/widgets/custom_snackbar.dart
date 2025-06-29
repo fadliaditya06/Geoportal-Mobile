@@ -22,7 +22,7 @@ void showCustomSnackbar({
         ),
         GestureDetector(
           onTap: () {
-            scaffoldMessenger.hideCurrentSnackBar(); 
+            scaffoldMessenger.hideCurrentSnackBar();
           },
           child: const Icon(Icons.close, color: Colors.white),
         ),
@@ -32,7 +32,7 @@ void showCustomSnackbar({
     behavior: SnackBarBehavior.floating,
     margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-    duration: const Duration(seconds: 4),
+    duration: const Duration(seconds: 2),
   );
 
   scaffoldMessenger.showSnackBar(snackBar);
