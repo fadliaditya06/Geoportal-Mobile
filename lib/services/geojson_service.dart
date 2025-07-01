@@ -82,7 +82,7 @@ class GeoJsonService {
             .map<LatLng>((c) => LatLng(c[1].toDouble(), c[0].toDouble()))
             .toList();
 
-        point = _getPolygonCenter(points);
+        point = getPolygonCenter(points);
       } else if (geometry['type'] == 'Point') {
         point = LatLng(
           geometry['coordinates'][1].toDouble(),
@@ -98,7 +98,7 @@ class GeoJsonService {
     return markers;
   }
 
-  static LatLng _getPolygonCenter(List<LatLng> points) {
+  static LatLng getPolygonCenter(List<LatLng> points) {
     double lat = 0;
     double lng = 0;
     for (var p in points) {
