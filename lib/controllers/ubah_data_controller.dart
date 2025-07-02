@@ -24,10 +24,10 @@ class UbahDataController extends GetxController {
   final luasBentukController = TextEditingController();
   final titikKoordinatController = TextEditingController();
 
-  /// Foto baru dari galeri
+  // Foto baru dari galeri
   List<File> fotoFiles = [];
 
-  /// Foto lama dari URL (misalnya dari database)
+  // Foto lama dari URL (misalnya dari database)
   List<String> fotoUrls = [];
 
   // Inisialisasi data dari Firestore / BottomSheet
@@ -101,14 +101,14 @@ class UbahDataController extends GetxController {
     }
   }
 
-  /// Menghapus foto baru
+  // Menghapus foto baru
   void hapusFotoBaru(int index) {
     if (index >= 0 && index < fotoFiles.length) {
       fotoFiles.removeAt(index);
     }
   }
 
-  /// Upload foto baru ke Supabase
+  // Upload foto baru ke Supabase
   Future<List<String>> uploadFotoBaru() async {
     final supabase = Supabase.instance.client;
     final bucket = supabase.storage.from('images');
@@ -116,7 +116,7 @@ class UbahDataController extends GetxController {
 
     for (final file in fotoFiles) {
       final fileName =
-          'foto_lokasi/${DateTime.now().millisecondsSinceEpoch}_${file.path.split('/').last}';
+          'foto_lokasi${DateTime.now().millisecondsSinceEpoch}_${file.path.split('/').last}';
       final bytes = await file.readAsBytes();
 
       await bucket.uploadBinary(
@@ -132,7 +132,7 @@ class UbahDataController extends GetxController {
     return uploadedUrls;
   }
 
-  /// Simpan perubahan ke Firestore
+  // Simpan perubahan ke Firestore
   Future<void> simpanPerubahan(
       String idDataUmum, String idDataSpasial, BuildContext context) async {
     if (!formKey.currentState!.validate()) return;

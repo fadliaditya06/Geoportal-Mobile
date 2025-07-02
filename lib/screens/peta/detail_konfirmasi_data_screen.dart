@@ -33,6 +33,7 @@ class DetailKonfirmasiDataScreenState
     _fetchAllData(idUmum, idSpasial, uid, docId);
   }
 
+  // Mengambil seluruh data dari firebase lalu digabungkan
   Future<void> _fetchAllData(
       String idUmum, String idSpasial, String uid, String docId) async {
     try {
@@ -151,6 +152,7 @@ class DetailKonfirmasiDataScreenState
     );
   }
 
+  // Menampilkan informasi pengguna yang melakukan permintaan
   Widget _buildUserCard() {
     return Card(
       shape: RoundedRectangleBorder(
@@ -239,6 +241,7 @@ class DetailKonfirmasiDataScreenState
     );
   }
 
+  // Menampilkan data umum dan data spasial
   Widget _buildIdentifikasiCard() {
     final fotoList = dataUmum?['foto_lokasi'];
 
@@ -317,7 +320,7 @@ class DetailKonfirmasiDataScreenState
         (value.endsWith('.jpg') ||
             value.endsWith('.png') ||
             value.endsWith('.jpeg'))) {
-      return _buildImageRow(label, [value]); // Bungkus jadi list
+      return _buildImageRow(label, [value]); 
     }
 
     return Padding(
@@ -411,16 +414,4 @@ class DetailKonfirmasiDataScreenState
       ),
     );
   }
-
-  // Widget _buildActionIcon(IconData icon) {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       shape: BoxShape.circle,
-  //       border: Border.all(color: const Color(0xFF358666), width: 1),
-  //     ),
-  //     padding: const EdgeInsets.all(10),
-  //     child: Icon(icon, color: Colors.black, size: 20),
-  //   );
-  // }
 }

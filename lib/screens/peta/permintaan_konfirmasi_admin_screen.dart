@@ -49,11 +49,11 @@ class PermintaanKonfirmasiAdminScreenState
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),
+          // Menampilkan daftar permintaan konfirmasi berstatus 'menunggu'
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('log_konfirmasi')
                 .where('status', isEqualTo: 'menunggu')
-                // .orderBy('timestamp', descending: true)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -204,7 +204,7 @@ class PermintaanKonfirmasiAdminScreenState
     );
   }
 
-  // Fungsi untuk update status konfirmasi dan update data spasial
+  // Fungsi untuk update status konfirmasi dan untuk logika tambah, ubah, dan hapus
   Future<void> _updateStatus(String docId, String status,
       [List<String>? alasan]) async {
     try {

@@ -31,6 +31,7 @@ class _PermintaanKonfirmasiScreenState
       return const Center(child: Text('Pengguna belum login'));
     }
 
+    // Query firestore berdasarkan status terpilih dan uid user login
     final query = FirebaseFirestore.instance
         .collection('log_konfirmasi')
         .where('status', isEqualTo: statusTerpilih.name)
@@ -112,6 +113,7 @@ class _PermintaanKonfirmasiScreenState
 
                     final docs = snapshot.data!.docs;
 
+                    // Menampilkan setiap data konfirmasi ke dalam card
                     return ListView.builder(
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: const EdgeInsets.all(30),
@@ -236,6 +238,7 @@ class _PermintaanKonfirmasiScreenState
                                               ),
                                             ),
                                             const SizedBox(height: 4),
+                                            // Menampilkan detail dari status permintaan konfirmasi
                                             Text(
                                               () {
                                                 if (status == 'ditolak' &&

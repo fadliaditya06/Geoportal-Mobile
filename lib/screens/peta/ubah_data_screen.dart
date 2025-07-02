@@ -60,6 +60,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 21, 16, 8),
+        // Form Ubah Data
         child: Form(
           key: controller.formKey,
           child: Container(
@@ -239,7 +240,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
           borderSide: const BorderSide(color: Color(0xFFB0E1C6)),
         ),
         suffixIcon: suffixIcon != null
-            ? GestureDetector(onTap: onSuffixTap, child: Icon(suffixIcon))
+            ? GestureDetector(onTap: onSuffixTap, child: Icon(suffixIcon, color: Colors.black))
             : null,
       ),
     );

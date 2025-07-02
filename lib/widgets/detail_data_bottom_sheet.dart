@@ -59,6 +59,7 @@ class DetailDataBottomSheet extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // Informasi Data Umum dan Spasial
                   const Center(
                     child: Text(
                       "Identifikasi",
@@ -96,6 +97,7 @@ class DetailDataBottomSheet extends StatelessWidget {
                   _buildDataRow("Titik Koordinat", data["titik_koordinat"]),
                   const Divider(thickness: 1, color: Colors.black),
                   const SizedBox(height: 24),
+                  // Tombol Ubah Data
                   Center(
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -129,6 +131,7 @@ class DetailDataBottomSheet extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 70),
+                        // Tombol Hapus Data
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFEA3535),
@@ -231,6 +234,7 @@ class DetailDataBottomSheet extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 80),
+                        // Tombol Unduh Data
                         Consumer<UnduhDataController>(
                           builder: (context, c, _) {
                             return ElevatedButton(
