@@ -121,6 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(height: 20),
                             // Dropdown untuk memilih peran
                             DropdownButtonFormField<String>(
+                              key: const Key('roleDropdown'),
                               value: selectedRole,
                               hint: Text(
                                 "Pilih Peran",
@@ -177,6 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(height: 20),
                             // Input email
                             TextFormField(
+                              key: const Key('emailField'),
                               controller: controller.emailController,
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
@@ -218,6 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(height: 20),
                             // Input password
                             TextFormField(
+                              key: const Key('passwordField'),
                               controller: controller.kataSandiController,
                               obscureText: _isObscure,
                               decoration: InputDecoration(

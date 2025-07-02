@@ -144,7 +144,7 @@ class _MainPageState extends State<MainPage> {
         index: _pageIndex,
         items: const [
           Icon(Icons.home, color: Colors.white, size: 30),
-          Icon(Icons.location_on, color: Colors.white, size: 30),
+          Icon(Icons.location_on, key: Key('navPeta'), color: Colors.white, size: 30),
           Icon(Icons.person, color: Colors.white, size: 30),
         ],
         onTap: (index) {

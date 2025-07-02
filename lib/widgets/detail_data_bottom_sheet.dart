@@ -17,281 +17,287 @@ class DetailDataBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.only(top: 5.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Center(
-                  child: SizedBox(
-                    width: 40,
-                    height: 4,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.black45,
-                        borderRadius: BorderRadius.all(Radius.circular(2)),
-                      ),
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Material(
-                      shape: const CircleBorder(),
-                      elevation: 4,
-                      color: Colors.white,
-                      child: InkWell(
-                        customBorder: const CircleBorder(),
-                        onTap: () => Navigator.pop(context),
-                        child: const Padding(
-                          padding: EdgeInsets.all(8),
-                          child:
-                              Icon(Icons.close, color: Colors.black, size: 20),
+      child: Container(
+        key: const Key('bottomSheetDetailData'),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.only(top: 5.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Center(
+                    child: SizedBox(
+                      width: 40,
+                      height: 4,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.black45,
+                          borderRadius: BorderRadius.all(Radius.circular(2)),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const Center(
-                  child: Text(
-                    "Identifikasi",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ),
-                const Divider(thickness: 1, color: Colors.black),
-                const SizedBox(height: 16),
-                _buildDataRow("Nama Lokasi", data["nama_lokasi"]),
-                const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Kelurahan", data["kelurahan"]),
-                const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Kecamatan", data["kecamatan"]),
-                const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Kawasan", data["kawasan"]),
-                const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Alamat", data["alamat"]),
-                const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("RT/RW", "${data['rt']}/${data['rw']}"),
-                const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Panjang Bentuk", data["panjang_bentuk"]),
-                const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Luas Bentuk", data["luas_bentuk"]),
-                const Divider(thickness: 1, color: Colors.black),
-                _buildFotoRow(data["foto_lokasi"]),
-                const Divider(thickness: 1, color: Colors.black),
-                const SizedBox(height: 20),
-                const Center(
-                  child: Text(
-                    "Informasi Spasial",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ),
-                const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Titik Koordinat", data["titik_koordinat"]),
-                const Divider(thickness: 1, color: Colors.black),
-                const SizedBox(height: 24),
-                Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF92E3A9),
-                          foregroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Material(
+                        shape: const CircleBorder(),
+                        elevation: 4,
+                        color: Colors.white,
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: () => Navigator.pop(context),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Icon(Icons.close,
+                                color: Colors.black, size: 20),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
                         ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => UbahDataScreen(
-                                idDataUmum: data['id_data_umum'],
-                                idDataSpasial: data['id_data_spasial'],
-                                data: data,
-                              ),
+                      ),
+                    ),
+                  ),
+                  const Center(
+                    child: Text(
+                      "Identifikasi",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  const Divider(thickness: 1, color: Colors.black),
+                  const SizedBox(height: 16),
+                  _buildDataRow("Nama Lokasi", data["nama_lokasi"]),
+                  const Divider(thickness: 1, color: Colors.black),
+                  _buildDataRow("Kelurahan", data["kelurahan"]),
+                  const Divider(thickness: 1, color: Colors.black),
+                  _buildDataRow("Kecamatan", data["kecamatan"]),
+                  const Divider(thickness: 1, color: Colors.black),
+                  _buildDataRow("Kawasan", data["kawasan"]),
+                  const Divider(thickness: 1, color: Colors.black),
+                  _buildDataRow("Alamat", data["alamat"]),
+                  const Divider(thickness: 1, color: Colors.black),
+                  _buildDataRow("RT/RW", "${data['rt']}/${data['rw']}"),
+                  const Divider(thickness: 1, color: Colors.black),
+                  _buildDataRow("Panjang Bentuk", data["panjang_bentuk"]),
+                  const Divider(thickness: 1, color: Colors.black),
+                  _buildDataRow("Luas Bentuk", data["luas_bentuk"]),
+                  const Divider(thickness: 1, color: Colors.black),
+                  _buildFotoRow(data["foto_lokasi"]),
+                  const Divider(thickness: 1, color: Colors.black),
+                  const SizedBox(height: 20),
+                  const Center(
+                    child: Text(
+                      "Informasi Spasial",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  const Divider(thickness: 1, color: Colors.black),
+                  _buildDataRow("Titik Koordinat", data["titik_koordinat"]),
+                  const Divider(thickness: 1, color: Colors.black),
+                  const SizedBox(height: 24),
+                  Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF92E3A9),
+                            foregroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          );
-                        },
-                        child: const Icon(
-                          Icons.edit_location_alt,
-                          size: 18,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(width: 70),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFEA3535),
-                          foregroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
-                        ),
-                        onPressed: () async {
-                          final user = FirebaseAuth.instance.currentUser;
-                          if (user == null) return;
-
-                          final userDoc = await FirebaseFirestore.instance
-                              .collection('user')
-                              .doc(user.uid)
-                              .get();
-
-                          final namaUser = userDoc['nama'] ?? 'Pengguna';
-                          final peranUser = userDoc['peran'] ?? 'pengguna';
-
-                          final idDataUmum = data['id_data_umum'];
-                          final idDataSpasial = data['id_data_spasial'];
-
-                          if (idDataUmum == null || idDataSpasial == null) {
-                            showCustomSnackbar(
-                              context: context,
-                              message: 'Data tidak lengkap',
-                              isSuccess: false,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UbahDataScreen(
+                                  idDataUmum: data['id_data_umum'],
+                                  idDataSpasial: data['id_data_spasial'],
+                                  data: data,
+                                ),
+                              ),
                             );
-                            return;
-                          }
-
-                          await showDeleteDataDialog(
-                            context: context,
-                            onConfirm: () async {
-                              // Jika role admin maka tidak memerlukan konfirmasi
-                              if (peranUser.toLowerCase() == 'admin') {
-                                try {
-                                  await FirebaseFirestore.instance
-                                      .collection('data_umum')
-                                      .doc(idDataUmum)
-                                      .delete();
-
-                                  await FirebaseFirestore.instance
-                                      .collection('data_spasial')
-                                      .doc(idDataSpasial)
-                                      .delete();
-
-                                  Navigator.pop(
-                                      context);
-                                  showCustomSnackbar(
-                                    context: context,
-                                    message: 'Data berhasil dihapus oleh admin',
-                                    isSuccess: true,
-                                  );
-                                } catch (e) {
-                                  showCustomSnackbar(
-                                    context: context,
-                                    message: 'Gagal menghapus data: $e',
-                                    isSuccess: false,
-                                  );
-                                }
-                              } else {
-                                // Jika role pengguna, maka memerlukan konfirmasi
-                                final log = LogKonfirmasiModel(
-                                  uid: user.uid,
-                                  nama: namaUser,
-                                  peran: peranUser,
-                                  deskripsi: 'Permintaan Konfirmasi Hapus Data',
-                                  status: 'menunggu',
-                                  timestamp: Timestamp.now(),
-                                  data: {
-                                    'id_data_umum': idDataUmum,
-                                    'id_data_spasial': idDataSpasial,
-                                  },
-                                );
-
-                                await FirebaseFirestore.instance
-                                    .collection('log_konfirmasi')
-                                    .add(log.toMap());
-
-                                Navigator.pop(context);
-                                showCustomSnackbar(
-                                  context: context,
-                                  message:
-                                      'Permintaan hapus data berhasil diajukan',
-                                  isSuccess: true,
-                                );
-                              }
-                            },
-                          );
-                        },
-                        child: const Icon(
-                          Icons.delete_outline,
-                          size: 18,
-                          color: Colors.black,
+                          },
+                          child: const Icon(
+                            Icons.edit_location_alt,
+                            size: 18,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 80),
-                      Consumer<UnduhDataController>(
-                        builder: (context, c, _) {
-                          return ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF92E3A9),
-                              foregroundColor: Colors.black,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 12),
+                        const SizedBox(width: 70),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFEA3535),
+                            foregroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                            onPressed: c.loadingPdf
-                                ? null
-                                : () async {
-                                    final controller =
-                                        Provider.of<UnduhDataController>(
-                                      context,
-                                      listen: false,
-                                    );
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
+                          ),
+                          onPressed: () async {
+                            final user = FirebaseAuth.instance.currentUser;
+                            if (user == null) return;
 
-                                    controller.setLoading(true);
+                            final userDoc = await FirebaseFirestore.instance
+                                .collection('user')
+                                .doc(user.uid)
+                                .get();
 
-                                    final namaLokasi = data["nama_lokasi"];
-                                    controller.selectedLokasi = namaLokasi;
+                            final namaUser = userDoc['nama'] ?? 'Pengguna';
+                            final peranUser = userDoc['peran'] ?? 'pengguna';
 
-                                    await controller
-                                        .fetchDataByNamaLokasi(namaLokasi);
-                                    await controller.downloadAndGeneratePDF();
+                            final idDataUmum = data['id_data_umum'];
+                            final idDataSpasial = data['id_data_spasial'];
 
-                                    controller.setLoading(false);
+                            if (idDataUmum == null || idDataSpasial == null) {
+                              showCustomSnackbar(
+                                context: context,
+                                message: 'Data tidak lengkap',
+                                isSuccess: false,
+                              );
+                              return;
+                            }
 
-                                    if (controller.savedFilePath != null) {
-                                      showCustomSnackbar(
-                                        context: context,
-                                        message: 'File telah berhasil diunduh',
-                                        isSuccess: true,
-                                      );
-                                    }
+                            await showDeleteDataDialog(
+                              context: context,
+                              onConfirm: () async {
+                                // Jika role admin maka tidak memerlukan konfirmasi
+                                if (peranUser.toLowerCase() == 'admin') {
+                                  try {
+                                    await FirebaseFirestore.instance
+                                        .collection('data_umum')
+                                        .doc(idDataUmum)
+                                        .delete();
+
+                                    await FirebaseFirestore.instance
+                                        .collection('data_spasial')
+                                        .doc(idDataSpasial)
+                                        .delete();
 
                                     Navigator.pop(context);
-                                  },
-                            child: c.loadingPdf
-                                ? const SizedBox(
-                                    width: 15,
-                                    height: 15,
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Colors.white),
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Icon(Icons.download,
-                                    size: 18, color: Colors.black),
-                          );
-                        },
-                      ),
-                    ],
+                                    showCustomSnackbar(
+                                      context: context,
+                                      message:
+                                          'Data berhasil dihapus oleh admin',
+                                      isSuccess: true,
+                                    );
+                                  } catch (e) {
+                                    showCustomSnackbar(
+                                      context: context,
+                                      message: 'Gagal menghapus data: $e',
+                                      isSuccess: false,
+                                    );
+                                  }
+                                } else {
+                                  // Jika role pengguna, maka memerlukan konfirmasi
+                                  final log = LogKonfirmasiModel(
+                                    uid: user.uid,
+                                    nama: namaUser,
+                                    peran: peranUser,
+                                    deskripsi:
+                                        'Permintaan Konfirmasi Hapus Data',
+                                    status: 'menunggu',
+                                    timestamp: Timestamp.now(),
+                                    data: {
+                                      'id_data_umum': idDataUmum,
+                                      'id_data_spasial': idDataSpasial,
+                                    },
+                                  );
+
+                                  await FirebaseFirestore.instance
+                                      .collection('log_konfirmasi')
+                                      .add(log.toMap());
+
+                                  Navigator.pop(context);
+                                  showCustomSnackbar(
+                                    context: context,
+                                    message:
+                                        'Permintaan hapus data berhasil diajukan',
+                                    isSuccess: true,
+                                  );
+                                }
+                              },
+                            );
+                          },
+                          child: const Icon(
+                            Icons.delete_outline,
+                            size: 18,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(width: 80),
+                        Consumer<UnduhDataController>(
+                          builder: (context, c, _) {
+                            return ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF92E3A9),
+                                foregroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 12),
+                              ),
+                              onPressed: c.loadingPdf
+                                  ? null
+                                  : () async {
+                                      final controller =
+                                          Provider.of<UnduhDataController>(
+                                        context,
+                                        listen: false,
+                                      );
+
+                                      controller.setLoading(true);
+
+                                      final namaLokasi = data["nama_lokasi"];
+                                      controller.selectedLokasi = namaLokasi;
+
+                                      await controller
+                                          .fetchDataByNamaLokasi(namaLokasi);
+                                      await controller.downloadAndGeneratePDF();
+
+                                      controller.setLoading(false);
+
+                                      if (controller.savedFilePath != null) {
+                                        showCustomSnackbar(
+                                          context: context,
+                                          message:
+                                              'File telah berhasil diunduh',
+                                          isSuccess: true,
+                                        );
+                                      }
+
+                                      Navigator.pop(context);
+                                    },
+                              child: c.loadingPdf
+                                  ? const SizedBox(
+                                      width: 15,
+                                      height: 15,
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.white),
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Icon(Icons.download,
+                                      size: 18, color: Colors.black),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
