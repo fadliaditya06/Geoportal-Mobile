@@ -147,7 +147,7 @@ class PetaScreenState extends State<PetaScreen> {
                       AnimatedInfoItem(
                         icon: Icons.map_outlined,
                         label: 'Kecamatan',
-                        targetNumber: 12,
+                        targetNumber: 5,
                       ),
                       SizedBox(height: 16),
                       AnimatedInfoItem(
