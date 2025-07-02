@@ -24,37 +24,6 @@ class DetailPetaController with ChangeNotifier {
   List<Marker> get markers => _markers;
   List<Polygon> get polygons => _polygons;
 
-  // Fungsi memuat GeoJSON dari URL Supabase Storage
-  // Future<void> loadGeoJsonMultiple(BuildContext context) async {
-  //   const String url =
-  //       'https://noeywxxoxuyicxtcsier.supabase.co/storage/v1/object/public/images/geojson/lubuk_baja.geojson';
-
-  //   try {
-  //     isLoading = true;
-  //     notifyListeners();
-
-  //     _markers.clear();
-  //     _polygons.clear();
-
-  //     // Ambil dan batasi jumlah polygon dan marker
-  //     final polygons = await GeoJsonService.loadPolygons(url);
-  //     final markersData = await GeoJsonService.loadMarkers(
-  //       url,
-  //       context,
-  //       _buildMarker,
-  //     );
-
-  //     // Membuat minimal marker dan polygon agar tidak crash
-  //     _polygons.addAll(polygons.take(500));
-  //     _markers.addAll(markersData.take(500));
-  //   } catch (e) {
-  //     debugPrint('Gagal load GeoJSON: $e');
-  //   } finally {
-  //     isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }
-
   // Fungsi memuat GeoJSON dari asset
   Future<void> loadGeoJsonMultiple(BuildContext context) async {
     try {
@@ -64,7 +33,7 @@ class DetailPetaController with ChangeNotifier {
       _markers.clear();
       _polygons.clear();
 
-      // Load daftar file dari index.json
+      // Load daftar file geojson
       final String indexData = await rootBundle
           .loadString('assets/geojson/dummy-geojson/index.json');
       final List<dynamic> fileList = jsonDecode(indexData);
@@ -72,16 +41,17 @@ class DetailPetaController with ChangeNotifier {
       for (final fileName in fileList) {
         final String assetPath = 'assets/geojson/dummy-geojson/$fileName';
 
-        // Muat polygon dari asset
+        // Muat polygon dan batasi
         final polygons = await GeoJsonService.loadPolygonsFromAsset(assetPath);
+        _polygons.addAll(polygons.take(1000));
+
+        // Muat marker dan batasi
         final markers = await GeoJsonService.loadMarkersFromAsset(
           assetPath,
           context,
           _buildMarker,
         );
-
-        _polygons.addAll(polygons.take(2000));
-        _markers.addAll(markers.take(2000));
+        _markers.addAll(markers.take(1000));
       }
     } catch (e) {
       debugPrint('Gagal load GeoJSON dari assets: $e');
@@ -89,6 +59,84 @@ class DetailPetaController with ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Fungsi untuk mencari fitur GeoJSON berdasarkan sebuah polygon
+  Future<Map<String, dynamic>?> findFeatureFromPolygon(Polygon polygon) async {
+    final center = GeoJsonService.getPolygonCenter(polygon.points);
+
+    try {
+      final String indexData = await rootBundle
+          .loadString('assets/geojson/dummy-geojson/index.json');
+      final List<dynamic> fileList = jsonDecode(indexData);
+
+      for (final fileName in fileList) {
+        final String assetPath = 'assets/geojson/dummy-geojson/$fileName';
+        final String data = await rootBundle.loadString(assetPath);
+        final geoJson = jsonDecode(data);
+
+        for (final feature in geoJson['features']) {
+          final geometry = feature['geometry'];
+          if (geometry == null || geometry['coordinates'] == null) continue;
+
+          List coords = geometry['type'] == 'Polygon'
+              ? geometry['coordinates'][0]
+              : geometry['coordinates'][0][0];
+
+          final points = coords
+              .map<LatLng>((c) => LatLng(c[1].toDouble(), c[0].toDouble()))
+              .toList();
+
+          final featureCenter = GeoJsonService.getPolygonCenter(points);
+
+          final distance = const Distance().as(
+            LengthUnit.Meter,
+            center,
+            featureCenter,
+          );
+
+          if (distance <= 10) {
+            return feature;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Gagal mencari fitur dari polygon: $e');
+    }
+
+    return null;
+  }
+
+  // Cek apakah suatu titik berada di dalam polygon
+  bool isPointInsidePolygon(LatLng tapPoint, List<LatLng> polygonPoints) {
+    int intersectCount = 0;
+    for (int j = 0; j < polygonPoints.length - 1; j++) {
+      LatLng a = polygonPoints[j];
+      LatLng b = polygonPoints[j + 1];
+      if (rayCastIntersect(tapPoint, a, b)) {
+        intersectCount++;
+      }
+    }
+    return (intersectCount % 2 == 1);
+  }
+
+  bool rayCastIntersect(LatLng point, LatLng vertA, LatLng vertB) {
+    final aY = vertA.latitude;
+    final bY = vertB.latitude;
+    final aX = vertA.longitude;
+    final bX = vertB.longitude;
+    final pY = point.latitude;
+    final pX = point.longitude;
+
+    if ((aY > pY && bY > pY) || (aY < pY && bY < pY) || (aX < pX && bX < pX)) {
+      return false;
+    }
+
+    final m = (aY - bY) / (aX - bX);
+    final bee = (-aX) * m + aY;
+    final x = (pY - bee) / m;
+
+    return x > pX;
   }
 
   // Fungsi membangun marker
@@ -99,13 +147,13 @@ class DetailPetaController with ChangeNotifier {
       width: 40,
       height: 40,
       child: GestureDetector(
-        onTap: () => _showDynamicBottomSheet(context, feature),
+        onTap: () => showDynamicBottomSheet(context, feature),
       ),
     );
   }
 
-  // BottomSheet untuk menampilkan properti dari fitur GeoJSON
-  void _showDynamicBottomSheet(
+  // Bottomsheet untuk menampilkan properti dari fitur GeoJSON
+  void showDynamicBottomSheet(
       BuildContext context, Map<String, dynamic> feature) {
     final properties = feature['properties'] as Map<String, dynamic>? ?? {};
     final geometry = feature['geometry'] as Map<String, dynamic>? ?? {};
@@ -132,7 +180,7 @@ class DetailPetaController with ChangeNotifier {
         rt: (properties['RT'] ?? 0).toString(),
         rw: (properties['RW'] ?? 0).toString(),
         shapeLength: properties['Shape_Leng'].toString(),
-        shapeArea: properties['Shape_Area'].toString(),
+        // shapeArea: properties['Shape_Area'].toString(),
         coordinates: coordinatesText,
       ),
     );
@@ -154,8 +202,6 @@ class DetailPetaController with ChangeNotifier {
     );
 
     mapController.move(point, 18.0);
-    await Clipboard.setData(
-        ClipboardData(text: '${point.latitude}, ${point.longitude}'));
 
     notifyListeners();
 

@@ -67,6 +67,19 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                     await _controller.selectLocation(latLng, context);
                 if (nearbyData != null && context.mounted) {
                   _tampilkanBottomSheet(context, nearbyData);
+                  return;
+                }
+
+                for (final polygon in _controller.polygons) {
+                  if (_controller.isPointInsidePolygon(
+                      latLng, polygon.points)) {
+                    final feature =
+                        await _controller.findFeatureFromPolygon(polygon);
+                    if (feature != null && context.mounted) {
+                      _controller.showDynamicBottomSheet(context, feature);
+                    }
+                    return;
+                  }
                 }
               },
             ),
@@ -145,6 +158,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                           ),
                         ),
                         IconButton(
+                          key: const Key('closeBottomSheet'),
                           icon: const Icon(Icons.close, color: Colors.black),
                           onPressed: () {
                             _controller.searchController.clear();
@@ -388,6 +402,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
+                    key: const Key('zoomInButton'),
                     icon: const Icon(Icons.add, color: Colors.black),
                     onPressed: () {
                       final currentZoom = _controller.mapController.camera.zoom;
@@ -426,6 +441,7 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
               child: SizedBox(
                 width: 200,
                 child: ElevatedButton.icon(
+                  key: const Key('btnKonfirmasiKoordinat'),
                   onPressed: widget.isKonfirmasiKoordinat
                       ? null
                       : () {
@@ -475,7 +491,8 @@ class _DetailPetaScreenState extends State<DetailPetaScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (BuildContext context) {
-        return DetailDataBottomSheet(data: data);
+        return DetailDataBottomSheet(
+            key: const Key('bottomSheetDetailData'), data: data);
       },
     );
   }
