@@ -6,7 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
-import 'package:geoportal_mobile/widgets/dummy_bottom_sheet.dart';
+import 'package:geoportal_mobile/widgets/geojson_bottom_sheet.dart';
 import 'package:geoportal_mobile/services/geojson_service.dart';
 
 class DetailPetaController with ChangeNotifier {
@@ -35,11 +35,11 @@ class DetailPetaController with ChangeNotifier {
 
       // Load daftar file geojson
       final String indexData = await rootBundle
-          .loadString('assets/geojson/dummy-geojson/index.json');
+          .loadString('assets/geojson/data-geojson/index.json');
       final List<dynamic> fileList = jsonDecode(indexData);
 
       for (final fileName in fileList) {
-        final String assetPath = 'assets/geojson/dummy-geojson/$fileName';
+        final String assetPath = 'assets/geojson/data-geojson/$fileName';
 
         // Muat polygon dan batasi
         final polygons = await GeoJsonService.loadPolygonsFromAsset(assetPath);
@@ -67,11 +67,11 @@ class DetailPetaController with ChangeNotifier {
 
     try {
       final String indexData = await rootBundle
-          .loadString('assets/geojson/dummy-geojson/index.json');
+          .loadString('assets/geojson/data-geojson/index.json');
       final List<dynamic> fileList = jsonDecode(indexData);
 
       for (final fileName in fileList) {
-        final String assetPath = 'assets/geojson/dummy-geojson/$fileName';
+        final String assetPath = 'assets/geojson/data-geojson/$fileName';
         final String data = await rootBundle.loadString(assetPath);
         final geoJson = jsonDecode(data);
 
