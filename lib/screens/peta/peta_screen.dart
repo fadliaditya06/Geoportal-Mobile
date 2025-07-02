@@ -303,37 +303,11 @@ class PetaScreenState extends State<PetaScreen> {
                                 ],
                               ),
                             ),
-                            // Tombol Download dan View
+                            // Tombol View
                             Padding(
-                              padding: const EdgeInsets.only(top: 18.0),
+                              padding: const EdgeInsets.only(top: 14.0),
                               child: Row(
                                 children: [
-                                  // Tombol Download
-                                  Material(
-                                    elevation: 4,
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Colors.transparent,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF92E3A9),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      width: 50,
-                                      height: 35,
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.download,
-                                          size: 18,
-                                          color: Colors.black,
-                                        ),
-                                        onPressed: () {
-                                          //
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  // Tombol View
                                   Material(
                                     elevation: 4,
                                     borderRadius: BorderRadius.circular(20),
