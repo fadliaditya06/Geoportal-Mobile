@@ -78,17 +78,20 @@ class _PermintaanKonfirmasiScreenState
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: query.snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  setState(() {});
+                },
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: query.snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
                         children: [
                           const SizedBox(height: 100),
                           Image.asset(
@@ -97,281 +100,286 @@ class _PermintaanKonfirmasiScreenState
                             height: 300,
                           ),
                           const SizedBox(height: 20),
-                          const Text(
-                            'Belum ada data yang dikonfirmasi',
-                            style: TextStyle(fontSize: 16),
+                          const Center(
+                            child: Text(
+                              'Belum ada data yang dikonfirmasi',
+                              style: TextStyle(fontSize: 16),
+                            ),
                           ),
                         ],
-                      ),
-                    );
-                  }
+                      );
+                    }
 
-                  final docs = snapshot.data!.docs;
+                    final docs = snapshot.data!.docs;
 
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(30),
-                    itemCount: docs.length,
-                    itemBuilder: (context, index) {
-                      final doc = docs[index];
-                      final data = doc.data() as Map<String, dynamic>;
-                      final nestedData = data['data'] as Map<String, dynamic>?;
+                    return ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(30),
+                      itemCount: docs.length,
+                      itemBuilder: (context, index) {
+                        final doc = docs[index];
+                        final data = doc.data() as Map<String, dynamic>;
+                        final nestedData =
+                            data['data'] as Map<String, dynamic>?;
 
-                      final nama = data['nama'] ?? '-';
-                      final deskripsi = data['deskripsi'] ?? '-';
-                      final status = data['status'] ?? '';
-                      final alasanList = data['alasan'] as List<dynamic>? ?? [];
-                      final alasanGabungan = alasanList.join(', ');
-                      final tanggal = data['timestamp'] as Timestamp;
-                      final idDataUmum = nestedData?['id_data_umum'];
+                        final nama = data['nama'] ?? '-';
+                        final deskripsi = data['deskripsi'] ?? '-';
+                        final status = data['status'] ?? '';
+                        final alasanList =
+                            data['alasan'] as List<dynamic>? ?? [];
+                        final alasanGabungan = alasanList.join(', ');
+                        final tanggal = data['timestamp'] as Timestamp;
+                        final idDataUmum = nestedData?['id_data_umum'];
 
-                      if (idDataUmum == null) {
-                        return ListTile(
-                          title: Text(nama),
-                          subtitle: const Text('ID data umum tidak tersedia'),
-                        );
-                      }
+                        if (idDataUmum == null) {
+                          return ListTile(
+                            title: Text(nama),
+                            subtitle: const Text('ID data umum tidak tersedia'),
+                          );
+                        }
 
-                      return FutureBuilder<DocumentSnapshot>(
-                        future: FirebaseFirestore.instance
-                            .collection('data_umum')
-                            .doc(idDataUmum)
-                            .get(),
-                        builder: (context, snapshotDataUmum) {
-                          String lokasi = 'Memuat lokasi';
+                        return FutureBuilder<DocumentSnapshot>(
+                          future: FirebaseFirestore.instance
+                              .collection('data_umum')
+                              .doc(idDataUmum)
+                              .get(),
+                          builder: (context, snapshotDataUmum) {
+                            String lokasi = 'Memuat lokasi';
 
-                          if (snapshotDataUmum.connectionState ==
-                              ConnectionState.done) {
-                            if (snapshotDataUmum.hasData &&
-                                snapshotDataUmum.data!.exists) {
-                              final dataUmum = snapshotDataUmum.data!.data()
-                                  as Map<String, dynamic>;
-                              lokasi = dataUmum['nama_lokasi'] ??
-                                  'Tidak ada nama lokasi';
-                            } else {
-                              lokasi = 'Data lokasi tidak ditemukan';
+                            if (snapshotDataUmum.connectionState ==
+                                ConnectionState.done) {
+                              if (snapshotDataUmum.hasData &&
+                                  snapshotDataUmum.data!.exists) {
+                                final dataUmum = snapshotDataUmum.data!.data()
+                                    as Map<String, dynamic>;
+                                lokasi = dataUmum['nama_lokasi'] ??
+                                    'Tidak ada nama lokasi';
+                              } else {
+                                lokasi = 'Data lokasi tidak ditemukan';
+                              }
                             }
-                          }
 
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            margin: const EdgeInsets.only(bottom: 16),
-                            elevation: 3,
-                            child: Container(
-                              decoration: BoxDecoration(
+                            return Card(
+                              shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: const Color(0xFF358666),
-                                  width: 1,
-                                ),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    FutureBuilder<DocumentSnapshot>(
-                                      future: FirebaseFirestore.instance
-                                          .collection('user')
-                                          .doc(data['uid'])
-                                          .get(),
-                                      builder: (context, snapshotUser) {
-                                        String? fotoProfil;
-                                        if (snapshotUser.connectionState ==
-                                                ConnectionState.done &&
-                                            snapshotUser.hasData &&
-                                            snapshotUser.data!.exists) {
-                                          final userData = snapshotUser.data!
-                                              .data() as Map<String, dynamic>;
-                                          fotoProfil = userData['foto_profil']
-                                              as String?;
-                                        }
+                              margin: const EdgeInsets.only(bottom: 16),
+                              elevation: 3,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: const Color(0xFF358666),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      FutureBuilder<DocumentSnapshot>(
+                                        future: FirebaseFirestore.instance
+                                            .collection('user')
+                                            .doc(data['uid'])
+                                            .get(),
+                                        builder: (context, snapshotUser) {
+                                          String? fotoProfil;
+                                          if (snapshotUser.connectionState ==
+                                                  ConnectionState.done &&
+                                              snapshotUser.hasData &&
+                                              snapshotUser.data!.exists) {
+                                            final userData = snapshotUser.data!
+                                                .data() as Map<String, dynamic>;
+                                            fotoProfil = userData['foto_profil']
+                                                as String?;
+                                          }
 
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: const Color(0xFF358666),
-                                              width: 1,
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: const Color(0xFF358666),
+                                                width: 1,
+                                              ),
                                             ),
-                                          ),
-                                          child: CircleAvatar(
-                                            radius: 30,
-                                            backgroundColor: Colors.grey[300],
-                                            backgroundImage:
-                                                (fotoProfil != null &&
-                                                        fotoProfil.isNotEmpty)
-                                                    ? NetworkImage(fotoProfil)
-                                                    : null,
-                                            child: (fotoProfil == null ||
-                                                    fotoProfil.isEmpty)
-                                                ? Icon(Icons.person,
-                                                    size: 30,
-                                                    color: Colors.grey[700])
-                                                : null,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            nama,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
+                                            child: CircleAvatar(
+                                              radius: 30,
+                                              backgroundColor: Colors.grey[300],
+                                              backgroundImage:
+                                                  (fotoProfil != null &&
+                                                          fotoProfil.isNotEmpty)
+                                                      ? NetworkImage(fotoProfil)
+                                                      : null,
+                                              child: (fotoProfil == null ||
+                                                      fotoProfil.isEmpty)
+                                                  ? Icon(Icons.person,
+                                                      size: 30,
+                                                      color: Colors.grey[700])
+                                                  : null,
                                             ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            () {
-                                              if (status == 'ditolak' &&
-                                                  alasanGabungan.isNotEmpty) {
-                                                return 'Ditolak - $alasanGabungan';
-                                              } else if (status == 'menunggu') {
-                                                final desc =
-                                                    deskripsi.toLowerCase();
-                                                if (desc.contains('hapus')) {
-                                                  return 'Menunggu Konfirmasi Hapus Data';
-                                                } else if (desc
-                                                    .contains('tambah')) {
-                                                  return 'Menunggu Konfirmasi Tambah Data';
-                                                } else if (desc
-                                                    .contains('ubah')) {
-                                                  return 'Menunggu Konfirmasi Ubah Data';
+                                          );
+                                        },
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              nama,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              () {
+                                                if (status == 'ditolak' &&
+                                                    alasanGabungan.isNotEmpty) {
+                                                  return 'Ditolak - $alasanGabungan';
+                                                } else if (status ==
+                                                    'menunggu') {
+                                                  final desc =
+                                                      deskripsi.toLowerCase();
+                                                  if (desc.contains('hapus')) {
+                                                    return 'Menunggu Konfirmasi Hapus Data';
+                                                  } else if (desc
+                                                      .contains('tambah')) {
+                                                    return 'Menunggu Konfirmasi Tambah Data';
+                                                  } else if (desc
+                                                      .contains('ubah')) {
+                                                    return 'Menunggu Konfirmasi Ubah Data';
+                                                  } else {
+                                                    return 'Menunggu Konfirmasi';
+                                                  }
                                                 } else {
-                                                  return 'Menunggu Konfirmasi';
+                                                  return _statusLabel(status);
                                                 }
-                                              } else {
-                                                return _statusLabel(status);
-                                              }
-                                            }(),
-                                            style: const TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 12,
+                                              }(),
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 12,
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            lokasi,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w400,
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              lokasi,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w400,
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Icon(
-                                                    Icons.description,
-                                                    size: 18,
-                                                    color: Color(0xFF358666),
-                                                  ),
-                                                  const SizedBox(width: 6),
-                                                  Flexible(
-                                                    child: RichText(
-                                                      text: TextSpan(
-                                                        style: const TextStyle(
-                                                          fontSize: 12,
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.w400,
+                                            const SizedBox(height: 8),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Icon(
+                                                      Icons.description,
+                                                      size: 18,
+                                                      color: Color(0xFF358666),
+                                                    ),
+                                                    const SizedBox(width: 6),
+                                                    Flexible(
+                                                      child: RichText(
+                                                        text: TextSpan(
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 12,
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                          children: [
+                                                            TextSpan(
+                                                              text:
+                                                                  'Permintaan Konfirmasi ',
+                                                              style: GoogleFonts.poppins(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                            ),
+                                                            TextSpan(
+                                                              text: deskripsi
+                                                                      .toLowerCase()
+                                                                      .contains(
+                                                                          'hapus')
+                                                                  ? 'Hapus'
+                                                                  : deskripsi
+                                                                          .toLowerCase()
+                                                                          .contains(
+                                                                              'tambah')
+                                                                      ? 'Tambah'
+                                                                      : deskripsi
+                                                                              .toLowerCase()
+                                                                              .contains('ubah')
+                                                                          ? 'Ubah'
+                                                                          : '',
+                                                              style: GoogleFonts.poppins(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                            ),
+                                                            const TextSpan(
+                                                                text: '\n'),
+                                                            TextSpan(
+                                                              text: 'Data',
+                                                              style: GoogleFonts.poppins(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                            ),
+                                                          ],
                                                         ),
-                                                        children: [
-                                                          TextSpan(
-                                                            text:
-                                                                'Permintaan Konfirmasi ',
-                                                            style: GoogleFonts
-                                                                .poppins(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400),
-                                                          ),
-                                                          TextSpan(
-                                                            text: deskripsi
-                                                                    .toLowerCase()
-                                                                    .contains(
-                                                                        'hapus')
-                                                                ? 'Hapus'
-                                                                : deskripsi
-                                                                        .toLowerCase()
-                                                                        .contains(
-                                                                            'tambah')
-                                                                    ? 'Tambah'
-                                                                    : deskripsi
-                                                                            .toLowerCase()
-                                                                            .contains('ubah')
-                                                                        ? 'Ubah'
-                                                                        : '',
-                                                            style: GoogleFonts
-                                                                .poppins(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400),
-                                                          ),
-                                                          const TextSpan(
-                                                              text: '\n'),
-                                                          TextSpan(
-                                                            text: 'Data',
-                                                            style: GoogleFonts
-                                                                .poppins(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400),
-                                                          ),
-                                                        ],
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Row(
-                                            children: [
-                                              const Icon(
-                                                Icons.access_time_filled,
-                                                size: 16,
-                                                color: Color(0xFF358666),
-                                              ),
-                                              const SizedBox(width: 6),
-                                              Text(
-                                                formatTanggal(tanggal),
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w400,
+                                                  ],
                                                 ),
-                                              )
-                                            ],
-                                          )
-                                        ],
+                                              ],
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.access_time_filled,
+                                                  size: 16,
+                                                  color: Color(0xFF358666),
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Text(
+                                                  formatTanggal(tanggal),
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  );
-                },
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ],

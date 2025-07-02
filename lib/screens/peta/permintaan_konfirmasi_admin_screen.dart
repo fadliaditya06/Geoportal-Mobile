@@ -61,9 +61,12 @@ class PermintaanKonfirmasiAdminScreenState
               }
 
               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    setState(() {});
+                  },
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     children: [
                       const SizedBox(height: 100),
                       Image.asset(
@@ -72,9 +75,11 @@ class PermintaanKonfirmasiAdminScreenState
                         height: 300,
                       ),
                       const SizedBox(height: 20),
-                      const Text(
-                        'Tidak ada permintaan konfirmasi data',
-                        style: TextStyle(fontSize: 16),
+                      const Center(
+                        child: Text(
+                          'Tidak ada permintaan konfirmasi data',
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -83,106 +88,114 @@ class PermintaanKonfirmasiAdminScreenState
 
               final docs = snapshot.data!.docs;
 
-              return ListView.builder(
-                itemCount: docs.length,
-                itemBuilder: (context, index) {
-                  final data = docs[index].data() as Map<String, dynamic>;
-                  final docId = docs[index].id;
+              return RefreshIndicator(
+                onRefresh: () async {
+                  setState(() {});
+                },
+                child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: docs.length,
+                  itemBuilder: (context, index) {
+                    final data = docs[index].data() as Map<String, dynamic>;
+                    final docId = docs[index].id;
 
-                  final nama = data['nama'] ?? '-';
-                  final deskripsi = data['deskripsi'] ?? '-';
-                  final waktu = data['timestamp'] != null
-                      ? DateFormat('dd MMMM yyyy - HH:mm', 'id')
-                          .format((data['timestamp'] as Timestamp).toDate())
-                      : '-';
+                    final nama = data['nama'] ?? '-';
+                    final deskripsi = data['deskripsi'] ?? '-';
+                    final waktu = data['timestamp'] != null
+                        ? DateFormat('dd MMMM yyyy - HH:mm', 'id')
+                            .format((data['timestamp'] as Timestamp).toDate())
+                        : '-';
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/detail-konfirmasi',
-                                arguments: {
-                                  'id_data_umum': data['data']?['id_data_umum'],
-                                  'id_data_spasial': data['data']
-                                      ?['id_data_spasial'],
-                                  'uid': data['uid'],
-                                  'deskripsi': data['deskripsi'],
-                                  'docId': docId,
-                                },
-                              );
-                            },
-                            child: _permintaanKonfirmasiCard(
-                              uid: data['uid'] ?? '-',
-                              title: nama,
-                              description: '$deskripsi\n$waktu',
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/detail-konfirmasi',
+                                  arguments: {
+                                    'id_data_umum': data['data']
+                                        ?['id_data_umum'],
+                                    'id_data_spasial': data['data']
+                                        ?['id_data_spasial'],
+                                    'uid': data['uid'],
+                                    'deskripsi': data['deskripsi'],
+                                    'docId': docId,
+                                  },
+                                );
+                              },
+                              child: _permintaanKonfirmasiCard(
+                                uid: data['uid'] ?? '-',
+                                title: nama,
+                                description: '$deskripsi\n$waktu',
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 30),
-                              child: GestureDetector(
-                                onTap: () {
-                                  showPermintaanDisetujuiDialog(
-                                    context: context,
-                                    deskripsi: data['deskripsi'] ?? '',
-                                    onConfirm: () =>
-                                        _updateStatus(docId, 'disetujui'),
-                                  );
-                                },
-                                child: _permintaanKonfirmasiIcon(
-                                  icon: CupertinoIcons.checkmark_alt,
+                          const SizedBox(width: 8),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 30),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    showPermintaanDisetujuiDialog(
+                                      context: context,
+                                      deskripsi: data['deskripsi'] ?? '',
+                                      onConfirm: () =>
+                                          _updateStatus(docId, 'disetujui'),
+                                    );
+                                  },
+                                  child: _permintaanKonfirmasiIcon(
+                                    icon: CupertinoIcons.checkmark_alt,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 5),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 30),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  late String jenisPermintaan;
+                              const SizedBox(width: 5),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 30),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    late String jenisPermintaan;
 
-                                  final deskripsiLower =
-                                      deskripsi.toLowerCase();
-                                  if (deskripsiLower.contains('hapus')) {
-                                    jenisPermintaan = 'hapus';
-                                  } else if (deskripsiLower
-                                      .contains('tambah')) {
-                                    jenisPermintaan = 'tambah';
-                                  } else if (deskripsiLower.contains('ubah')) {
-                                    jenisPermintaan = 'ubah';
-                                  } else {
-                                    jenisPermintaan = 'lainnya';
-                                  }
+                                    final deskripsiLower =
+                                        deskripsi.toLowerCase();
+                                    if (deskripsiLower.contains('hapus')) {
+                                      jenisPermintaan = 'hapus';
+                                    } else if (deskripsiLower
+                                        .contains('tambah')) {
+                                      jenisPermintaan = 'tambah';
+                                    } else if (deskripsiLower
+                                        .contains('ubah')) {
+                                      jenisPermintaan = 'ubah';
+                                    } else {
+                                      jenisPermintaan = 'lainnya';
+                                    }
 
-                                  await showPenolakanDialogDinamis(
-                                    context: context,
-                                    jenisPermintaan: jenisPermintaan,
-                                    onConfirm: (alasanList) async {
-                                      await _updateStatus(
-                                          docId, 'ditolak', alasanList);
-                                    },
-                                  );
-                                },
-                                child: _permintaanKonfirmasiIcon(
-                                  icon: Icons.close,
+                                    await showPenolakanDialogDinamis(
+                                      context: context,
+                                      jenisPermintaan: jenisPermintaan,
+                                      onConfirm: (alasanList) async {
+                                        await _updateStatus(
+                                            docId, 'ditolak', alasanList);
+                                      },
+                                    );
+                                  },
+                                  child: _permintaanKonfirmasiIcon(
+                                    icon: Icons.close,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  );
-                },
+                            ],
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
               );
             },
           ),
