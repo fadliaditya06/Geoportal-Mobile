@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class DummyBottomSheet extends StatelessWidget {
+class GeoJSONBottomSheet extends StatelessWidget {
   final String kelurahan;
   final String kecamatan;
   final String kawasan;
@@ -9,10 +9,10 @@ class DummyBottomSheet extends StatelessWidget {
   final String rt;
   final String rw;
   final String shapeLength;
-  // final String shapeArea;
+  final String shapeArea;
   final String coordinates;
 
-  const DummyBottomSheet({
+  const GeoJSONBottomSheet({
     super.key,
     required this.kelurahan,
     required this.kecamatan,
@@ -22,7 +22,7 @@ class DummyBottomSheet extends StatelessWidget {
     required this.rt,
     required this.rw,
     required this.shapeLength,
-    // required this.shapeArea,
+    required this.shapeArea,
     required this.coordinates,
   });
 
@@ -75,8 +75,8 @@ class DummyBottomSheet extends StatelessWidget {
                 const Divider(thickness: 1, color: Colors.black),
                 _buildDataRow("Panjang Bentuk", shapeLength),
                 const Divider(thickness: 1, color: Colors.black),
-                // _buildDataRow("Luas Bentuk", shapeArea),
-                // const Divider(thickness: 1, color: Colors.black),
+                _buildDataRow("Luas Bentuk", shapeArea),
+                const Divider(thickness: 1, color: Colors.black),
                 _buildDataRow("Koordinat", coordinates),
                 const SizedBox(height: 24),
               ],

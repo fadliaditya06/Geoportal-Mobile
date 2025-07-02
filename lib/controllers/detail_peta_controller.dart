@@ -171,7 +171,7 @@ class DetailPetaController with ChangeNotifier {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (_) => DummyBottomSheet(
+      builder: (_) => GeoJSONBottomSheet(
         kelurahan: (properties['Kelurahan'] ?? '').toString(),
         kecamatan: (properties['Kecamatan'] ?? '').toString(),
         kawasan: (properties['Kawasan'] ?? '').toString(),
@@ -180,7 +180,7 @@ class DetailPetaController with ChangeNotifier {
         rt: (properties['RT'] ?? 0).toString(),
         rw: (properties['RW'] ?? 0).toString(),
         shapeLength: properties['Shape_Leng'].toString(),
-        // shapeArea: properties['Shape_Area'].toString(),
+        shapeArea: properties['Shape_Area'].toString(),
         coordinates: coordinatesText,
       ),
     );

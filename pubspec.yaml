@@ -21,6 +21,8 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   flutter_localizations:
     sdk: flutter
+  flutter_svg: ^2.2.0
+  get: ^4.7.2
   google_fonts: ^6.2.1
   http: ^1.4.0
   intl: ^0.19.0
@@ -38,9 +40,13 @@ dependencies:
   url_launcher: ^6.3.1
 
 dev_dependencies:
+  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  mockito: ^5.4.2
+  build_runner: ^2.4.6
+  integration_test:
+    sdk: flutter
 
 flutter:
   uses-material-design: true
@@ -54,7 +60,7 @@ flutter:
     - assets/images/logo/
     - assets/images/onboarding/
     - assets/carousel/
-    - assets/geojson/dummy-geojson/
+    - assets/geojson/data-geojson/
 
   fonts:
     - family: Poppins

@@ -6,7 +6,7 @@ import 'package:geoportal_mobile/screens/peta/permintaan_konfirmasi_admin_screen
 import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:geoportal_mobile/widgets/animasi_data_peta.dart';
+import 'package:geoportal_mobile/widgets/item_info_animasi.dart';
 
 class PetaScreen extends StatefulWidget {
   const PetaScreen({super.key, this.role});
@@ -144,13 +144,13 @@ class PetaScreenState extends State<PetaScreen> {
                   ),
                   child: Column(
                     children: const [
-                      AnimatedInfoItem(
+                      ItemInfoAnimasi(
                         icon: Icons.map_outlined,
                         label: 'Kecamatan',
                         targetNumber: 5,
                       ),
                       SizedBox(height: 16),
-                      AnimatedInfoItem(
+                      ItemInfoAnimasi(
                         iconPath: 'assets/images/icon/database.svg',
                         label: 'Dataset',
                         targetNumber: 1,

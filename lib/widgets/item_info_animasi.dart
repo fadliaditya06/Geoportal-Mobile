@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class AnimatedInfoItem extends StatelessWidget {
+class ItemInfoAnimasi extends StatelessWidget {
   final IconData? icon;
   final String? iconPath;
   final String label;
   final int targetNumber;
 
-  const AnimatedInfoItem({
+  const ItemInfoAnimasi({
     super.key,
     this.icon,
     this.iconPath,
