@@ -18,7 +18,7 @@ Future<void> showDeleteDataDialog({
           ),
         ),
         content: const Text(
-          'Apakah Anda yakin ingin mengapus data ini?',
+          'Apakah Anda yakin ingin menghapus data ini?',
           textAlign: TextAlign.center,
         ),
         contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 5.0),
