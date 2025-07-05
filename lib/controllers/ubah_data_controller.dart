@@ -116,7 +116,7 @@ class UbahDataController extends GetxController {
 
     for (final file in fotoFiles) {
       final fileName =
-          'foto_lokasi${DateTime.now().millisecondsSinceEpoch}_${file.path.split('/').last}';
+          'foto_lokasi/${DateTime.now().millisecondsSinceEpoch}_${file.path.split('/').last}';
       final bytes = await file.readAsBytes();
 
       await bucket.uploadBinary(
