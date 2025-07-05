@@ -4,6 +4,7 @@ import 'package:geoportal_mobile/screens/peta/detail_peta_screen.dart';
 import 'package:geoportal_mobile/controllers/tambah_data_controller.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 class TambahDataScreen extends StatefulWidget {
   const TambahDataScreen({super.key});
@@ -75,6 +76,7 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
         ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 21, 16, 8),
+          // Form Tambah Data
           child: Form(
             key: controller.formKey,
             child: Container(
@@ -338,6 +340,27 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
                             ),
                           ),
                           const SizedBox(height: 10),
+                          // Untuk mock foto ketika pengujian
+                          if (const bool.fromEnvironment('TEST_MODE')) ...[
+                            ElevatedButton(
+                              key: const Key('btnMockFoto'),
+                              onPressed: () async {
+                                final byteData = await rootBundle
+                                    .load('assets/images/test-mock.jpg');
+                                final tempDir = await getTemporaryDirectory();
+                                final file =
+                                    File('${tempDir.path}/test-mock.jpg');
+                                await file.writeAsBytes(
+                                    byteData.buffer.asUint8List());
+
+                                controller.fotoFiles.add(file);
+                                state.didChange(controller.fotoFiles);
+                                setState(() {});
+                              },
+                              child: const Text('USE_TEST_IMAGE'),
+                            ),
+                          ],
+                          const SizedBox(height: 10),
                           // Preview foto
                           if (controller.fotoFiles.isNotEmpty)
                             Column(
@@ -418,6 +441,7 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
                   _buildSectionTitle('Data Spasial'),
                   _buildTitle("Titik Koordinat"),
                   _buildTextField(
+                    key: const Key('fieldKoordinat'),
                     label: 'Titik Koordinat',
                     controller: controller.titikKoordinatController,
                     readOnly: true,
@@ -538,6 +562,7 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
 
   // Fungsi untuk membangun TextField dengan label
   Widget _buildTextField({
+    Key? key,
     required String label,
     required TextEditingController controller,
     bool readOnly = false,
@@ -549,6 +574,7 @@ class _TambahDataScreenState extends State<TambahDataScreen> {
     List<TextInputFormatter>? inputFormatters,
   }) {
     return TextFormField(
+      key: key,
       controller: controller,
       readOnly: readOnly,
       keyboardType: keyboardType,

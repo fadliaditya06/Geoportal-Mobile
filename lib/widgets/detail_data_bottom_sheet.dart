@@ -103,6 +103,7 @@ class DetailDataBottomSheet extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ElevatedButton(
+                          key: const Key('btnUbahData'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF92E3A9),
                             foregroundColor: Colors.black,
@@ -133,6 +134,7 @@ class DetailDataBottomSheet extends StatelessWidget {
                         const SizedBox(width: 70),
                         // Tombol Hapus Data
                         ElevatedButton(
+                          key: const Key('btnHapusData'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFEA3535),
                             foregroundColor: Colors.black,

@@ -29,6 +29,7 @@ Future<void> showDeleteDataDialog({
             children: [
               Expanded(
                 child: ElevatedButton(
+                  key: const Key('btnBatalHapus'),
                   onPressed: () => Navigator.of(context).pop(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFD8D8D8),
@@ -43,6 +44,7 @@ Future<void> showDeleteDataDialog({
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
+                  key: const Key('btnKonfirmasiHapus'),
                   onPressed: () {
                     Navigator.of(context).pop();
                     onConfirm();

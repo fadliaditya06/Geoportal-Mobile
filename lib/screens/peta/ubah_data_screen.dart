@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:geoportal_mobile/controllers/ubah_data_controller.dart';
 import 'package:geoportal_mobile/screens/peta/detail_peta_screen.dart';
+import 'package:path_provider/path_provider.dart';
 
 class UbahDataScreen extends StatefulWidget {
   final String idDataUmum;
@@ -95,6 +96,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
                 const SizedBox(height: 10),
                 _buildTitle("Nama Lokasi"),
                 _buildTextField(
+                  key: const Key('fieldNamaLokasi'),
                   controller: controller.lokasiController,
                   label: 'Contoh: Perumahan Mutiara Hijau',
                   validator: (value) =>
@@ -111,6 +113,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
                 const SizedBox(height: 10),
                 _buildTitle("RT"),
                 _buildTextField(
+                  key: const Key('fieldRT'),
                   controller: controller.rtController,
                   label: 'Contoh: 003',
                   keyboardType: TextInputType.number,
@@ -127,6 +130,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
                 const SizedBox(height: 10),
                 _buildTitle("RW"),
                 _buildTextField(
+                  key: const Key('fieldRW'),
                   controller: controller.rwController,
                   label: 'Contoh: 006',
                   keyboardType: TextInputType.number,
@@ -159,6 +163,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
                   child: SizedBox(
                     width: 150,
                     child: Obx(() => ElevatedButton(
+                          key: const Key('btnSimpanUbahData'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF92E3A9),
                             padding: const EdgeInsets.symmetric(vertical: 15),
@@ -210,6 +215,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
   }
 
   Widget _buildTextField({
+    Key? key,
     required TextEditingController controller,
     required String label,
     TextInputType? keyboardType,
@@ -221,6 +227,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
     VoidCallback? onSuffixTap,
   }) {
     return TextFormField(
+      key: key,
       controller: controller,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
@@ -239,7 +246,9 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
           borderSide: const BorderSide(color: Color(0xFFB0E1C6)),
         ),
         suffixIcon: suffixIcon != null
-            ? GestureDetector(onTap: onSuffixTap, child: Icon(suffixIcon, color: Colors.black))
+            ? GestureDetector(
+                onTap: onSuffixTap,
+                child: Icon(suffixIcon, color: Colors.black))
             : null,
       ),
     );
@@ -355,6 +364,31 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 8),
+            // Tambahkan di dalam _buildFotoField atau sejenisnya
+            if (const bool.fromEnvironment('TEST_MODE')) ...[
+              ElevatedButton(
+                key: const Key('btnMockUbahFoto'),
+                onPressed: () async {
+                  try {
+                    final byteData =
+                        await rootBundle.load('assets/images/test-mock-2.jpg');
+
+                    final tempDir = await getTemporaryDirectory();
+                    final file = File('${tempDir.path}/test-mock-2.jpg');
+                    await file.writeAsBytes(byteData.buffer.asUint8List());
+
+                    controller.fotoFiles.clear();
+                    controller.fotoFiles.add(file);
+                    state.didChange(controller.fotoFiles);
+                    setState(() {});
+                  } catch (e) {
+                    debugPrint('Gagal memuat gambar mock: $e');
+                  }
+                },
+                child: const Text('USE_TEST_IMAGE'),
+              ),
+            ],
             const SizedBox(height: 10),
             ...controller.fotoUrls.asMap().entries.map((entry) {
               int index = entry.key;
@@ -440,6 +474,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
       controller: controller.titikKoordinatController,
       label: 'Titik Koordinat',
       readOnly: true,
+      key: const Key('btnUbahKoordinat'),
       validator: (value) => value == null || value.isEmpty
           ? 'Silahkan masukkan Titik Koordinat'
           : null,
