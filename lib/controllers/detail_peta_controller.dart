@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
 import 'package:geoportal_mobile/widgets/geojson_bottom_sheet.dart';
 import 'package:geoportal_mobile/services/geojson_service.dart';
+import 'package:geoportal_mobile/models/geojson_model.dart';
 
 class DetailPetaController with ChangeNotifier {
   final MapController mapController = MapController();
@@ -156,8 +157,8 @@ class DetailPetaController with ChangeNotifier {
   // Bottomsheet untuk menampilkan properti dari fitur GeoJSON
   void showDynamicBottomSheet(
       BuildContext context, Map<String, dynamic> feature) {
-    final properties = feature['properties'] as Map<String, dynamic>? ?? {};
-    final geometry = feature['geometry'] as Map<String, dynamic>? ?? {};
+    final properties = feature['properties'] as Map<String, dynamic>;
+    final geometry = feature['geometry'] as Map<String, dynamic>;
 
     String coordinatesText = '-';
     final rawCoordinates = geometry['coordinates'];
@@ -169,21 +170,25 @@ class DetailPetaController with ChangeNotifier {
       }
     }
 
+    // Buat data model dari properti dan koordinat
+    final dataModel = GeoJSONDataModel(
+      kelurahan: (properties['Kelurahan'] ?? 'Tidak ada data').toString(),
+      kecamatan: (properties['Kecamatan'] ?? 'Tidak ada data').toString(),
+      kawasan: (properties['Kawasan'] ?? 'Tidak ada data').toString(),
+      lokasi: (properties['Lokasi'] ?? 'Tidak ada data').toString(),
+      alamat: (properties['Alamat'] ?? 'Tidak ada data').toString(),
+      rt: (properties['RT'] ?? 0).toString(),
+      rw: (properties['RW'] ?? 0).toString(),
+      shapeLength: (properties['Shape_Leng'] ?? 'Tidak ada data').toString(),
+      shapeArea: (properties['Shape_Area'] ?? 'Tidak ada data').toString(),
+      coordinates: coordinatesText,
+    );
+
+    // Tampilkan BottomSheet dengan data
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (_) => GeoJSONBottomSheet(
-        kelurahan: (properties['Kelurahan'] ?? '').toString(),
-        kecamatan: (properties['Kecamatan'] ?? '').toString(),
-        kawasan: (properties['Kawasan'] ?? '').toString(),
-        lokasi: (properties['Lokasi'] ?? '').toString(),
-        alamat: (properties['Alamat'] ?? 'Tidak ada data').toString(),
-        rt: (properties['RT'] ?? 0).toString(),
-        rw: (properties['RW'] ?? 0).toString(),
-        shapeLength: properties['Shape_Leng'].toString(),
-        shapeArea: properties['Shape_Area'].toString(),
-        coordinates: coordinatesText,
-      ),
+      builder: (_) => GeoJSONBottomSheet(data: dataModel),
     );
   }
 

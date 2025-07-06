@@ -1,30 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:geoportal_mobile/models/geojson_model.dart';
 
 class GeoJSONBottomSheet extends StatelessWidget {
-  final String kelurahan;
-  final String kecamatan;
-  final String kawasan;
-  final String lokasi;
-  final String alamat;
-  final String rt;
-  final String rw;
-  final String shapeLength;
-  final String shapeArea;
-  final String coordinates;
+  final GeoJSONDataModel data;
 
-  const GeoJSONBottomSheet({
-    super.key,
-    required this.kelurahan,
-    required this.kecamatan,
-    required this.kawasan,
-    required this.lokasi,
-    required this.alamat,
-    required this.rt,
-    required this.rw,
-    required this.shapeLength,
-    required this.shapeArea,
-    required this.coordinates,
-  });
+  const GeoJSONBottomSheet({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +33,7 @@ class GeoJSONBottomSheet extends StatelessWidget {
                 const SizedBox(height: 40),
                 Center(
                   child: Text(
-                    lokasi.isNotEmpty ? lokasi : 'Detail Lokasi',
+                    data.lokasi.isNotEmpty ? data.lokasi : 'Detail Lokasi',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -63,21 +43,21 @@ class GeoJSONBottomSheet extends StatelessWidget {
                 ),
                 const Divider(thickness: 1, color: Colors.black),
                 const SizedBox(height: 16),
-                _buildDataRow("Kelurahan", kelurahan),
+                _buildDataRow("Kelurahan", data.kelurahan),
                 const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Kecamatan", kecamatan),
+                _buildDataRow("Kecamatan", data.kecamatan),
                 const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Kawasan", kawasan),
+                _buildDataRow("Kawasan", data.kawasan),
                 const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Alamat", alamat),
+                _buildDataRow("Alamat", data.alamat),
                 const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("RT/RW", '$rt/$rw'),
+                _buildDataRow("RT/RW", '${data.rt}/${data.rw}'),
                 const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Panjang Bentuk", shapeLength),
+                _buildDataRow("Panjang Bentuk", data.shapeLength),
                 const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Luas Bentuk", shapeArea),
+                _buildDataRow("Luas Bentuk", data.shapeArea),
                 const Divider(thickness: 1, color: Colors.black),
-                _buildDataRow("Koordinat", coordinates),
+                _buildDataRow("Koordinat", data.coordinates),
                 const SizedBox(height: 24),
               ],
             ),
@@ -94,11 +74,7 @@ class GeoJSONBottomSheet extends StatelessWidget {
                 onTap: () => Navigator.pop(context),
                 child: const Padding(
                   padding: EdgeInsets.all(8),
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.black,
-                    size: 20,
-                  ),
+                  child: Icon(Icons.close, color: Colors.black, size: 20),
                 ),
               ),
             ),
@@ -116,10 +92,7 @@ class GeoJSONBottomSheet extends StatelessWidget {
         children: [
           Expanded(
             flex: 5,
-            child: Text(
-              label,
-              style: const TextStyle(fontWeight: FontWeight.w400),
-            ),
+            child: Text(label, style: const TextStyle(fontWeight: FontWeight.w400)),
           ),
           Expanded(
             flex: 6,

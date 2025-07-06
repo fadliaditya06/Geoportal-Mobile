@@ -33,4 +33,19 @@ class LogKonfirmasiModel {
       if (dataBaru != null) 'data_baru': dataBaru,
     };
   }
+
+  factory LogKonfirmasiModel.fromMap(Map<String, dynamic> map) {
+    return LogKonfirmasiModel(
+      uid: map['uid'] ?? '',
+      nama: map['nama'] ?? '',
+      peran: map['peran'] ?? '',
+      deskripsi: map['deskripsi'] ?? '',
+      status: map['status'] ?? '',
+      timestamp: map['timestamp'] ?? Timestamp.now(),
+      data: Map<String, dynamic>.from(map['data'] ?? {}),
+      dataBaru: map['data_baru'] != null
+          ? Map<String, dynamic>.from(map['data_baru'])
+          : null,
+    );
+  }
 }

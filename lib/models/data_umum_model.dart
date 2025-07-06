@@ -48,4 +48,22 @@ class DataUmumModel {
       'createdAt': Timestamp.fromDate(createdAt),
     };
   }
+
+  factory DataUmumModel.fromMap(Map<String, dynamic> map) {
+    return DataUmumModel(
+      id: map['id_data_umum'] ?? '',
+      namaLokasi: map['nama_lokasi'] ?? '',
+      kelurahan: map['kelurahan'] ?? '',
+      kecamatan: map['kecamatan'] ?? '',
+      kawasan: map['kawasan'] ?? '',
+      alamat: map['alamat'] ?? '',
+      rt: map['rt'] ?? '',
+      rw: map['rw'] ?? '',
+      panjangBentuk: map['panjang_bentuk'] ?? '',
+      luasBentuk: map['luas_bentuk'] ?? '',
+      fotoLokasi: List<String>.from(map['foto_lokasi'] ?? []),
+      idDataSpasial: map['id_data_spasial'] ?? '',
+      createdAt: (map['createdAt'] as Timestamp).toDate(),
+    );
+  }
 }

@@ -18,4 +18,12 @@ class DataSpasialModel {
       'createdAt': Timestamp.fromDate(createdAt),
     };
   }
+
+  factory DataSpasialModel.fromMap(Map<String, dynamic> map) {
+    return DataSpasialModel(
+      titikKoordinat: map['titik_koordinat'] ?? '',
+      status: map['status'] ?? '',
+      createdAt: (map['createdAt'] as Timestamp).toDate(),
+    );
+  }
 }
