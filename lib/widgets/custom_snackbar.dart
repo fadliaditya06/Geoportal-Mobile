@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+bool isTestMode = false;
+
 void showCustomSnackbar({
   required BuildContext context,
   required String message,
   required bool isSuccess,
 }) {
+  if (isTestMode) return;
   final backgroundColor = isSuccess ? const Color(0xFF358666) : const Color(0xFFEA3535);
   final icon = isSuccess ? Icons.check_circle : Icons.error;
   final scaffoldMessenger = ScaffoldMessenger.of(context);

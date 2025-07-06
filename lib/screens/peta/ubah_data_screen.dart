@@ -1,5 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -29,7 +32,12 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
   @override
   void initState() {
     super.initState();
-    controller = UbahDataController();
+    controller = UbahDataController(
+      auth: FirebaseAuth.instance,
+      firestore: FirebaseFirestore.instance,
+      supabase: Supabase.instance.client,
+      storage: Supabase.instance.client.storage.from('images'),
+    );
     controller.initWithData(widget.data);
   }
 

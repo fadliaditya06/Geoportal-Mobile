@@ -3,9 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
-// import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
 import 'package:geoportal_mobile/models/data_umum_model.dart';
 import 'package:geoportal_mobile/models/data_spasial_model.dart';
 import 'package:geoportal_mobile/models/log_konfirmasi_model.dart';
@@ -22,8 +21,13 @@ class TambahDataController {
   final TextEditingController panjangBentukController;
   final TextEditingController luasBentukController;
   final TextEditingController titikKoordinatController;
+  final GlobalKey<FormState>? formKey;
 
-  final GlobalKey<FormState> formKey;
+  // NOTE: Property ini hanya digunakan untuk keperluan unit test (mock dependency)
+  final FirebaseFirestore firestore;
+  final FirebaseAuth auth;
+  final SupabaseClient supabase;
+  final StorageFileApi storage;
 
   TambahDataController({
     required this.titikKoordinatController,
@@ -37,7 +41,14 @@ class TambahDataController {
     required this.panjangBentukController,
     required this.luasBentukController,
     required this.formKey,
-  });
+    FirebaseFirestore? firestore,
+    FirebaseAuth? auth,
+    SupabaseClient? supabase,
+    StorageFileApi? storage,
+  })  : firestore = firestore ?? FirebaseFirestore.instance,
+        auth = auth ?? FirebaseAuth.instance,
+        supabase = supabase ?? Supabase.instance.client,
+        storage = storage ?? Supabase.instance.client.storage.from('images');
 
   final List<File> _fotoFiles = [];
   final List<String> _fotoUrls = [];
@@ -102,22 +113,19 @@ class TambahDataController {
     _isUploading = true;
     _fotoUrls.clear();
 
-    final supabase = Supabase.instance.client;
-    final bucket = supabase.storage.from('images');
-
     try {
       for (final file in _fotoFiles) {
         final fileName =
             'foto_lokasi/${DateTime.now().millisecondsSinceEpoch}.jpg';
         final fileBytes = await file.readAsBytes();
 
-        await bucket.uploadBinary(
+        await storage.uploadBinary(
           fileName,
           fileBytes,
           fileOptions: const FileOptions(contentType: 'image/jpeg'),
         );
 
-        final url = bucket.getPublicUrl(fileName);
+        final url = storage.getPublicUrl(fileName);
         _fotoUrls.add(url);
       }
       return _fotoUrls;
@@ -129,7 +137,9 @@ class TambahDataController {
   }
 
   Future<void> simpanData(BuildContext context) async {
-    if (!formKey.currentState!.validate()) return;
+    if (formKey?.currentState?.validate() == false) {
+      return;
+    }
 
     try {
       // Upload foto jika ada
@@ -138,12 +148,18 @@ class TambahDataController {
       }
 
       // Ambil user saat ini
-      final currentUser = FirebaseAuth.instance.currentUser;
-      final userDoc = await FirebaseFirestore.instance
-          .collection('user')
-          .doc(currentUser!.uid)
-          .get();
+      final currentUser = auth.currentUser;
+      if (currentUser == null) {
+        showCustomSnackbar(
+          context: context,
+          message: 'User tidak ditemukan.',
+          isSuccess: false,
+        );
+        return;
+      }
 
+      final userDoc =
+          await firestore.collection('user').doc(currentUser.uid).get();
       final dataUser = userDoc.data();
       final role = dataUser?['peran']?.toString().toLowerCase() ?? '';
       final bool isAdmin = role == 'admin';
@@ -155,12 +171,11 @@ class TambahDataController {
         createdAt: DateTime.now(),
       );
 
-      final docSpasial = await FirebaseFirestore.instance
-          .collection('data_spasial')
-          .add(dataSpasial.toMap());
+      final docSpasial =
+          await firestore.collection('data_spasial').add(dataSpasial.toMap());
 
       // Simpan data umum
-      final docUmum = FirebaseFirestore.instance.collection('data_umum').doc();
+      final docUmum = firestore.collection('data_umum').doc();
 
       final dataUmum = DataUmumModel(
         id: docUmum.id,
@@ -195,16 +210,12 @@ class TambahDataController {
           },
         );
 
-        await FirebaseFirestore.instance
-            .collection('log_konfirmasi')
-            .add(log.toMap());
+        await firestore.collection('log_konfirmasi').add(log.toMap());
       }
 
-      // Notifikasi
       showCustomSnackbar(
         context: context,
-        message:
-            'Permintaan tambah data${isAdmin ? '' : ' berhasil diajukan'}',
+        message: 'Permintaan tambah data${isAdmin ? '' : ' berhasil diajukan'}',
         isSuccess: true,
       );
       Navigator.pop(context);
@@ -216,22 +227,6 @@ class TambahDataController {
       );
     }
   }
-
-  // // Memilih tanggal publikasi
-  // Future<void> selectDate(BuildContext context) async {
-  //   final DateTime? pickedDate = await showDatePicker(
-  //     context: context,
-  //     initialDate: DateTime.now(),
-  //     firstDate: DateTime(1900),
-  //     lastDate: DateTime(2100),
-  //     locale: const Locale('id'),
-  //   );
-
-  //   if (pickedDate != null) {
-  //     publikasiController.text =
-  //         DateFormat('dd MMMM yyyy', 'id').format(pickedDate);
-  //   }
-  // }
 
   // Dispose semua controller
   void dispose() {
