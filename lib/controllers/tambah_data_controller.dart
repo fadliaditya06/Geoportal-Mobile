@@ -23,7 +23,7 @@ class TambahDataController {
   final TextEditingController titikKoordinatController;
   final GlobalKey<FormState>? formKey;
 
-  // NOTE: Property ini hanya digunakan untuk keperluan unit test (mock dependency)
+  // Keperluan unit test (mock dependency)
   final FirebaseFirestore firestore;
   final FirebaseAuth auth;
   final SupabaseClient supabase;
