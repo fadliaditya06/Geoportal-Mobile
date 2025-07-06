@@ -34,8 +34,8 @@ class DetailPetaController with ChangeNotifier {
       _polygons.clear();
 
       // Load daftar file geojson
-      final String indexData = await rootBundle
-          .loadString('assets/geojson/data-geojson/index.json');
+      final String indexData =
+          await rootBundle.loadString('assets/geojson/data-geojson/index.json');
       final List<dynamic> fileList = jsonDecode(indexData);
 
       for (final fileName in fileList) {
@@ -43,7 +43,7 @@ class DetailPetaController with ChangeNotifier {
 
         // Muat polygon dan batasi
         final polygons = await GeoJsonService.loadPolygonsFromAsset(assetPath);
-        _polygons.addAll(polygons.take(1000));
+        _polygons.addAll(polygons.take(4000));
 
         // Muat marker dan batasi
         final markers = await GeoJsonService.loadMarkersFromAsset(
@@ -51,7 +51,8 @@ class DetailPetaController with ChangeNotifier {
           context,
           _buildMarker,
         );
-        _markers.addAll(markers.take(1000));
+        _markers.addAll(markers.take(4000));
+        await Future.delayed(const Duration(milliseconds: 300));
       }
     } catch (e) {
       debugPrint('Gagal load GeoJSON dari assets: $e');
@@ -66,8 +67,8 @@ class DetailPetaController with ChangeNotifier {
     final center = GeoJsonService.getPolygonCenter(polygon.points);
 
     try {
-      final String indexData = await rootBundle
-          .loadString('assets/geojson/data-geojson/index.json');
+      final String indexData =
+          await rootBundle.loadString('assets/geojson/data-geojson/index.json');
       final List<dynamic> fileList = jsonDecode(indexData);
 
       for (final fileName in fileList) {
