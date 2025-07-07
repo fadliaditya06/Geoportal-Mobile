@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geoportal_mobile/controllers/register_controller.dart';
+import 'package:geoportal_mobile/screens/auth/login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -45,7 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 Image.asset(
                   'assets/images/logo/logo-geoportal.png',
-                  width: 200,
+                  width: 150,
                 ),
               ],
             ),
@@ -121,7 +122,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.person, color: Colors.black),
+                          prefixIcon:
+                              const Icon(Icons.person, color: Colors.black),
                           filled: true,
                           fillColor: const Color(0xFFB0E1C6),
                           border: OutlineInputBorder(
@@ -145,7 +147,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         controller: controller.emailController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.email_outlined, color: Colors.black),
+                          prefixIcon: const Icon(Icons.email_outlined,
+                              color: Colors.black),
                           labelText: 'Email',
                           labelStyle: const TextStyle(
                             fontSize: 15,
@@ -183,7 +186,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       TextFormField(
                         controller: controller.namaController,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.person_outline, color: Colors.black),
+                          prefixIcon: const Icon(Icons.person_outline,
+                              color: Colors.black),
                           labelText: 'Nama Lengkap',
                           labelStyle: const TextStyle(
                             fontSize: 15,
@@ -218,7 +222,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       TextFormField(
                         controller: controller.alamatController,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.home_outlined, color: Colors.black),
+                          prefixIcon: const Icon(Icons.home_outlined,
+                              color: Colors.black),
                           labelText: 'Alamat',
                           labelStyle: const TextStyle(
                             fontSize: 15,
@@ -254,7 +259,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         controller: controller.kataSandiController,
                         obscureText: _isObscure,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock_outline, color: Colors.black),
+                          prefixIcon: const Icon(Icons.lock_outline,
+                              color: Colors.black),
                           labelText: 'Kata Sandi',
                           labelStyle: const TextStyle(
                             fontSize: 15,
@@ -304,7 +310,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         controller: controller.konfirmasiKataSandiController,
                         obscureText: _isConfirmObscure,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock_outline, color: Colors.black),
+                          prefixIcon: const Icon(Icons.lock_outline,
+                              color: Colors.black),
                           labelText: 'Konfirmasi Kata Sandi',
                           labelStyle: const TextStyle(
                             fontSize: 15,
@@ -396,7 +403,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 10),
+                      // Navigasi ke halaman login
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Sudah memiliki akun?',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginScreen()),
+                              );
+                            },
+                            child: const Text(
+                              "Masuk",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w400,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
