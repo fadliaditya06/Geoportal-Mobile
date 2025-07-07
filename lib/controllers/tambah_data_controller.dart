@@ -215,7 +215,9 @@ class TambahDataController {
 
       showCustomSnackbar(
         context: context,
-        message: 'Permintaan tambah data${isAdmin ? '' : ' berhasil diajukan'}',
+        message: isAdmin
+            ? 'Data berhasil ditambahkan oleh admin.'
+            : 'Permintaan tambah data berhasil diajukan',
         isSuccess: true,
       );
       Navigator.pop(context);

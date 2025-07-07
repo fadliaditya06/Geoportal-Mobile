@@ -195,10 +195,9 @@ class UbahDataController extends GetxController {
 
         showCustomSnackbar(
           context: context,
-          message: 'Data berhasil diubah',
+          message: 'Data berhasil diubah oleh admin',
           isSuccess: true,
         );
-        Navigator.pop(context);
         Navigator.pop(context);
       } else {
         // Role pengguna update memerlukan konfirmasi
