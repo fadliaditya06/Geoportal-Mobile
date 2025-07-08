@@ -83,6 +83,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
                 _buildSectionTitle('Data Umum'),
                 _buildTitle("Nama Kelurahan"),
                 _buildTextField(
+                  key: const Key('fieldNamaKelurahan'),
                   controller: controller.kelurahanController,
                   label: 'Contoh: Kelurahan Duriangkang',
                   validator: (value) => value!.isEmpty
@@ -92,6 +93,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
                 const SizedBox(height: 10),
                 _buildTitle("Nama Kecamatan"),
                 _buildTextField(
+                  key: const Key('fieldNamaKecamatan'),
                   controller: controller.kecamatanController,
                   label: 'Contoh: Kecamatan Sei Beduk',
                   validator: (value) => value!.isEmpty
@@ -113,6 +115,7 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
                 const SizedBox(height: 10),
                 _buildTitle("Alamat"),
                 _buildTextField(
+                  key: const Key('fieldAlamat'),
                   controller: controller.alamatController,
                   label: 'Contoh: Blok C2 No 15',
                   validator: (value) =>
@@ -154,13 +157,18 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
                 ),
                 const SizedBox(height: 10),
                 _buildTitle("Panjang Bentuk"),
-                _buildDecimalField(controller.panjangBentukController,
-                    'Contoh: 0.00079236174892200004'),
+                _buildDecimalField(
+                  key: const Key('fieldPanjangBentuk'),
+                  controller: controller.panjangBentukController,
+                  label: 'Contoh: 0.00079236174892200004',
+                ),
                 const SizedBox(height: 10),
                 _buildTitle("Luas Bentuk"),
-                _buildDecimalField(controller.luasBentukController,
-                    'Contoh: 1.14035827148e-08'),
-                const SizedBox(height: 10),
+                _buildDecimalField(
+                  key: const Key('fieldLuasBentuk'),
+                  controller: controller.luasBentukController,
+                  label: 'Contoh: 1.14035827148e-08',
+                ),
                 _buildTitle("Foto"),
                 _buildFotoField(),
                 _buildSectionTitle('Data Spasial'),
@@ -262,8 +270,13 @@ class _UbahDataScreenState extends State<UbahDataScreen> {
     );
   }
 
-  Widget _buildDecimalField(TextEditingController controller, String label) {
+  Widget _buildDecimalField({
+    Key? key,
+    required TextEditingController controller,
+    required String label,
+  }) {
     return _buildTextField(
+      key: key,
       controller: controller,
       label: label,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),

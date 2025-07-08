@@ -42,7 +42,7 @@ void main() {
 
       expect(bottomSheetFound, isTrue,
           reason:
-              '❌ Bottom sheet detail tidak muncul setelah memilih item "$expectedItemText"');
+              'Bottom sheet detail tidak muncul setelah memilih item "$expectedItemText"');
     }
 
     testWidgets('Test Tambah, Edit, dan Hapus: Koordinat, Foto, dan Data Umum',
@@ -50,7 +50,7 @@ void main() {
       try {
         app.main();
         await tester.pumpAndSettle();
-        debugPrint('✅ Aplikasi dimulai');
+        debugPrint('Aplikasi dimulai...');
 
         // Menunggu Splash Screen selesai
         int splashAttempts = 0;
@@ -66,7 +66,7 @@ void main() {
 
         // Halaman onboarding
         expect(find.text('Selamat Datang di Geoportal!'), findsOneWidget);
-        debugPrint('✅ Masuk ke Halaman Onboarding');
+        debugPrint('Masuk ke Halaman Onboarding');
 
         // Navigasi halaman onboarding
         final nextButton = find.text('Selanjutnya');
@@ -74,13 +74,13 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(nextButton);
         await tester.pumpAndSettle();
-        debugPrint('✅ Swipe onboarding selesai');
+        debugPrint('Swipe onboarding selesai');
 
         // Lanjut ke halaman login
         final startButton = find.text('Mulai Sekarang');
         await tester.tap(startButton);
         await tester.pumpAndSettle();
-        debugPrint('✅ Navigasi ke halaman Login');
+        debugPrint('Navigasi ke halaman Login');
 
         // Form login
         expect(find.text('Masuk'), findsWidgets);
@@ -99,16 +99,16 @@ void main() {
         await tester.enterText(emailField, 'fadli@gmail.com');
         await tester.enterText(passwordField, 'fadli12');
         await tester.pump();
-        debugPrint('✅ Form login terisi');
+        debugPrint('Form login terisi');
 
         // Tutup keyboard dengan cara manual
         FocusManager.instance.primaryFocus?.unfocus();
         await tester.pump(const Duration(seconds: 2));
-        debugPrint('✅ Keyboard berhasil ditutup');
+        debugPrint('Keyboard berhasil ditutup');
 
         // Tap tombol login
         await tester.tap(loginButton);
-        debugPrint('✅ Tombol login ditekan');
+        debugPrint('Tombol login ditekan');
 
         // Delay eksplisit untuk beri waktu transisi animasi/login
         await tester.pump(const Duration(seconds: 2));
@@ -127,7 +127,7 @@ void main() {
 
         // Verifikasi sukses login
         expect(find.text('Hi Fadli!'), findsOneWidget);
-        debugPrint('✅ Berhasil sampai di halaman Beranda');
+        debugPrint('Berhasil sampai di halaman Beranda');
 
         // Biarkan halaman beranda tampil selama beberapa detik
         await tester.pump(const Duration(seconds: 5));
@@ -147,19 +147,19 @@ void main() {
 
         // Mmeastikan widget ditemukan
         expect(petaBatamText, findsOneWidget);
-        debugPrint('✅ Item Peta Batam ditemukan');
+        debugPrint('Item Peta Batam ditemukan');
 
         final viewButton = find.widgetWithText(TextButton, 'View');
         await tester.tap(viewButton);
         await tester.pumpAndSettle();
-        debugPrint('✅ Tombol View ditekan, masuk ke detail peta');
+        debugPrint('Tombol View ditekan, masuk ke detail peta');
 
         await tester.pump(const Duration(seconds: 5));
         debugPrint('Menunggu 5 detik agar map selesai di-render...');
 
         await tester.tapAt(const Offset(400, 300));
         await tester.pumpAndSettle();
-        debugPrint('✅ Map ditap');
+        debugPrint('Map ditap...');
 
         // Tap tombol Tambah Data
         await tester.pump(const Duration(seconds: 3));
@@ -168,7 +168,7 @@ void main() {
         await tester.tap(tambahDataButton);
         await tester.pumpAndSettle();
 
-        debugPrint('✅ Navigasi ke halaman Tambah Data');
+        debugPrint('Navigasi ke halaman Tambah Data');
 
         // Input data di form tambah data
         await tester.enterText(
@@ -255,7 +255,7 @@ void main() {
         if (mockImageButton.evaluate().isNotEmpty) {
           await tester.tap(mockImageButton);
           await tester.pumpAndSettle();
-          debugPrint('✅ Berhasil menambahkan gambar mock');
+          debugPrint('Berhasil menambahkan gambar mock');
         } else {
           debugPrint(
               'Tombol mock foto tidak ditemukan - mungkin bukan dalam TEST_MODE !!');
@@ -264,13 +264,13 @@ void main() {
         // Scroll agar field koordinat terlihat dan tap untuk buka map
         final koordinatFinder = find.byKey(const Key('fieldKoordinat'));
         expect(koordinatFinder, findsOneWidget,
-            reason: '❌ fieldKoordinat tidak ditemukan');
+            reason: 'fieldKoordinat tidak ditemukan');
         await tester.ensureVisible(koordinatFinder);
         await tester.pump(const Duration(milliseconds: 500));
         await tester.tap(koordinatFinder);
         await tester.pumpAndSettle();
 
-        // Tap di map untuk pilih titik koordinat (contoh posisi offset)
+        // Tap di map untuk pilih titik koordinat
         await tester.tapAt(const Offset(200, 300));
         await tester.pumpAndSettle();
 
@@ -286,7 +286,7 @@ void main() {
         }
         expect(konfirmasiBtnFound, isTrue,
             reason:
-                '❌ Tombol konfirmasi koordinat tidak muncul setelah memilih titik');
+                'Tombol konfirmasi koordinat tidak muncul setelah memilih titik');
 
         await tester.tap(konfirmasiBtn);
         await tester.pumpAndSettle();
@@ -296,17 +296,17 @@ void main() {
             (tester.widget(koordinatFinder) as TextFormField).controller?.text;
         expect(koordinatText != null && koordinatText.isNotEmpty, true);
 
-        debugPrint('✅ Form berhasil diisi');
+        debugPrint('Form berhasil diisi');
 
         final simpanButton = find.widgetWithText(ElevatedButton, 'Simpan');
         await tester.tap(simpanButton);
         await tester.pumpAndSettle(const Duration(seconds: 3));
-        debugPrint('✅ Tombol simpan ditekan');
+        debugPrint('Tombol simpan ditekan');
 
         await tester.pump(const Duration(seconds: 4));
 
         debugPrint(
-            '🎉 Test Berhasil: Tambah data - Koordinat, Foto, dan Data Umum (1/1)');
+            '✅ Test Berhasil: Tambah Data - Koordinat, Foto, dan Data Umum (1/1)');
 
         // Pengujian Edit Data - Koordinat, Foto, dan Data Umum
         final searchField = find.byType(TextField);
@@ -339,13 +339,54 @@ void main() {
         expect(bottomSheetFound, isTrue);
 
         // Tunggu 3 detik agar bottom sheet terlihat
-        debugPrint('✅ Bottom sheet detail data muncul');
+        debugPrint('Bottom sheet detail data muncul');
         await tester.pump(const Duration(seconds: 3));
         final editButton = find.byKey(const Key('btnUbahData'));
         await tester.ensureVisible(editButton);
         await tester.pump();
         await tester.tap(editButton);
         await tester.pumpAndSettle();
+
+        // Ubah Nama Kelurahan
+        final namaKelurahanField = find.byKey(const Key('fieldNamaKelurahan'));
+        await tester.ensureVisible(namaKelurahanField);
+        expect(namaKelurahanField, findsOneWidget);
+
+        // Hapus dulu isi form
+        await tester.enterText(namaKelurahanField, '');
+        await tester.pumpAndSettle();
+
+        // Masukkan teks baru
+        await tester.enterText(namaKelurahanField, 'Kelurahan Mangsang');
+        await tester.pump(const Duration(seconds: 1));
+
+        // Tutup keyboard
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await tester.pumpAndSettle();
+
+        // Ubah Nama Kecamatan
+        final namaKecamatanField = find.byKey(const Key('fieldNamaKecamatan'));
+        await tester.ensureVisible(namaKecamatanField);
+        expect(namaKecamatanField, findsOneWidget);
+
+        // Hapus dulu isi form
+        await tester.enterText(namaKecamatanField, '');
+        await tester.pumpAndSettle();
+
+        // Masukkan teks baru
+        await tester.enterText(namaKecamatanField, 'Kecamatan Batam Kota');
+        await tester.pump(const Duration(seconds: 1));
+
+        // Tutup keyboard
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await tester.pumpAndSettle();
+
+        // Ubah Jenis Kawasan
+        await tester.tap(find.text('Jenis Kawasan'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Kawasan Non Pengembang').last);
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 2));
 
         final namaLokasiField = find.byKey(const Key('fieldNamaLokasi'));
         await tester.ensureVisible(namaLokasiField);
@@ -363,6 +404,23 @@ void main() {
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await tester.pumpAndSettle();
 
+        // Ubah Alamat
+        final alamatField = find.byKey(const Key('fieldAlamat'));
+        expect(alamatField, findsOneWidget);
+
+        // Hapus dulu isi form
+        await tester.enterText(alamatField, '');
+        await tester.pumpAndSettle();
+
+        // Masukkan teks baru
+        await tester.enterText(alamatField, 'Jalan Mangga No 15');
+        await tester.pump(const Duration(seconds: 1));
+
+        // Tutup keyboard
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await tester.pumpAndSettle();
+
+        // Ubah RT
         final rtField = find.byKey(const Key('fieldRT'));
         expect(rtField, findsOneWidget);
 
@@ -378,6 +436,7 @@ void main() {
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await tester.pumpAndSettle();
 
+        // Ubah RW
         final rwField = find.byKey(const Key('fieldRW'));
         expect(rwField, findsOneWidget);
 
@@ -387,6 +446,38 @@ void main() {
 
         // Masukkan teks baru
         await tester.enterText(rwField, '009');
+        await tester.pump(const Duration(seconds: 1));
+
+        // Tutup keyboard
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await tester.pumpAndSettle();
+
+        // Ubah Panjang Bentuk
+        final panjangBentukField = find.byKey(const Key('fieldPanjangBentuk'));
+        expect(rwField, findsOneWidget);
+
+        // Hapus dulu isi form
+        await tester.enterText(panjangBentukField, '');
+        await tester.pumpAndSettle();
+
+        // Masukkan teks baru
+        await tester.enterText(panjangBentukField, '0.01279236174892200432');
+        await tester.pump(const Duration(seconds: 1));
+
+        // Tutup keyboard
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await tester.pumpAndSettle();
+
+        // Ubah Luas Bentuk
+        final luasBentukField = find.byKey(const Key('fieldLuasBentuk'));
+        expect(rwField, findsOneWidget);
+
+        // Hapus dulu isi form
+        await tester.enterText(luasBentukField, '');
+        await tester.pumpAndSettle();
+
+        // Masukkan teks baru
+        await tester.enterText(luasBentukField, '2.65435827156e-07');
         await tester.pump(const Duration(seconds: 1));
 
         // Tutup keyboard
@@ -420,7 +511,7 @@ void main() {
         // Sekarang pastikan field koordinat dan tap
         final ubahkoordinatFinder = find.byKey(const Key('btnUbahKoordinat'));
         expect(ubahkoordinatFinder, findsOneWidget,
-            reason: '❌ fieldKoordinat tidak ditemukan');
+            reason: 'fieldKoordinat tidak ditemukan');
 
         await tester.ensureVisible(ubahkoordinatFinder);
         await tester.tap(ubahkoordinatFinder);
@@ -441,7 +532,7 @@ void main() {
 
         await tester.tap(simpanUbahBtn);
         await tester.pumpAndSettle();
-        debugPrint('✅ Tombol simpan ubah data ditekan');
+        debugPrint('Tombol simpan ditekan');
 
         final closeBottomSheet = find.byKey(const Key('closeBottomSheet'));
         await tester.tap(closeBottomSheet);
@@ -449,7 +540,7 @@ void main() {
 
         expect(find.byKey(const Key('bottomSheetDetailData')), findsNothing);
         debugPrint(
-            '🎉 Test Berhasil: Ubah data - Koordinat, Foto, dan Data Umum (2/2)');
+            '✅ Test Berhasil: Ubah Data - Koordinat, Foto, dan Data Umum (2/2)');
 
         // Pengujian Hapus Data - Koordinat, Foto, dan Data Umum
         await selectItemFromSearch(
@@ -473,7 +564,7 @@ void main() {
         // Tunggu dialog muncul
         final konfirmasiHapusBtn = find.byKey(const Key('btnKonfirmasiHapus'));
         expect(konfirmasiHapusBtn, findsOneWidget,
-            reason: '❌ Tombol konfirmasi hapus tidak ditemukan');
+            reason: 'Tombol konfirmasi hapus tidak ditemukan');
 
         // Tekan tombol konfirmasi
         await tester.pump(const Duration(seconds: 2));
@@ -492,7 +583,8 @@ void main() {
 
         // Verifikasi bottom sheet tertutup
         expect(find.byKey(const Key('bottomSheetDetailData')), findsNothing);
-        debugPrint('🎉 Test Berhasil: Hapus data - Koordinat, Foto, dan Data Umum (3/3)');
+        debugPrint(
+            '✅ Test Berhasil: Hapus Data - Koordinat, Foto, dan Data Umum (3/3)');
 
         expect(bottomSheetFound, isTrue);
       } catch (e, stackTrace) {
