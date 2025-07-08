@@ -44,7 +44,7 @@ class DetailPetaController with ChangeNotifier {
 
         // Muat polygon dan batasi
         final polygons = await GeoJsonService.loadPolygonsFromAsset(assetPath);
-        _polygons.addAll(polygons.take(4000));
+        _polygons.addAll(polygons.take(2000));
 
         // Muat marker dan batasi
         final markers = await GeoJsonService.loadMarkersFromAsset(
@@ -52,7 +52,7 @@ class DetailPetaController with ChangeNotifier {
           context,
           _buildMarker,
         );
-        _markers.addAll(markers.take(4000));
+        _markers.addAll(markers.take(2000));
         await Future.delayed(const Duration(milliseconds: 300));
       }
     } catch (e) {
