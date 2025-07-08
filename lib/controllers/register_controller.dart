@@ -67,6 +67,7 @@ class RegisterController {
       createdAt: null, 
     );
 
+    // Query simpan data user ke koleksi user
     await _firestore.collection('user').doc(user.uid).set(userModel.toMap());
   }
 

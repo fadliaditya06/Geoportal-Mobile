@@ -171,10 +171,11 @@ class TambahDataController {
         createdAt: DateTime.now(),
       );
 
+      // Query simpan data spasial ke koleksi data spasial
       final docSpasial =
           await firestore.collection('data_spasial').add(dataSpasial.toMap());
 
-      // Simpan data umum
+      // Query simpan data umum ke koleksi data umum
       final docUmum = firestore.collection('data_umum').doc();
 
       final dataUmum = DataUmumModel(
@@ -209,7 +210,8 @@ class TambahDataController {
             'id_data_spasial': docSpasial.id,
           },
         );
-
+        
+        // Query simpan log konfirmasi ke koleksi log konfirmasi
         await firestore.collection('log_konfirmasi').add(log.toMap());
       }
 
