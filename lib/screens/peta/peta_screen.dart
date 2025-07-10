@@ -237,6 +237,8 @@ class PetaScreenState extends State<PetaScreen> {
                                   TileLayer(
                                     urlTemplate:
                                         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                    userAgentPackageName:
+                                        'com.example.geoportal_mobile',
                                   ),
                                   if (_pickedLocation != null)
                                     MarkerLayer(
