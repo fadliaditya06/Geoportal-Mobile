@@ -36,7 +36,6 @@ Geoportal dikembangkan sebagai bagian dari upaya mendukung program pemerintah di
 
 ## 🖼️ Screenshots Tampilan Aplikasi
 
-
 ## ⚙️ Prasyarat
 
 - ![Flutter](https://img.shields.io/badge/Flutter-3.29.3-02569B?logo=flutter&logoColor=white)
@@ -107,5 +106,5 @@ Geoportal dikembangkan sebagai bagian dari upaya mendukung program pemerintah di
 
 <p align="center">
   <img src="assets/images/logo/logo-polibatam.png" alt="Logo Polibatam" width="180" style="margin-right: 50px;" />
-  <img src="assets/images/logo/logo-prodi-if.png" alt="Logo Prodi IF" width="180"/>
+  <img src="assets/images/logo/logo-prodi-if.png" alt="Logo Prodi IF" width="180" style="margin-bottom: 50px;"/>
 </p>
