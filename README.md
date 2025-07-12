@@ -107,5 +107,5 @@ Geoportal dikembangkan sebagai bagian dari upaya mendukung program pemerintah di
 
 <p align="center">
   <img src="assets/images/logo/logo-polibatam.png" alt="Logo Polibatam" width="180" style="margin-right: 50px;" />
-  <img src="assets/images/logo/logo-prodi-if.png" alt="Logo Prodi IF" width="180" style="margin-bottom: 20px;" />
+  <img src="assets/images/logo/logo-prodi-if.png" alt="Logo Prodi IF" width="180" style="margin-bottom: 40px;" />
 </p>
