@@ -80,7 +80,7 @@ Geoportal dikembangkan sebagai bagian dari upaya mendukung program pemerintah di
      - Di dalam bucket `images`, buat dua folder:
        - `foto_lokasi`
        - `foto_profil`
-   -  Buka **Project Settings → API Keys**
+   -  Buka **Project Settings → API Keys**, lalu salin:
        - **Anon Public Key (Anon Key)**
    -  Buka **Project Settings → Data API**, lalu salin:
        - **URL (Project URL)**
