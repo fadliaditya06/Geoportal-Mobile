@@ -36,6 +36,7 @@ Geoportal dikembangkan sebagai bagian dari upaya mendukung program pemerintah di
 
 ## 🖼️ Screenshots Tampilan Aplikasi
 
+
 ## ⚙️ Prasyarat
 
 - ![Flutter](https://img.shields.io/badge/Flutter-3.29.3-02569B?logo=flutter&logoColor=white)
@@ -104,7 +105,13 @@ Geoportal dikembangkan sebagai bagian dari upaya mendukung program pemerintah di
 | 3312301022 – Isma Rapmaria Silitonga      | Frontend Mobile Developer & UI/UX Designer |
 | 3312301122 – Ainaya Nurfaddilah           | Frontend Mobile Developer & UI/UX Designer |
 
-<p align="center">
-  <img src="assets/images/logo/logo-polibatam.png" alt="Logo Polibatam" width="180" style="margin-right: 50px;" />
-  <img src="assets/images/logo/logo-prodi-if.png" alt="Logo Prodi IF" width="180" style="margin-bottom: 100px;"/>
-</p>
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="assets/images/logo/logo-polibatam.png" width="180" alt="Logo Polibatam" />
+    </td>
+    <td align="center">
+      <img src="assets/images/logo/logo-prodi-if.png" width="180" alt="Logo Prodi IF" />
+    </td>
+  </tr>
+</table>
