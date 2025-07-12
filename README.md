@@ -62,18 +62,29 @@ Geoportal dikembangkan sebagai bagian dari upaya mendukung program pemerintah di
 
 3. Setup Firebase:
 
-   - Tambahkan file `google-services.json` ke dalam folder `android/app/`
+   - Buat project baru di [Firebase Console](https://console.firebase.google.com/)
+   - Tambahkan aplikasi Android ke Firebase:
+     - Isi nama package sesuai dengan aplikasi Flutter 
+     - Unduh file `google-services.json`
+     - Letakkan file tersebut di dalam folder: `android/app/`
    - Pastikan fitur berikut aktif di Firebase console:
-     - Firebase Authentication
-     - Cloud Firestore
+     - **Firebase Authentication**
+     - **Cloud Firestore**
 
 4. Setup Supabase:
 
-   - Simpan konfigurasi berikut dari Supabase Project:
-     - URL
-     - Anon Key
-     - Storage Bucket untuk gambar lokasi
-   - Pastikan bucket bersifat public atau diatur sesuai kebutuhan aplikasi.
+   - Daftar di [https://supabase.com](https://supabase.com) dan buat project baru  
+   - Buka menu **Storage → Buckets**, lalu:
+     - Buat bucket dengan nama `images`
+     - Centang **public access**
+     - Di dalam bucket `images`, buat dua folder:
+       - `foto_lokasi`
+       - `foto_profil`
+   -  Buka **Project Settings → API Keys**
+       - **Anon Public Key (Anon Key)**
+   -  Buka **Project Settings → Data API**, lalu salin:
+       - **URL (Project URL)**
+   - Simpan nilai tersebut di file `.env` atau langsung inisialisasi di `main.dart`
 
 5. Jalankan aplikasi:
    ```bash
