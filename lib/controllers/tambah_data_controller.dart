@@ -8,6 +8,8 @@ import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
 import 'package:geoportal_mobile/models/data_umum_model.dart';
 import 'package:geoportal_mobile/models/data_spasial_model.dart';
 import 'package:geoportal_mobile/models/log_konfirmasi_model.dart';
+import 'package:geoportal_mobile/services/performance_tracer.dart';
+import 'package:geoportal_mobile/services/firebase_performance_tracer.dart';
 
 class TambahDataController {
   // Text Controllers
@@ -28,6 +30,7 @@ class TambahDataController {
   final FirebaseAuth auth;
   final SupabaseClient supabase;
   final StorageFileApi storage;
+  final PerformanceTracer tracer;
 
   TambahDataController({
     required this.titikKoordinatController,
@@ -41,14 +44,16 @@ class TambahDataController {
     required this.panjangBentukController,
     required this.luasBentukController,
     required this.formKey,
+    PerformanceTracer? tracer,
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
     SupabaseClient? supabase,
     StorageFileApi? storage,
-  })  : firestore = firestore ?? FirebaseFirestore.instance,
-        auth = auth ?? FirebaseAuth.instance,
-        supabase = supabase ?? Supabase.instance.client,
-        storage = storage ?? Supabase.instance.client.storage.from('images');
+  }) : firestore = firestore ?? FirebaseFirestore.instance,
+       auth = auth ?? FirebaseAuth.instance,
+       supabase = supabase ?? Supabase.instance.client,
+       storage = storage ?? Supabase.instance.client.storage.from('images'),
+       tracer = tracer ?? FirebasePerformanceTracer('trace_tambah_data');
 
   final List<File> _fotoFiles = [];
   final List<String> _fotoUrls = [];
@@ -136,7 +141,14 @@ class TambahDataController {
     }
   }
 
-  Future<void> simpanData(BuildContext context) async {
+  Future<void> simpanData(
+    BuildContext context, {
+    bool isLoadTest = false,
+  }) async {
+    await tracer.start();
+
+    final stopwatch = Stopwatch()..start();
+
     if (formKey?.currentState?.validate() == false) {
       return;
     }
@@ -172,8 +184,9 @@ class TambahDataController {
       );
 
       // Query simpan data spasial ke koleksi data spasial
-      final docSpasial =
-          await firestore.collection('data_spasial').add(dataSpasial.toMap());
+      final docSpasial = await firestore
+          .collection('data_spasial')
+          .add(dataSpasial.toMap());
 
       // Query simpan data umum ke koleksi data umum
       final docUmum = firestore.collection('data_umum').doc();
@@ -205,30 +218,44 @@ class TambahDataController {
           deskripsi: 'Permintaan Konfirmasi Tambah Data',
           status: 'menunggu',
           timestamp: Timestamp.now(),
-          data: {
-            'id_data_umum': docUmum.id,
-            'id_data_spasial': docSpasial.id,
-          },
+          data: {'id_data_umum': docUmum.id, 'id_data_spasial': docSpasial.id},
         );
-        
+
         // Query simpan log konfirmasi ke koleksi log konfirmasi
         await firestore.collection('log_konfirmasi').add(log.toMap());
       }
 
-      showCustomSnackbar(
-        context: context,
-        message: isAdmin
-            ? 'Data berhasil ditambahkan oleh admin.'
-            : 'Permintaan tambah data berhasil diajukan',
-        isSuccess: true,
+      stopwatch.stop();
+      print(
+        'User ${auth.currentUser?.uid} waktu simpanData(): ${stopwatch.elapsedMilliseconds} ms',
       );
-      Navigator.pop(context);
+
+      try {
+        await tracer.stop();
+      } catch (e) {
+        print('Gagal mencatat trace Firebase: $e');
+      }
+
+      if (!isLoadTest && context.mounted) {
+        await Future.delayed(const Duration(milliseconds: 300));
+        showCustomSnackbar(
+          context: context,
+          message:
+              isAdmin
+                  ? 'Data berhasil ditambahkan oleh admin.'
+                  : 'Permintaan tambah data berhasil diajukan',
+          isSuccess: true,
+        );
+        Navigator.pop(context);
+      }
     } catch (e) {
-      showCustomSnackbar(
-        context: context,
-        message: 'Gagal menyimpan data: $e',
-        isSuccess: false,
-      );
+      if (!isLoadTest && context.mounted) {
+        showCustomSnackbar(
+          context: context,
+          message: 'Gagal menyimpan data: $e',
+          isSuccess: false,
+        );
+      }
     }
   }
 

@@ -14,12 +14,16 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:geoportal_mobile/config/firebase_options.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:geoportal_mobile/controllers/unduh_data_controller.dart';
+import 'package:geoportal_mobile/screens/dev/load_test_tambah_page.dart';
+import 'package:geoportal_mobile/screens/dev/load_test_ubah_page.dart';
+import 'package:geoportal_mobile/screens/dev/load_test_hapus_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +32,9 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Aktifkan Firebase Performance Monitoring
+  await FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
 
   // Inisialisasi Supabase
   await Supabase.initialize(
@@ -85,6 +92,9 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegisterScreen(),
         '/detail-konfirmasi': (context) => const DetailKonfirmasiDataScreen(),
         '/tambah-data': (context) => const TambahDataScreen(),
+        '/load-test-tambah': (context) => const LoadTestTambahPage(), 
+        '/load-test-ubah': (context) => const LoadTestUbahPage(),
+        '/load-test-hapus': (context) => const LoadTestHapusPage(),
       },
     );
   }

@@ -7,6 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
 import 'package:geoportal_mobile/models/log_konfirmasi_model.dart';
+import 'package:geoportal_mobile/services/performance_tracer.dart';
+import 'package:geoportal_mobile/services/firebase_performance_tracer.dart';
 
 class UbahDataController extends GetxController {
   final GlobalKey<FormState> formKey;
@@ -16,6 +18,7 @@ class UbahDataController extends GetxController {
   final FirebaseFirestore firestore;
   final SupabaseClient supabase;
   final StorageFileApi storage;
+  final PerformanceTracer tracer;
 
   UbahDataController({
     GlobalKey<FormState>? formKey,
@@ -23,7 +26,9 @@ class UbahDataController extends GetxController {
     required this.firestore,
     required this.supabase,
     required this.storage,
-  }) : formKey = formKey ?? GlobalKey<FormState>();
+    PerformanceTracer? tracer,
+  }) : formKey = formKey ?? GlobalKey<FormState>(),
+       tracer = tracer ?? FirebasePerformanceTracer('trace_ubah_data');
 
   // Form input controllers
   final kelurahanController = TextEditingController();
@@ -145,7 +150,14 @@ class UbahDataController extends GetxController {
 
   // Simpan perubahan ke Firestore
   Future<void> simpanPerubahan(
-      String idDataUmum, String idDataSpasial, BuildContext context) async {
+    String idDataUmum,
+    String idDataSpasial,
+    BuildContext context, {
+    bool isLoadTest = false,
+  }) async {
+    await tracer.start();
+    final stopwatch = Stopwatch()..start();
+
     if (!isTestMode && formKey.currentState?.validate() == false) {
       return;
     }
@@ -169,6 +181,9 @@ class UbahDataController extends GetxController {
       final role = dataUser?['peran']?.toString().toLowerCase() ?? '';
       final isAdmin = role == 'admin';
 
+      // tracer.putAttribute("user_role", role);
+      // tracer.incrementMetric("foto_baru_count", fotoFiles.length);
+
       if (isAdmin) {
         // Role admin update tanpa konfirmasi
         await firestore.collection('data_spasial').doc(idDataSpasial).update({
@@ -191,14 +206,14 @@ class UbahDataController extends GetxController {
           'updated_at': DateTime.now(),
         });
 
-        if (!context.mounted) return;
-
-        showCustomSnackbar(
-          context: context,
-          message: 'Data berhasil diubah oleh admin',
-          isSuccess: true,
-        );
-        Navigator.pop(context);
+        if (!isLoadTest && context.mounted) {
+          showCustomSnackbar(
+            context: context,
+            message: 'Data berhasil diubah oleh admin',
+            isSuccess: true,
+          );
+          Navigator.pop(context);
+        }
       } else {
         // Role pengguna update memerlukan konfirmasi
         final log = LogKonfirmasiModel(
@@ -208,10 +223,7 @@ class UbahDataController extends GetxController {
           deskripsi: 'Permintaan Konfirmasi Ubah Data',
           status: 'menunggu',
           timestamp: Timestamp.now(),
-          data: {
-            'id_data_umum': idDataUmum,
-            'id_data_spasial': idDataSpasial,
-          },
+          data: {'id_data_umum': idDataUmum, 'id_data_spasial': idDataSpasial},
           dataBaru: {
             'nama_lokasi': lokasiController.text,
             'kelurahan': kelurahanController.text,
@@ -229,19 +241,30 @@ class UbahDataController extends GetxController {
 
         await firestore.collection('log_konfirmasi').add(log.toMap());
 
+        if (!isLoadTest && context.mounted) {
+          showCustomSnackbar(
+            context: context,
+            message: 'Permintaan ubah data berhasil diajukan',
+            isSuccess: true,
+          );
+          Navigator.pop(context);
+        }
+      }
+
+      stopwatch.stop();
+      print(
+        ' User ${auth.currentUser?.uid} waktu simpanPerubahan(): ${stopwatch.elapsedMilliseconds} ms',
+      );
+      await tracer.stop();
+    } catch (e) {
+      // tracer.incrementMetric("error", 1);
+      if (!isLoadTest && context.mounted) {
         showCustomSnackbar(
           context: context,
-          message: 'Permintaan ubah data berhasil diajukan',
-          isSuccess: true,
+          message: 'Gagal mengubah data: $e',
+          isSuccess: false,
         );
-        Navigator.pop(context);
       }
-    } catch (e) {
-      showCustomSnackbar(
-        context: context,
-        message: 'Gagal mengubah data: $e',
-        isSuccess: false,
-      );
     } finally {
       isLoading.value = false;
     }
