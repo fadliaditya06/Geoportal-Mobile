@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:path/path.dart' as path;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
+import 'package:geoportal_mobile/services/performance_tracer.dart';
 import 'ubah_data_controller_test.mocks.dart';
 
 @GenerateMocks([
@@ -22,6 +23,7 @@ import 'ubah_data_controller_test.mocks.dart';
   SupabaseClient,
   SupabaseStorageClient,
   StorageFileApi,
+  PerformanceTracer,
 ])
 void main() {
   isTestMode = true;
@@ -40,6 +42,7 @@ void main() {
     late MockDocumentReference<Map<String, dynamic>> spasialRef;
     late MockDocumentSnapshot<Map<String, dynamic>> mockSnapshot;
     late MockSupabaseClient mockSupabase;
+    late MockPerformanceTracer mockTracer;
     late MockSupabaseStorageClient mockStorageClient;
     late MockStorageFileApi mockFileApi;
     late GlobalKey<FormState> formKey;
@@ -64,6 +67,7 @@ void main() {
       mockSupabase = MockSupabaseClient();
       mockStorageClient = MockSupabaseStorageClient();
       mockFileApi = MockStorageFileApi();
+      mockTracer = MockPerformanceTracer();
 
       // Arrange - Inisialisasi controller dengan mock dependencies
       controller = UbahDataController(
@@ -72,6 +76,7 @@ void main() {
         firestore: mockFirestore,
         supabase: mockSupabase,
         storage: mockFileApi,
+        tracer: mockTracer,
       );
 
       // Arrange - Isi data form
@@ -162,6 +167,9 @@ void main() {
 
 // Dummy BuildContext
 class FakeBuildContext implements BuildContext {
+  @override
+  bool get mounted => true;
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

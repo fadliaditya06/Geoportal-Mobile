@@ -9,6 +9,7 @@ import 'package:geoportal_mobile/controllers/tambah_data_controller.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:geoportal_mobile/services/performance_tracer.dart';
 import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
 
 import 'tambah_data_controller_test.mocks.dart';
@@ -23,6 +24,7 @@ import 'tambah_data_controller_test.mocks.dart';
   SupabaseClient,
   SupabaseStorageClient,
   StorageFileApi,
+  PerformanceTracer,
 ])
 void main() {
   isTestMode = true;
@@ -35,6 +37,7 @@ void main() {
     late MockSupabaseClient mockSupabase;
     late MockStorageFileApi mockStorage;
     late MockSupabaseStorageClient mockSupabaseStorage;
+    late MockPerformanceTracer mockTracer;
 
     late MockCollectionReference<Map<String, dynamic>> userCollection;
     late MockCollectionReference<Map<String, dynamic>> spasialCollection;
@@ -53,6 +56,7 @@ void main() {
       mockSupabase = MockSupabaseClient();
       mockSupabaseStorage = MockSupabaseStorageClient();
       mockStorage = MockStorageFileApi();
+      mockTracer = MockPerformanceTracer();
 
       userCollection = MockCollectionReference<Map<String, dynamic>>();
       spasialCollection = MockCollectionReference<Map<String, dynamic>>();
@@ -70,12 +74,15 @@ void main() {
         rwController: TextEditingController(text: '002'),
         panjangBentukController: TextEditingController(text: '0.1005678910'),
         luasBentukController: TextEditingController(text: '1.52786353e-08'),
-        titikKoordinatController: TextEditingController(text: '1.0276789123456, 104.12345678901234'),
+        titikKoordinatController: TextEditingController(
+          text: '1.0276789123456, 104.12345678901234',
+        ),
         formKey: testFormKey,
         firestore: mockFirestore,
         auth: mockAuth,
         supabase: mockSupabase,
         storage: mockStorage,
+        tracer: mockTracer,
       );
 
       // Tambahkan foto dummy
@@ -97,13 +104,14 @@ void main() {
       when(mockFirestore.collection('user')).thenReturn(userCollection);
       when(userCollection.doc('user123')).thenReturn(mockDocument);
       when(mockDocument.get()).thenAnswer((_) async => mockSnapshot);
-      when(mockSnapshot.data()).thenReturn({
-        'peran': 'admin',
-        'nama': 'Admin F',
-      });
+      when(
+        mockSnapshot.data(),
+      ).thenReturn({'peran': 'admin', 'nama': 'Admin F'});
 
       // Mock Firestore
-      when(mockFirestore.collection('data_spasial')).thenReturn(spasialCollection);
+      when(
+        mockFirestore.collection('data_spasial'),
+      ).thenReturn(spasialCollection);
       when(spasialCollection.add(any)).thenAnswer((_) async => mockDocument);
       when(mockDocument.id).thenReturn('spasial123');
 
@@ -115,19 +123,28 @@ void main() {
       // Mock Supabase storage
       when(mockSupabase.storage).thenReturn(mockSupabaseStorage);
       when(mockSupabaseStorage.from('images')).thenReturn(mockStorage);
-      when(mockStorage.uploadBinary(any, any,
-              fileOptions: anyNamed('fileOptions')))
-          .thenAnswer((_) async => 'uploaded_file_url');
-      when(mockStorage.getPublicUrl(any))
-          .thenReturn('https://example.com/rumah.jpg');
+      when(
+        mockStorage.uploadBinary(
+          any,
+          any,
+          fileOptions: anyNamed('fileOptions'),
+        ),
+      ).thenAnswer((_) async => 'uploaded_file_url');
+      when(
+        mockStorage.getPublicUrl(any),
+      ).thenReturn('https://example.com/rumah.jpg');
 
       // Act - Jalankan simpanData
       await controller.simpanData(fakeContext);
 
       // Assert - Verifikasi
-      verify(mockStorage.uploadBinary(any, any,
-              fileOptions: anyNamed('fileOptions')))
-          .called(1);
+      verify(
+        mockStorage.uploadBinary(
+          any,
+          any,
+          fileOptions: anyNamed('fileOptions'),
+        ),
+      ).called(1);
       verify(mockStorage.getPublicUrl(any)).called(1);
       verify(spasialCollection.add(any)).called(1);
       verify(umumCollection.doc()).called(1);
@@ -139,6 +156,9 @@ void main() {
 
 // Dummy BuildContext untuk testing non-UI
 class FakeBuildContext implements BuildContext {
+  @override
+  bool get mounted => true;
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
