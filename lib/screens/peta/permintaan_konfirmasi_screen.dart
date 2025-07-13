@@ -35,7 +35,8 @@ class _PermintaanKonfirmasiScreenState
     final query = FirebaseFirestore.instance
         .collection('log_konfirmasi')
         .where('status', isEqualTo: statusTerpilih.name)
-        .where('uid', isEqualTo: currentUser.uid);
+        .where('uid', isEqualTo: currentUser.uid)
+        .orderBy('timestamp', descending: true);
 
     return Scaffold(
       appBar: AppBar(
@@ -141,10 +142,11 @@ class _PermintaanKonfirmasiScreenState
                         }
 
                         return FutureBuilder<DocumentSnapshot>(
-                          future: FirebaseFirestore.instance
-                              .collection('data_umum')
-                              .doc(idDataUmum)
-                              .get(),
+                          future:
+                              FirebaseFirestore.instance
+                                  .collection('data_umum')
+                                  .doc(idDataUmum)
+                                  .get(),
                           builder: (context, snapshotDataUmum) {
                             String lokasi = 'Memuat lokasi';
 
@@ -152,9 +154,11 @@ class _PermintaanKonfirmasiScreenState
                                 ConnectionState.done) {
                               if (snapshotDataUmum.hasData &&
                                   snapshotDataUmum.data!.exists) {
-                                final dataUmum = snapshotDataUmum.data!.data()
-                                    as Map<String, dynamic>;
-                                lokasi = dataUmum['nama_lokasi'] ??
+                                final dataUmum =
+                                    snapshotDataUmum.data!.data()
+                                        as Map<String, dynamic>;
+                                lokasi =
+                                    dataUmum['nama_lokasi'] ??
                                     'Tidak ada nama lokasi';
                               } else {
                                 lokasi = 'Data lokasi tidak ditemukan';
@@ -182,20 +186,23 @@ class _PermintaanKonfirmasiScreenState
                                         CrossAxisAlignment.start,
                                     children: [
                                       FutureBuilder<DocumentSnapshot>(
-                                        future: FirebaseFirestore.instance
-                                            .collection('user')
-                                            .doc(data['uid'])
-                                            .get(),
+                                        future:
+                                            FirebaseFirestore.instance
+                                                .collection('user')
+                                                .doc(data['uid'])
+                                                .get(),
                                         builder: (context, snapshotUser) {
                                           String? fotoProfil;
                                           if (snapshotUser.connectionState ==
                                                   ConnectionState.done &&
                                               snapshotUser.hasData &&
                                               snapshotUser.data!.exists) {
-                                            final userData = snapshotUser.data!
-                                                .data() as Map<String, dynamic>;
-                                            fotoProfil = userData['foto_profil']
-                                                as String?;
+                                            final userData =
+                                                snapshotUser.data!.data()
+                                                    as Map<String, dynamic>;
+                                            fotoProfil =
+                                                userData['foto_profil']
+                                                    as String?;
                                           }
 
                                           return Container(
@@ -214,12 +221,15 @@ class _PermintaanKonfirmasiScreenState
                                                           fotoProfil.isNotEmpty)
                                                       ? NetworkImage(fotoProfil)
                                                       : null,
-                                              child: (fotoProfil == null ||
-                                                      fotoProfil.isEmpty)
-                                                  ? Icon(Icons.person,
-                                                      size: 30,
-                                                      color: Colors.grey[700])
-                                                  : null,
+                                              child:
+                                                  (fotoProfil == null ||
+                                                          fotoProfil.isEmpty)
+                                                      ? Icon(
+                                                        Icons.person,
+                                                        size: 30,
+                                                        color: Colors.grey[700],
+                                                      )
+                                                      : null,
                                             ),
                                           );
                                         },
@@ -250,11 +260,13 @@ class _PermintaanKonfirmasiScreenState
                                                       deskripsi.toLowerCase();
                                                   if (desc.contains('hapus')) {
                                                     return 'Menunggu Konfirmasi Hapus Data';
-                                                  } else if (desc
-                                                      .contains('tambah')) {
+                                                  } else if (desc.contains(
+                                                    'tambah',
+                                                  )) {
                                                     return 'Menunggu Konfirmasi Tambah Data';
-                                                  } else if (desc
-                                                      .contains('ubah')) {
+                                                  } else if (desc.contains(
+                                                    'ubah',
+                                                  )) {
                                                     return 'Menunggu Konfirmasi Ubah Data';
                                                   } else {
                                                     return 'Menunggu Konfirmasi';
@@ -298,49 +310,61 @@ class _PermintaanKonfirmasiScreenState
                                                         text: TextSpan(
                                                           style:
                                                               const TextStyle(
-                                                            fontSize: 12,
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                          ),
+                                                                fontSize: 12,
+                                                                color:
+                                                                    Colors
+                                                                        .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
                                                           children: [
                                                             TextSpan(
                                                               text:
                                                                   'Permintaan Konfirmasi ',
                                                               style: GoogleFonts.poppins(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
                                                             ),
                                                             TextSpan(
-                                                              text: deskripsi
-                                                                      .toLowerCase()
-                                                                      .contains(
-                                                                          'hapus')
-                                                                  ? 'Hapus'
-                                                                  : deskripsi
+                                                              text:
+                                                                  deskripsi
                                                                           .toLowerCase()
                                                                           .contains(
-                                                                              'tambah')
+                                                                            'hapus',
+                                                                          )
+                                                                      ? 'Hapus'
+                                                                      : deskripsi
+                                                                          .toLowerCase()
+                                                                          .contains(
+                                                                            'tambah',
+                                                                          )
                                                                       ? 'Tambah'
                                                                       : deskripsi
-                                                                              .toLowerCase()
-                                                                              .contains('ubah')
-                                                                          ? 'Ubah'
-                                                                          : '',
+                                                                          .toLowerCase()
+                                                                          .contains(
+                                                                            'ubah',
+                                                                          )
+                                                                      ? 'Ubah'
+                                                                      : '',
                                                               style: GoogleFonts.poppins(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
                                                             ),
                                                             const TextSpan(
-                                                                text: '\n'),
+                                                              text: '\n',
+                                                            ),
                                                             TextSpan(
                                                               text: 'Data',
                                                               style: GoogleFonts.poppins(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
                                                             ),
                                                           ],
                                                         ),
@@ -366,9 +390,9 @@ class _PermintaanKonfirmasiScreenState
                                                     color: Colors.black,
                                                     fontWeight: FontWeight.w400,
                                                   ),
-                                                )
+                                                ),
                                               ],
-                                            )
+                                            ),
                                           ],
                                         ),
                                       ),

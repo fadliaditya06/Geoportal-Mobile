@@ -51,10 +51,12 @@ class PermintaanKonfirmasiAdminScreenState
           padding: const EdgeInsets.all(16),
           // Menampilkan daftar permintaan konfirmasi berstatus 'menunggu'
           child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('log_konfirmasi')
-                .where('status', isEqualTo: 'menunggu')
-                .snapshots(),
+            stream:
+                FirebaseFirestore.instance
+                    .collection('log_konfirmasi')
+                    .where('status', isEqualTo: 'menunggu')
+                    .orderBy('timestamp', descending: true)
+                    .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -101,10 +103,13 @@ class PermintaanKonfirmasiAdminScreenState
 
                     final nama = data['nama'] ?? '-';
                     final deskripsi = data['deskripsi'] ?? '-';
-                    final waktu = data['timestamp'] != null
-                        ? DateFormat('dd MMMM yyyy - HH:mm', 'id')
-                            .format((data['timestamp'] as Timestamp).toDate())
-                        : '-';
+                    final waktu =
+                        data['timestamp'] != null
+                            ? DateFormat(
+                              'dd MMMM yyyy - HH:mm',
+                              'id',
+                            ).format((data['timestamp'] as Timestamp).toDate())
+                            : '-';
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
@@ -118,10 +123,10 @@ class PermintaanKonfirmasiAdminScreenState
                                   context,
                                   '/detail-konfirmasi',
                                   arguments: {
-                                    'id_data_umum': data['data']
-                                        ?['id_data_umum'],
-                                    'id_data_spasial': data['data']
-                                        ?['id_data_spasial'],
+                                    'id_data_umum':
+                                        data['data']?['id_data_umum'],
+                                    'id_data_spasial':
+                                        data['data']?['id_data_spasial'],
                                     'uid': data['uid'],
                                     'deskripsi': data['deskripsi'],
                                     'docId': docId,
@@ -145,8 +150,9 @@ class PermintaanKonfirmasiAdminScreenState
                                     showPermintaanDisetujuiDialog(
                                       context: context,
                                       deskripsi: data['deskripsi'] ?? '',
-                                      onConfirm: () =>
-                                          _updateStatus(docId, 'disetujui'),
+                                      onConfirm:
+                                          () =>
+                                              _updateStatus(docId, 'disetujui'),
                                     );
                                   },
                                   child: _permintaanKonfirmasiIcon(
@@ -165,11 +171,13 @@ class PermintaanKonfirmasiAdminScreenState
                                         deskripsi.toLowerCase();
                                     if (deskripsiLower.contains('hapus')) {
                                       jenisPermintaan = 'hapus';
-                                    } else if (deskripsiLower
-                                        .contains('tambah')) {
+                                    } else if (deskripsiLower.contains(
+                                      'tambah',
+                                    )) {
                                       jenisPermintaan = 'tambah';
-                                    } else if (deskripsiLower
-                                        .contains('ubah')) {
+                                    } else if (deskripsiLower.contains(
+                                      'ubah',
+                                    )) {
                                       jenisPermintaan = 'ubah';
                                     } else {
                                       jenisPermintaan = 'lainnya';
@@ -180,7 +188,10 @@ class PermintaanKonfirmasiAdminScreenState
                                       jenisPermintaan: jenisPermintaan,
                                       onConfirm: (alasanList) async {
                                         await _updateStatus(
-                                            docId, 'ditolak', alasanList);
+                                          docId,
+                                          'ditolak',
+                                          alasanList,
+                                        );
                                       },
                                     );
                                   },
@@ -190,7 +201,7 @@ class PermintaanKonfirmasiAdminScreenState
                                 ),
                               ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     );
@@ -205,13 +216,17 @@ class PermintaanKonfirmasiAdminScreenState
   }
 
   // Fungsi untuk update status konfirmasi dan untuk logika tambah, ubah, dan hapus
-  Future<void> _updateStatus(String docId, String status,
-      [List<String>? alasan]) async {
+  Future<void> _updateStatus(
+    String docId,
+    String status, [
+    List<String>? alasan,
+  ]) async {
     try {
-      final logDoc = await FirebaseFirestore.instance
-          .collection('log_konfirmasi')
-          .doc(docId)
-          .get();
+      final logDoc =
+          await FirebaseFirestore.instance
+              .collection('log_konfirmasi')
+              .doc(docId)
+              .get();
 
       if (!logDoc.exists) {
         showCustomSnackbar(
@@ -267,40 +282,36 @@ class PermintaanKonfirmasiAdminScreenState
               .collection('data_spasial')
               .doc(idDataSpasial)
               .update({
-            'titik_koordinat': baru['titik_koordinat'],
-            'status': 'disetujui',
-            'updated_at': DateTime.now(),
-          });
+                'titik_koordinat': baru['titik_koordinat'],
+                'status': 'disetujui',
+                'updated_at': DateTime.now(),
+              });
 
           // Update data umum
           await FirebaseFirestore.instance
               .collection('data_umum')
               .doc(idDataUmum)
               .update({
-            'nama_lokasi': baru['nama_lokasi'],
-            'kelurahan': baru['kelurahan'],
-            'kecamatan': baru['kecamatan'],
-            'kawasan': baru['kawasan'],
-            'alamat': baru['alamat'],
-            'rt': baru['rt'],
-            'rw': baru['rw'],
-            'panjang_bentuk': baru['panjang_bentuk'],
-            'luas_bentuk': baru['luas_bentuk'],
-            'foto_lokasi': baru['foto_lokasi'],
-            'updated_at': DateTime.now(),
-          });
+                'nama_lokasi': baru['nama_lokasi'],
+                'kelurahan': baru['kelurahan'],
+                'kecamatan': baru['kecamatan'],
+                'kawasan': baru['kawasan'],
+                'alamat': baru['alamat'],
+                'rt': baru['rt'],
+                'rw': baru['rw'],
+                'panjang_bentuk': baru['panjang_bentuk'],
+                'luas_bentuk': baru['luas_bentuk'],
+                'foto_lokasi': baru['foto_lokasi'],
+                'updated_at': DateTime.now(),
+              });
         } else if (deskripsi.contains('tambah') && idDataSpasial != null) {
           // Jika tambah data disetujui
           await FirebaseFirestore.instance
               .collection('data_spasial')
               .doc(idDataSpasial)
-              .update({
-            'status': 'disetujui',
-            'updated_at': DateTime.now(),
-          });
+              .update({'status': 'disetujui', 'updated_at': DateTime.now()});
         }
       }
-
       // Jika tambah data ditolak maka hapus data
       else if (status == 'ditolak') {
         if (deskripsi.contains('tambah') &&
@@ -378,9 +389,14 @@ class PermintaanKonfirmasiAdminScreenState
                         (fotoProfil != null && fotoProfil.isNotEmpty)
                             ? NetworkImage(fotoProfil)
                             : null,
-                    child: (fotoProfil == null || fotoProfil.isEmpty)
-                        ? Icon(Icons.person, size: 30, color: Colors.grey[700])
-                        : null,
+                    child:
+                        (fotoProfil == null || fotoProfil.isEmpty)
+                            ? Icon(
+                              Icons.person,
+                              size: 30,
+                              color: Colors.grey[700],
+                            )
+                            : null,
                   ),
                 );
               },
@@ -445,10 +461,7 @@ class PermintaanKonfirmasiAdminScreenState
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: const Color(0xFFB0E1C6),
-        border: Border.all(
-          color: const Color(0xFF358666),
-          width: 1,
-        ),
+        border: Border.all(color: const Color(0xFF358666), width: 1),
       ),
       padding: const EdgeInsets.all(12),
       child: Icon(icon, size: 22, color: Colors.black),
