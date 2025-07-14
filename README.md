@@ -36,6 +36,20 @@ Geoportal dikembangkan sebagai bagian dari upaya mendukung program pemerintah di
 
 ## 🖼️ Screenshots Tampilan Aplikasi
 
+<p align="center">
+  <table>
+    <tr>
+      <th>Beranda</th>
+      <th>Layar Peta</th>
+      <th>Detail Peta</th>
+    </tr>
+    <tr>
+      <td><img src="https://i.imgur.com/XwbhXoq.jpeg" width="200" alt="Beranda"/></td>
+      <td><img src="https://i.imgur.com/by0BdNh.jpeg" width="200" alt="Layar Peta"/></td>
+      <td><img src="https://i.imgur.com/99CHFiv.jpeg" width="200" alt="Detail Peta"/></td>
+    </tr>
+  </table>
+</p>
 
 ## ⚙️ Prasyarat
 
@@ -64,7 +78,7 @@ Geoportal dikembangkan sebagai bagian dari upaya mendukung program pemerintah di
 
    - Buat project baru di [Firebase Console](https://console.firebase.google.com/)
    - Tambahkan aplikasi Android ke Firebase:
-     - Isi nama package sesuai dengan aplikasi Flutter 
+     - Isi nama package sesuai dengan aplikasi Flutter
      - Unduh file `google-services.json`
      - Letakkan file tersebut di dalam folder: `android/app/`
    - Pastikan fitur berikut aktif di Firebase console:
@@ -73,17 +87,17 @@ Geoportal dikembangkan sebagai bagian dari upaya mendukung program pemerintah di
 
 4. Setup Supabase:
 
-   - Daftar di [https://supabase.com](https://supabase.com) dan buat project baru  
+   - Daftar di [https://supabase.com](https://supabase.com) dan buat project baru
    - Buka menu **Storage → Buckets**, lalu:
      - Buat bucket dengan nama `images`
      - Centang **public access**
      - Di dalam bucket `images`, buat dua folder:
        - `foto_lokasi`
        - `foto_profil`
-   -  Buka **Project Settings → API Keys**, lalu salin:
-       - **Anon Public Key (Anon Key)**
-   -  Buka **Project Settings → Data API**, lalu salin:
-       - **URL (Project URL)**
+   - Buka **Project Settings → API Keys**, lalu salin:
+     - **Anon Public Key (Anon Key)**
+   - Buka **Project Settings → Data API**, lalu salin:
+     - **URL (Project URL)**
    - Simpan nilai tersebut di file `.env` atau langsung inisialisasi di `main.dart`
 
 5. Jalankan aplikasi:
