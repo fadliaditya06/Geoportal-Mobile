@@ -253,7 +253,7 @@ class UbahDataController extends GetxController {
 
       stopwatch.stop();
       print(
-        ' User ${auth.currentUser?.uid} waktu simpanPerubahan(): ${stopwatch.elapsedMilliseconds} ms',
+        'User ${auth.currentUser?.uid} waktu simpanPerubahan(): ${stopwatch.elapsedMilliseconds} ms',
       );
       await tracer.stop();
     } catch (e) {
