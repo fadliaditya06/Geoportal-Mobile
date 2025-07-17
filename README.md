@@ -10,29 +10,29 @@ Geoportal dikembangkan sebagai bagian dari upaya mendukung program pemerintah di
 
 ## 📱 Fitur Utama
 
-- 🔐 **Login & Register**  
-  Pengguna dapat membuat akun dan masuk ke dalam aplikasi.
+### 🔐 **Login & Register**  
+  - Pengguna dapat membuat akun dan masuk ke dalam aplikasi.
 
-- 🗺️ **Tampilan Informasi Perumahan dan Permukiman di Peta**  
-  Data ditampilkan secara interaktif melalui peta berbasis GeoJSON.
+### 🗺️ **Tampilan Informasi Perumahan dan Permukiman di Peta**  
+  - Data ditampilkan secara interaktif melalui peta berbasis GeoJSON.
 
-- ✏️ **Input, Ubah dan Hapus Data Umum dan Spasial**  
-  Mengelola informasi perumahan dan permukiman, termasuk nama lokasi, jenis kawasan, serta atribut lainnya.
+### ✏️ **Input, Ubah dan Hapus Data Umum dan Spasial**  
+  - Mengelola informasi perumahan dan permukiman, termasuk nama lokasi, jenis kawasan, serta atribut lainnya.
 
-- 📍 **Input, Ubah dan Hapus Koordinat Lokasi**  
-  Mengelola titik koordinat lokasi secara langsung dari interaksi peta.
+### 📍 **Input, Ubah dan Hapus Koordinat Lokasi**  
+  - Mengelola titik koordinat lokasi secara langsung dari interaksi peta.
 
-- 📸 **Input, Ubah dan Hapus Foto Lokasi**  
-  Mengelola foto lokasi menggunakan galeri perangkat.
+### 📸 **Input, Ubah dan Hapus Foto Lokasi**  
+  - Mengelola foto lokasi menggunakan galeri perangkat.
 
-- ⬇️ **Unduh Data Lokasi**  
-  Pengguna dapat mengunduh data lokasi dalam format terstruktur dalam format PDF.
+### ⬇️ **Unduh Data Lokasi**  
+  - Pengguna dapat mengunduh data lokasi dalam format terstruktur dalam format PDF.
 
-- 🧭 **Akses dan Navigasi Peta Interaktif**  
-  Berbasis Flutter Map, pengguna dapat menelusuri dan memantau persebaran data lokasi secara interaktif.  
+### 🧭 **Akses dan Navigasi Peta Interaktif**  
+  - Berbasis Flutter Map, pengguna dapat menelusuri dan memantau persebaran data lokasi secara interaktif.  
   Tersedia dua jenis tampilan peta yang dapat dipilih:
-  - 🗺️ **Peta Biasa (OpenStreetMap)**
-  - 🛰️ **Peta Satelit (ESRI Satellite)**
+    - 🗺️ **Peta Biasa (OpenStreetMap)**
+    - 🛰️ **Peta Satelit (ESRI Satellite)**
 
 ## 🖼️ Screenshots Tampilan Aplikasi
 
