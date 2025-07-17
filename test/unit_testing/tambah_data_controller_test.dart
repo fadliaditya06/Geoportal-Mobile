@@ -11,7 +11,6 @@ import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:geoportal_mobile/services/performance_tracer.dart';
 import 'package:geoportal_mobile/widgets/custom_snackbar.dart';
-
 import 'tambah_data_controller_test.mocks.dart';
 
 @GenerateMocks([
