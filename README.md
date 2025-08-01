@@ -20,7 +20,7 @@ Geoportal dikembangkan sebagai bagian dari upaya mendukung program pemerintah di
   - Mengelola informasi perumahan dan permukiman, termasuk nama lokasi, jenis kawasan, serta atribut lainnya.
 
 ### 📍 **Input, Ubah dan Hapus Koordinat Lokasi**  
-  - Mengelola titik koordinat lokasi secara langsung dari interaksi peta.
+  - Mengelola titik koordinat lokasi secara langsung dari peta interaktif.
 
 ### 📸 **Input, Ubah dan Hapus Foto Lokasi**  
   - Mengelola foto lokasi menggunakan galeri perangkat.
