@@ -26,7 +26,7 @@ Geoportal dikembangkan sebagai bagian dari upaya mendukung program pemerintah di
   - Mengelola foto lokasi menggunakan galeri perangkat.
 
 ### ⬇️ **Unduh Data Lokasi**  
-  - Pengguna dapat mengunduh data lokasi dalam format terstruktur dalam format PDF.
+  - Pengguna dapat mengunduh data lokasi dalam format PDF.
 
 ### 🧭 **Akses dan Navigasi Peta Interaktif**  
   - Berbasis Flutter Map, pengguna dapat menelusuri dan memantau persebaran data lokasi secara interaktif.  
